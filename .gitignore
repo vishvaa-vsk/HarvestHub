@@ -39,5 +39,17 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Environment variables
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Sensitive configuration files
 .env
+google-services.json
+firebase_options.dart
+ios/Runner/GoogleService-Info.plist
+
+# Keep templates for reference
+!.env.example
+!google-services.example.json
