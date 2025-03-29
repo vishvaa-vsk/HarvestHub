@@ -74,34 +74,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset(
-          'assets/crop.jpg',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            print('Error loading image: $error');
-            return const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.agriculture,
-                  size: 80,
-                  color: Colors.green,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'HarvestHub',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+        child: Image.asset('assets/images/crop.jpg'), // Replace with your image path
       ),
     );
   }
@@ -121,149 +95,60 @@ class _LoginPageState extends State<LoginPage> {
   final _otpController = TextEditingController();
   bool _isOtpSent = false;
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _phoneNumberController.dispose();
-    _otpController.dispose();
-    super.dispose();
-  }
-
-  String? _validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
-    }
-    if (!RegExp(r'^\+?[\d\s-]+$').hasMatch(value)) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
-  }
-
-  String? _validateUsername(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your name';
-    }
-    if (value.length < 2) {
-      return 'Name must be at least 2 characters long';
-    }
-    return null;
-  }
-
-  String? _validateOtp(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter OTP';
-    }
-    if (value.length != 6) {
-      return 'OTP must be 6 digits';
-    }
-    if (!RegExp(r'^\d+$').hasMatch(value)) {
-      return 'OTP must contain only digits';
-    }
-    return null;
-  }
-
   void _sendOtp() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Implement Firebase phone authentication
-      setState(() {
-        _isOtpSent = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP sent to ${_phoneNumberController.text}')),
-      );
-    }
+    setState(() {
+      _isOtpSent = true;
+    });
+    print('Sending OTP to ${_phoneNumberController.text}');
   }
 
   void _verifyOtp() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Implement Firebase OTP verification
-      if (_otpController.text == '123456') { // This should be replaced with actual Firebase verification
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage(username: _usernameController.text)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid OTP')),
-        );
-      }
+    if (_otpController.text == '123456') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(username: _usernameController.text)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid OTP')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HarvestHub'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: const Text('HarvestHub')),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const SizedBox(height: 32),
-              Text(
-                'Welcome to HarvestHub',
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
               TextFormField(
                 controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'User Name',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: _validateUsername,
-                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(labelText: 'User Name'),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _phoneNumberController,
-                decoration: const InputDecoration(
-                  labelText: 'Mobile Number',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: _validatePhoneNumber,
-                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(labelText: 'Mobile Number'),
               ),
               const SizedBox(height: 16),
               if (!_isOtpSent)
-                ElevatedButton(
-                  onPressed: _sendOtp,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Send OTP'),
+                ElevatedButton(onPressed: _sendOtp, child: const Text('Send OTP')),
+              if (_isOtpSent)
+                Column(
+                  children: [
+                    TextFormField(
+                      controller: _otpController,
+                      decoration: InputDecoration(labelText: 'OTP'),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(onPressed: _verifyOtp, child: const Text('Continue')),
+                  ],
                 ),
-              if (_isOtpSent) ...[
-                TextFormField(
-                  controller: _otpController,
-                  decoration: const InputDecoration(
-                    labelText: 'OTP',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: _validateOtp,
-                  textInputAction: TextInputAction.done,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _verifyOtp,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Verify & Continue'),
-                ),
-              ],
             ],
           ),
         ),
