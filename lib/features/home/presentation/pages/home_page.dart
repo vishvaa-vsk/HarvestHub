@@ -134,15 +134,11 @@ class HomePage extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildMetricItem(
-              'Soil Moisture',
-              '${agricultural['soilMoisture']}%',
-            ),
-            _buildMetricItem(
-              'Evaporation',
-              '${agricultural['evaporation']} mm',
-            ),
             _buildMetricItem('UV Index', agricultural['uvIndex'].toString()),
+            _buildMetricItem(
+              'Precipitation',
+              '${agricultural['precipitation']} mm',
+            ),
           ],
         ),
       ],

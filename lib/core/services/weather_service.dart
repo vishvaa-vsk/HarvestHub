@@ -1,36 +1,93 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 
 class WeatherService {
-  static const String _baseUrl =
-      'https://earthengine.googleapis.com/v1/projects';
-  final String? _apiKey = dotenv.env['GOOGLE_CLOUD_API_KEY'];
+  static const String _weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
+  final String? _weatherApiKey = dotenv.env['WEATHER_API_KEY'];
 
   Future<Map<String, dynamic>> getWeatherData() async {
     try {
       // Get current location
       Position position = await _getCurrentLocation();
-
-      // Get weather data from Google Cloud
-      final response = await http.get(
-        Uri.parse(
-          '$_baseUrl/${dotenv.env['GOOGLE_CLOUD_PROJECT_ID']}/assets/weather'
-          '?location=${position.latitude},${position.longitude}'
-          '&key=$_apiKey',
-        ),
+      print(
+        'Location fetched: Latitude=${position.latitude}, Longitude=${position.longitude}',
       );
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        throw Exception('Failed to load weather data');
+      // Fetch current weather data from WeatherAPI
+      final currentWeatherResponse = await http.get(
+        Uri.parse(
+          '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}',
+        ),
+      );
+      print(
+        'WeatherAPI Current Weather Response: ${currentWeatherResponse.statusCode}',
+      );
+      print('Response Body: ${currentWeatherResponse.body}');
+
+      if (currentWeatherResponse.statusCode != 200) {
+        throw Exception('Failed to load current weather data');
       }
+
+      final currentWeather = json.decode(currentWeatherResponse.body);
+
+      // Fetch 3-day forecast data from WeatherAPI
+      final forecastResponse = await http.get(
+        Uri.parse(
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}&days=3',
+        ),
+      );
+      print('WeatherAPI Forecast Response: ${forecastResponse.statusCode}');
+      print('Response Body: ${forecastResponse.body}');
+
+      if (forecastResponse.statusCode != 200) {
+        throw Exception('Failed to load forecast data');
+      }
+
+      final forecastData = json.decode(forecastResponse.body);
+
+      // Parse forecast into 3-day chunks
+      final List<dynamic> forecastList =
+          forecastData['forecast']['forecastday'];
+      final List<Map<String, dynamic>> forecast =
+          forecastList.map((day) {
+            return {
+              'date': day['date'],
+              'temperature': {
+                'min': day['day']['mintemp_c'],
+                'max': day['day']['maxtemp_c'],
+              },
+              'condition': day['day']['condition']['text'],
+              'rainChance': day['day']['daily_chance_of_rain'],
+            };
+          }).toList();
+
+      return {
+        'current': {
+          'temperature': currentWeather['current']['temp_c'],
+          'humidity': currentWeather['current']['humidity'],
+          'condition': currentWeather['current']['condition']['text'],
+          'windSpeed': currentWeather['current']['wind_kph'],
+        },
+        'forecast': forecast,
+        'agricultural': {
+          'uvIndex': currentWeather['current']['uv'],
+          'precipitation': currentWeather['current']['precip_mm'],
+        },
+      };
     } catch (e) {
-      // Return mock data for testing until API is properly configured
-      return _getMockWeatherData();
+      print('Error fetching weather data: $e');
+      return {
+        'current': {
+          'temperature': 0,
+          'humidity': 0,
+          'condition': 'Unknown',
+          'windSpeed': 0,
+        },
+        'forecast': [],
+        'agricultural': {'uvIndex': 0, 'precipitation': 0},
+      }; // Return default values in case of error
     }
   }
 
@@ -55,39 +112,5 @@ class WeatherService {
     }
 
     return await Geolocator.getCurrentPosition();
-  }
-
-  // Mock data for testing
-  Map<String, dynamic> _getMockWeatherData() {
-    return {
-      "current": {
-        "temperature": 28,
-        "humidity": 65,
-        "condition": "Partly cloudy",
-        "windSpeed": 12,
-        "rainfall": 0,
-      },
-      "forecast": [
-        {
-          "date": DateTime.now().add(const Duration(days: 1)).toString(),
-          "temperature": {"min": 22, "max": 30},
-          "condition": "Sunny",
-          "rainChance": 10,
-        },
-        {
-          "date": DateTime.now().add(const Duration(days: 2)).toString(),
-          "temperature": {"min": 23, "max": 31},
-          "condition": "Cloudy",
-          "rainChance": 30,
-        },
-        {
-          "date": DateTime.now().add(const Duration(days: 3)).toString(),
-          "temperature": {"min": 21, "max": 29},
-          "condition": "Light rain",
-          "rainChance": 60,
-        },
-      ],
-      "agricultural": {"soilMoisture": 75, "evaporation": 4.5, "uvIndex": 6},
-    };
   }
 }
