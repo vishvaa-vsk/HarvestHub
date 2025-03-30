@@ -21,14 +21,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HarvestHub',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.lightTheme.copyWith(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.green, // Match the floating chat icon color
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          type: BottomNavigationBarType.fixed,
+        ),
+      ),
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          return snapshot.hasData ? const HomePage() : const PhoneAuthPage();
+          return snapshot.hasData ? const MainScreen() : const PhoneAuthPage();
         },
       ),
     );

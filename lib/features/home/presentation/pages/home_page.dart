@@ -1,25 +1,98 @@
 import 'package:flutter/material.dart';
-import '../../../../core/services/gemini_service.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import '../../../../core/services/weather_service.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HarvestHubApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        useMaterial3: true,
+      ),
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({Key? key}) : super(key: key);
+
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const AIChatScreen(),
+    const PestDetectionScreen(),
+    const CommunityScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HarvestHub'),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        backgroundColor: Colors.green.shade400,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(FeatherIcons.cloud),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FeatherIcons.messageCircle),
+            label: 'AI Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FeatherIcons.alertTriangle),
+            label: 'Pest Detection',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FeatherIcons.users),
+            label: 'Community',
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _currentIndex = 1; // Navigate to AI Chat
+          });
+        },
+        child: const Icon(Icons.chat),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Weather Forecast')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWeatherCard(context),
-            const SizedBox(height: 16),
-            _buildCropAdviceCard(context),
+            Expanded(child: _buildWeatherCard(context)),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Toggle Weekly/Extended Forecast'),
+            ),
           ],
         ),
       ),
@@ -63,21 +136,19 @@ class HomePage extends StatelessWidget {
 
                 final weather = snapshot.data!;
                 final current = weather['current'];
-                final agricultural = weather['agricultural'];
+                final forecast = weather['forecast'];
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildCurrentWeather(context, current),
                     const Divider(height: 32),
-                    _buildAgriculturalMetrics(context, agricultural),
-                    const Divider(height: 32),
                     Text(
                       '3-Day Forecast',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
-                    _buildForecast(context, weather['forecast']),
+                    _buildForecast(context, forecast),
                   ],
                 );
               },
@@ -147,101 +218,65 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAgriculturalMetrics(
-    BuildContext context,
-    Map<String, dynamic> agricultural,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Agricultural Metrics',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildMetricItem('UV Index', agricultural['uvIndex'].toString()),
-            _buildMetricItem(
-              'Precipitation',
-              '${agricultural['precipitation']} mm',
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMetricItem(String label, String value) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
   Widget _buildForecast(BuildContext context, List<dynamic> forecast) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children:
-          forecast.map((day) {
-            final date = DateTime.parse(day['date']).day;
-            return Column(
-              children: [
-                Text('Day $date'),
-                const SizedBox(height: 4),
-                Text('${day['temperature']['max']}°'),
-                Text('${day['temperature']['min']}°'),
-                const SizedBox(height: 4),
-                Text('${day['rainChance']}%'),
-              ],
-            );
-          }).toList(),
-    );
-  }
-
-  Widget _buildCropAdviceCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Crop Advisor', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                final advice = await GeminiService.getCropAdvice(
-                  weather: 'Sunny, 25°C',
-                  soilType: 'Loamy',
-                );
-                if (context.mounted) {
-                  showDialog(
-                    context: context,
-                    builder:
-                        (context) => AlertDialog(
-                          title: const Text('Crop Advice'),
-                          content: Text(advice),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Close'),
-                            ),
-                          ],
-                        ),
-                  );
-                }
-              },
-              child: const Text('Get Crop Advice'),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: forecast.map((day) {
+          return Container(
+            width: 120,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.green.shade100,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  day['date'],
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${day['temperature']['max']}°C / ${day['temperature']['min']}°C',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 8),
+                Text('${day['rainChance']}% Rain'),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
+  }
+}
+
+class AIChatScreen extends StatelessWidget {
+  const AIChatScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('AI Chat Screen'));
+  }
+}
+
+class PestDetectionScreen extends StatelessWidget {
+  const PestDetectionScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Pest Detection Screen'));
+  }
+}
+
+class CommunityScreen extends StatelessWidget {
+  const CommunityScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Community Screen'));
   }
 }

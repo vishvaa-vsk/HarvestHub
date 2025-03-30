@@ -63,7 +63,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       if (verified) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       } else {
         setState(() {
