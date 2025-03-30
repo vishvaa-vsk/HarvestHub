@@ -92,27 +92,55 @@ class HomePage extends StatelessWidget {
     BuildContext context,
     Map<String, dynamic> current,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '${current['temperature']}°C',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${current['temperature']}°C',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                Text(
+                  current['condition'],
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
-            Text(
-              current['condition'],
-              style: Theme.of(context).textTheme.titleMedium,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('Feels Like: ${current['feelslike_c']}°C'),
+                Text(
+                  'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
+                ),
+                Text('Pressure: ${current['pressure_mb']} mb'),
+              ],
             ),
           ],
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Humidity: ${current['humidity']}%'),
-            Text('Wind: ${current['windSpeed']} km/h'),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Humidity: ${current['humidity']}%'),
+                Text('Visibility: ${current['vis_km']} km'),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('UV Index: ${current['uv']}'),
+                Text('Cloud Cover: ${current['cloud']}%'),
+              ],
+            ),
           ],
         ),
       ],

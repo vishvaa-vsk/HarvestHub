@@ -63,13 +63,23 @@ class WeatherService {
             };
           }).toList();
 
+      // Parse current weather and agricultural metrics
+      final current = {
+        'temperature': currentWeather['current']['temp_c'] ?? 0,
+        'humidity': currentWeather['current']['humidity'] ?? 0,
+        'condition':
+            currentWeather['current']['condition']['text'] ?? 'Unknown',
+        'windSpeed': currentWeather['current']['wind_kph'] ?? 0,
+        'wind_dir': currentWeather['current']['wind_dir'] ?? 'Unknown',
+        'feelslike_c': currentWeather['current']['feelslike_c'] ?? 0,
+        'pressure_mb': currentWeather['current']['pressure_mb'] ?? 0,
+        'vis_km': currentWeather['current']['vis_km'] ?? 0,
+        'uv': currentWeather['current']['uv'] ?? 0,
+        'cloud': currentWeather['current']['cloud'] ?? 0,
+      };
+
       return {
-        'current': {
-          'temperature': currentWeather['current']['temp_c'],
-          'humidity': currentWeather['current']['humidity'],
-          'condition': currentWeather['current']['condition']['text'],
-          'windSpeed': currentWeather['current']['wind_kph'],
-        },
+        'current': current,
         'forecast': forecast,
         'agricultural': {
           'uvIndex': currentWeather['current']['uv'],
