@@ -3,6 +3,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import '../../../../core/services/weather_service.dart';
 import '../../../../core/services/gemini_service.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
+import 'ai_chat_page.dart';
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -387,12 +388,17 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class AIChatScreen extends StatelessWidget {
+class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
 
   @override
+  State<AIChatScreen> createState() => _AIChatScreenState();
+}
+
+class _AIChatScreenState extends State<AIChatScreen> {
+  @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('AI Chat Screen'));
+    return const AIChatPage();
   }
 }
 
