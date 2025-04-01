@@ -33,6 +33,10 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
+    # Clean Flutter Cache
+    - name: Clean Flutter Cache
+      run: flutter clean
+
     # Build the APK
     - name: Build APK
       run: flutter build apk --release --split-per-abi
