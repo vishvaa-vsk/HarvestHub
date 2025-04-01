@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import '../../../../core/services/weather_service.dart';
+import '../../../../core/services/gemini_service.dart';
+import '../../../auth/presentation/pages/edit_profile_page.dart';
 
 class HarvestHubApp extends StatelessWidget {
+  const HarvestHubApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,7 +20,7 @@ class HarvestHubApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -47,10 +51,7 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white60,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.cloud),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(FeatherIcons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.messageCircle),
             label: 'AI Chat',
@@ -65,34 +66,73 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _currentIndex = 1; // Navigate to AI Chat
-          });
-        },
-        child: const Icon(Icons.chat),
-      ),
     );
   }
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Weather Forecast')),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text('HarvestHub'),
+        leading: Builder(
+          builder:
+              (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(
+                    context,
+                  ).openDrawer(); // Open the drawer when the hamburger icon is clicked
+                },
+              ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            onPressed: () {
+              // Add functionality for the profile icon here
+            },
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.green.shade400),
+              child: const Text(
+                'HarvestHub Menu',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Edit Profile Settings'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfilePage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildWeatherCard(context)),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Toggle Weekly/Extended Forecast'),
-            ),
+            _buildWeatherCard(context),
+            const SizedBox(height: 16),
+            _buildInsightsSection(context),
           ],
         ),
       ),
@@ -103,19 +143,28 @@ class HomeScreen extends StatelessWidget {
     final weatherService = WeatherService();
 
     return Card(
+      color: Colors.teal.shade50, // Add a light teal background color
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16), // Rounded corners
+      ),
+      elevation: 4, // Add shadow for depth
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Weather Forecast',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.teal.shade800, // Dark teal for text
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const Icon(Icons.cloud_outlined, size: 28),
+                const Icon(Icons.cloud_outlined, size: 28, color: Colors.teal),
               ],
             ),
             const SizedBox(height: 16),
@@ -140,12 +189,15 @@ class HomeScreen extends StatelessWidget {
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildCurrentWeather(context, current),
-                    const Divider(height: 32),
+                    const Divider(height: 32, color: Colors.teal),
                     Text(
                       '3-Day Forecast',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.teal.shade700, // Slightly darker teal
+                      ),
                     ),
                     const SizedBox(height: 8),
                     _buildForecast(context, forecast),
@@ -222,40 +274,121 @@ class HomeScreen extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: forecast.map((day) {
-          return Container(
-            width: 120,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.green.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
+        children:
+            forecast.map((day) {
+              return Container(
+                width: 120,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      day['date'],
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${day['temperature']['max']}°C / ${day['temperature']['min']}°C',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text('${day['rainChance']}% Rain'),
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildInsightsSection(BuildContext context) {
+    return FutureBuilder<Map<String, String>>(
+      future: GeminiService().getAgriculturalInsights(
+        temperature: 30.0, // Example temperature
+        humidity: 70.0, // Example humidity
+        rainfall: 100.0, // Example rainfall
+        windSpeed: 10.0, // Example wind speed
+        condition: 'Rainy', // Example condition
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        if (!snapshot.hasData) {
+          return const Text('No insights available');
+        }
+
+        final insights = snapshot.data!;
+        return Card(
+          color: Colors.teal.shade50,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  day['date'],
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Row(
+                  children: const [
+                    Icon(Icons.eco, color: Colors.green),
+                    SizedBox(width: 8),
+                    Text(
+                      'Farming Tip',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${day['temperature']['max']}°C / ${day['temperature']['min']}°C',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  insights['farmingTip'] ?? 'No farming tip available',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const Divider(height: 32),
+                Row(
+                  children: const [
+                    Icon(Icons.grass, color: Colors.brown),
+                    SizedBox(width: 8),
+                    Text(
+                      'Recommended Crop',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
-                Text('${day['rainChance']}% Rain'),
+                Text(
+                  insights['cropRecommendation'] ??
+                      'No crop recommendation available',
+                  style: const TextStyle(fontSize: 16),
+                ),
               ],
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
 class AIChatScreen extends StatelessWidget {
-  const AIChatScreen({Key? key}) : super(key: key);
+  const AIChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +397,7 @@ class AIChatScreen extends StatelessWidget {
 }
 
 class PestDetectionScreen extends StatelessWidget {
-  const PestDetectionScreen({Key? key}) : super(key: key);
+  const PestDetectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +406,7 @@ class PestDetectionScreen extends StatelessWidget {
 }
 
 class CommunityScreen extends StatelessWidget {
-  const CommunityScreen({Key? key}) : super(key: key);
+  const CommunityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
