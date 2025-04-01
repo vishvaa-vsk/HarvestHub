@@ -11,9 +11,6 @@ class WeatherService {
     try {
       // Get current location
       Position position = await _getCurrentLocation();
-      print(
-        'Location fetched: Latitude=${position.latitude}, Longitude=${position.longitude}',
-      );
 
       // Fetch current weather data from WeatherAPI
       final currentWeatherResponse = await http.get(
@@ -21,10 +18,6 @@ class WeatherService {
           '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}',
         ),
       );
-      print(
-        'WeatherAPI Current Weather Response: ${currentWeatherResponse.statusCode}',
-      );
-      print('Response Body: ${currentWeatherResponse.body}');
 
       if (currentWeatherResponse.statusCode != 200) {
         throw Exception('Failed to load current weather data');
@@ -38,8 +31,6 @@ class WeatherService {
           '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}&days=3',
         ),
       );
-      print('WeatherAPI Forecast Response: ${forecastResponse.statusCode}');
-      print('Response Body: ${forecastResponse.body}');
 
       if (forecastResponse.statusCode != 200) {
         throw Exception('Failed to load forecast data');

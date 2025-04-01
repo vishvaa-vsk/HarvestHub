@@ -30,15 +30,15 @@ class GeminiService {
       '''),
       ];
 
-      print('Calling Generative Language API with prompt: $content');
-
       // Call the Generative Language API using the client
       final response = await model.generateContent(content);
 
-      print('Generative Language API Response: ${response.text}');
-
       final farmingTip =
-          response.text?.split('Crop Recommendation:').first.trim() ??
+          response.text
+              ?.split('Crop Recommendation:')
+              .first
+              .replaceFirst('Daily Farming Tip:', '')
+              .trim() ??
           'No farming tip available';
       final cropRecommendation =
           response.text?.split('Crop Recommendation:').last.trim() ??
