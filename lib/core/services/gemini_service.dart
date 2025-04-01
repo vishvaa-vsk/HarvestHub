@@ -1,6 +1,5 @@
-import 'dart:convert';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:flutter/services.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GeminiService {
   Future<Map<String, String>> getAgriculturalInsights({
@@ -11,21 +10,15 @@ class GeminiService {
     required String condition,
   }) async {
     try {
-      // Load service account credentials
-      final serviceAccountJson = await rootBundle.loadString(
-        'lib/core/services/gemini_service_account.json',
+      // Initialize the GenerativeModel client
+      final model = GenerativeModel(
+        model: 'models/gemini-1.5-pro',
+        apiKey: dotenv.env['GEMINI_API_KEY']!,
       );
-      final serviceAccountCredentials = ServiceAccountCredentials.fromJson(
-        serviceAccountJson,
-      );
-
-      // Authenticate with Google Cloud
-      final client = await clientViaServiceAccount(serviceAccountCredentials, [
-        'https://www.googleapis.com/auth/generative-language',
-      ]);
 
       // Prepare the prompt
-      final prompt = '''
+      final content = [
+        Content.text('''
         You are an AI-powered agricultural assistant. Based on the given weather conditions, provide a daily farming tip and crop recommendation.
 
         Weather Data:
@@ -34,34 +27,22 @@ class GeminiService {
         - Rainfall: ${rainfall}mm
         - Wind Speed: $windSpeed km/h
         - Condition: $condition
-      ''';
+      '''),
+      ];
 
-      print('Calling Generative Language API with prompt: $prompt');
+      print('Calling Generative Language API with prompt: $content');
 
-      // Call the Generative Language API using REST
-      final response = await client.post(
-        Uri.parse(
-          'https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText',
-        ),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'prompt': {'text': prompt},
-          'temperature': 0.7,
-          'candidateCount': 1,
-        }),
-      );
+      // Call the Generative Language API using the client
+      final response = await model.generateContent(content);
 
-      print('Generative Language API Response: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      print('Generative Language API Response: ${response.text}');
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to fetch AI insights: ${response.body}');
-      }
-
-      final data = json.decode(response.body);
       final farmingTip =
-          data['candidates']?[0]['output'] ?? 'No farming tip available';
-      final cropRecommendation = 'Crop recommendation logic can be added here';
+          response.text?.split('Crop Recommendation:').first.trim() ??
+          'No farming tip available';
+      final cropRecommendation =
+          response.text?.split('Crop Recommendation:').last.trim() ??
+          'No crop recommendation available';
 
       return {
         'farmingTip': farmingTip,
