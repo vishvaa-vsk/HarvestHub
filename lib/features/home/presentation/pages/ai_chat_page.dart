@@ -3,7 +3,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AIChatPage extends StatefulWidget {
-  const AIChatPage({Key? key}) : super(key: key);
+  const AIChatPage({super.key});
 
   @override
   State<AIChatPage> createState() => _AIChatPageState();
