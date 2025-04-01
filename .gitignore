@@ -48,9 +48,10 @@ app.*.map.json
 .env
 google-services.json
 firebase_options.dart
-gemini_service_account.json
 ios/Runner/GoogleService-Info.plist
 
 # Keep templates for reference
 !.env.example
 !google-services.example.json
+
+lib/core/services/gemini_service_account.json
