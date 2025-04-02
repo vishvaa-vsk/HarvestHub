@@ -48,7 +48,6 @@ jobs:
     - name: Build APK
       run: flutter build apk --release --split-per-abi
 
-
     # Create a release and upload the APK
     - name: Create Release
       uses: ncipollo/release-action@v1
@@ -58,6 +57,7 @@ jobs:
             build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk,
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk,
             build/app/outputs/flutter-apk/app-x86_64-release.apk
+        token: ${{ secrets.TOKEN }}
         tag: v${{ github.run_number }}
         name: Release v${{ github.run_number }}
         prerelease: true
