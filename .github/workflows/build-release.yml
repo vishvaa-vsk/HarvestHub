@@ -21,7 +21,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'zulu'
-        java-version: '11'
+        java-version: '17'
 
     # Set up Flutter
     - name: Set up Flutter
@@ -29,13 +29,13 @@ jobs:
       with:
         flutter-version: '3.29.2'
 
-    # Install dependencies
-    - name: Install dependencies
-      run: flutter pub get
-
     # Clean Flutter Cache
     - name: Clean Flutter Cache
       run: flutter clean
+      
+    # Install dependencies
+    - name: Install dependencies
+      run: flutter pub get
 
     # Build the APK
     - name: Build APK
