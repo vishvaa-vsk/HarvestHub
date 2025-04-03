@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import '../../../../core/services/weather_service.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/services/gemini_service.dart';
+import '../../../../core/utils/formatted_text_utils.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
+import 'extended_forecast_page.dart';
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -71,8 +74,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WeatherProvider>(
+        context,
+        listen: false,
+      ).fetchWeatherAndInsights();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,74 +160,77 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildWeatherCard(BuildContext context) {
-    final weatherService = WeatherService();
+    return Consumer<WeatherProvider>(
+      builder: (context, weatherProvider, child) {
+        if (weatherProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return Card(
-      color: Colors.teal.shade50, // Add a light teal background color
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16), // Rounded corners
-      ),
-      elevation: 4, // Add shadow for depth
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        final weather = weatherProvider.weatherData;
+        if (weather == null) {
+          return const Text('Failed to load weather data');
+        }
+
+        final current = weather['current'];
+        final forecast = weather['forecast'];
+
+        return Card(
+          color: Colors.teal.shade50,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Weather Forecast',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.teal.shade800, // Dark teal for text
+                    color: Colors.teal.shade800,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Icon(Icons.cloud_outlined, size: 28, color: Colors.teal),
-              ],
-            ),
-            const SizedBox(height: 16),
-            FutureBuilder<Map<String, dynamic>>(
-              future: weatherService.getWeatherData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-
-                if (!snapshot.hasData) {
-                  return const Text('No weather data available');
-                }
-
-                final weather = snapshot.data!;
-                final current = weather['current'];
-                final forecast = weather['forecast'];
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 16),
+                _buildCurrentWeather(context, current),
+                const Divider(height: 32, color: Colors.teal),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildCurrentWeather(context, current),
-                    const Divider(height: 32, color: Colors.teal),
                     Text(
                       '3-Day Forecast',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.teal.shade700, // Slightly darker teal
+                        color: Colors.teal.shade700,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    _buildForecast(context, forecast),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ExtendedForecastPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'View More',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
                   ],
-                );
-              },
+                ),
+                const SizedBox(height: 8),
+                _buildForecast(context, forecast),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -308,28 +330,17 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildInsightsSection(BuildContext context) {
-    return FutureBuilder<Map<String, String>>(
-      future: GeminiService().getAgriculturalInsights(
-        temperature: 30.0, // Example temperature
-        humidity: 70.0, // Example humidity
-        rainfall: 100.0, // Example rainfall
-        windSpeed: 10.0, // Example wind speed
-        condition: 'Rainy', // Example condition
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<WeatherProvider>(
+      builder: (context, weatherProvider, child) {
+        if (weatherProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+        final insights = weatherProvider.insights;
+        if (insights == null) {
+          return const Text('Failed to load insights');
         }
 
-        if (!snapshot.hasData) {
-          return const Text('No insights available');
-        }
-
-        final insights = snapshot.data!;
         return Card(
           color: Colors.teal.shade50,
           shape: RoundedRectangleBorder(
@@ -402,12 +413,90 @@ class _AIChatScreenState extends State<AIChatScreen> {
   }
 }
 
+class AIChatPage extends StatelessWidget {
+  const AIChatPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AI Chat')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Consumer<WeatherProvider>(
+          builder: (context, weatherProvider, child) {
+            if (weatherProvider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final currentWeather = weatherProvider.weatherData?['current'];
+            if (currentWeather == null) {
+              return const Center(child: Text('Failed to load weather data'));
+            }
+
+            final response = GeminiService().getAgriculturalInsights(
+              temperature: (currentWeather['temperature'] as num).toDouble(),
+              humidity: (currentWeather['humidity'] as num).toDouble(),
+              rainfall:
+                  (currentWeather['precipitation'] as num?)?.toDouble() ?? 0.0,
+              windSpeed: (currentWeather['windSpeed'] as num).toDouble(),
+              condition: currentWeather['condition'],
+            );
+
+            return FutureBuilder<Map<String, String>>(
+              future: response,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                final data = snapshot.data;
+                if (data == null) {
+                  return const Center(child: Text('No data available'));
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Farming Tip:',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      data['farmingTip'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Crop Recommendation:',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      data['cropRecommendation'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class PestDetectionScreen extends StatelessWidget {
   const PestDetectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Pest Detection Screen'));
+    return const Center(child: Text('Pest Detection'));
   }
 }
 

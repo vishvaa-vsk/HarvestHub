@@ -16,10 +16,10 @@ class GeminiService {
         apiKey: dotenv.env['GEMINI_API_KEY']!,
       );
 
-      // Prepare the prompt
+      // Call the Generative Language API using the client
       final content = [
         Content.text('''
-        You are an AI-powered agricultural assistant. Based on the given weather conditions, provide a daily farming tip and crop recommendation.
+        You are an AI-powered agricultural assistant. Based on the given weather conditions, provide a crisp farming tip and a crop recommendation.
 
         Weather Data:
         - Temperature: $temperature°C
@@ -27,21 +27,30 @@ class GeminiService {
         - Rainfall: ${rainfall}mm
         - Wind Speed: $windSpeed km/h
         - Condition: $condition
-      '''),
+
+        Response Format:
+        Farming Tip: <Provide only the farming tip here>
+        Recommended Crop: <Provide only the recommended crop advice in few lines here>
+        '''),
       ];
 
-      // Call the Generative Language API using the client
       final response = await model.generateContent(content);
 
+      // Extract and format the response
+      final responseText = response.text ?? '';
+      final farmingTipMatch = RegExp(
+        r'Farming Tip:\s*(.*?)\s*Recommended Crop:',
+        dotAll: true,
+      ).firstMatch(responseText);
+      final cropRecommendationMatch = RegExp(
+        r'Recommended Crop:\s*(.*)',
+        dotAll: true,
+      ).firstMatch(responseText);
+
       final farmingTip =
-          response.text
-              ?.split('Crop Recommendation:')
-              .first
-              .replaceFirst('Daily Farming Tip:', '')
-              .trim() ??
-          'No farming tip available';
+          farmingTipMatch?.group(1)?.trim() ?? 'No farming tip available';
       final cropRecommendation =
-          response.text?.split('Crop Recommendation:').last.trim() ??
+          cropRecommendationMatch?.group(1)?.trim() ??
           'No crop recommendation available';
 
       return {
@@ -54,6 +63,35 @@ class GeminiService {
         'farmingTip': 'Error fetching farming tip',
         'cropRecommendation': 'Error fetching crop recommendation',
       };
+    }
+  }
+
+  Future<String> getCropRecommendation(
+    List<Map<String, dynamic>> monthlyForecast,
+  ) async {
+    try {
+      // Prepare the prompt for Gemini API
+      final prompt = '''
+        You are an AI-powered agricultural assistant. Based on the given monthly weather forecast, recommend the best crop for planting in a detailed manner.
+
+        Monthly Weather Data:
+        ${monthlyForecast.map((day) => '- Date: ${day['date']}, Max Temp: ${day['temperature']['max']}°C, Min Temp: ${day['temperature']['min']}°C, Condition: ${day['condition']}, Rain Chance: ${day['rainChance']}%').join('\n')}
+      ''';
+
+      final client = GenerativeModel(
+        model: 'models/gemini-1.5-pro',
+        apiKey: dotenv.env['GEMINI_API_KEY']!,
+      );
+
+      final content = [Content.text(prompt)];
+      final response = await client.generateContent(content);
+
+      // Preserve and format the response
+      return response.candidates.first.text?.trim() ??
+          'No recommendation available';
+    } catch (e) {
+      print('Error fetching crop recommendation: $e');
+      return 'Error fetching crop recommendation';
     }
   }
 }

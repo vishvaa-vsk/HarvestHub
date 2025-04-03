@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/services/gemini_service.dart';
+import '../../../../core/providers/weather_provider.dart';
 
 class SmartAgricultureInsightsPage extends StatefulWidget {
   const SmartAgricultureInsightsPage({super.key});
@@ -26,45 +28,45 @@ class _SmartAgricultureInsightsPageState
 
   Future<void> _fetchInsights() async {
     try {
-      // Fetch weather data from WeatherAPI
-      final weatherResponse = await http.get(
-        Uri.parse(
-          'https://api.weatherapi.com/v1/current.json?key=${dotenv.env['WEATHER_API_KEY']}&q=London',
-        ),
-      );
-      print('WeatherAPI Response: ${weatherResponse.body}');
-
-      if (weatherResponse.statusCode != 200) {
-        throw Exception('Failed to fetch weather data');
-      }
-
-      final weatherData = json.decode(weatherResponse.body);
-      final temperature = weatherData['current']['temp_c'];
-      final humidity = weatherData['current']['humidity'];
-      final rainfall = weatherData['current']['precip_mm'];
-      final windSpeed = weatherData['current']['wind_kph'];
-      final condition = weatherData['current']['condition']['text'];
+      setState(() {
+        _isLoading = true;
+      });
 
       // Fetch AI-generated insights using GeminiService
+      final weatherProvider = Provider.of<WeatherProvider>(
+        context,
+        listen: false,
+      );
+      final currentWeather = weatherProvider.weatherData?['current'];
+
+      if (currentWeather == null) {
+        throw Exception('Failed to fetch current weather data');
+      }
+
       final geminiService = GeminiService();
       final insights = await geminiService.getAgriculturalInsights(
-        temperature: temperature,
-        humidity: humidity,
-        rainfall: rainfall,
-        windSpeed: windSpeed,
-        condition: condition,
+        temperature: (currentWeather['temperature'] as num).toDouble(),
+        humidity: (currentWeather['humidity'] as num).toDouble(),
+        rainfall: (currentWeather['precipitation'] as num?)?.toDouble() ?? 0.0,
+        windSpeed: (currentWeather['windSpeed'] as num).toDouble(),
+        condition: currentWeather['condition'],
       );
 
+      // Ensure only relevant content is displayed in each section
       setState(() {
-        _farmingTip = insights['farmingTip'];
-        _cropRecommendation = insights['cropRecommendation'];
-        _isLoading = false;
+        _farmingTip =
+            insights['farmingTip']?.trim() ?? 'No farming tip available';
+        _cropRecommendation =
+            insights['cropRecommendation']?.trim() ??
+            'No crop recommendation available';
       });
     } catch (e) {
-      print('Error: $e');
       setState(() {
         _farmingTip = 'Error fetching insights: $e';
-        _cropRecommendation = null;
+        _cropRecommendation = 'Error fetching insights: $e';
+      });
+    } finally {
+      setState(() {
         _isLoading = false;
       });
     }
