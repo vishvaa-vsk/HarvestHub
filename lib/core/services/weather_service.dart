@@ -120,4 +120,177 @@ class WeatherService {
 
     return await Geolocator.getCurrentPosition();
   }
+
+  Future<List<Map<String, dynamic>>> getMonthlyForecast() async {
+    try {
+      // Fetch 30-day forecast data from WeatherAPI
+      final response = await http.get(
+        Uri.parse(
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=auto:ip&days=30',
+        ),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load monthly forecast data');
+      }
+
+      final data = json.decode(response.body);
+      final List<dynamic> forecastList = data['forecast']['forecastday'];
+
+      return forecastList.map((day) {
+        return {
+          'date': day['date'],
+          'temperature': {
+            'min': day['day']['mintemp_c'],
+            'max': day['day']['maxtemp_c'],
+          },
+          'condition': day['day']['condition']['text'],
+          'rainChance': day['day']['daily_chance_of_rain'],
+        };
+      }).toList();
+    } catch (e) {
+      print('Error fetching monthly forecast: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getFutureWeather(
+    String location,
+    String date,
+  ) async {
+    try {
+      // Fetch future weather data from WeatherAPI
+      final response = await http.get(
+        Uri.parse(
+          '$_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$location&dt=$date',
+        ),
+      );
+
+      print(
+        'Fetching future weather data from: $_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$location&dt=$date',
+      );
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load future weather data');
+      }
+
+      final data = json.decode(response.body);
+      final forecast = data['forecast']['forecastday'];
+
+      return forecast.map<Map<String, dynamic>>((day) {
+        return {
+          'date': day['date'],
+          'temperature': {
+            'min': day['day']['mintemp_c'],
+            'max': day['day']['maxtemp_c'],
+          },
+          'condition': day['day']['condition']['text'],
+          'rainChance': day['day']['daily_chance_of_rain'],
+        };
+      }).toList();
+    } catch (e) {
+      print('Error fetching future weather data: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getExtendedForecast(
+    String location,
+    int days,
+  ) async {
+    try {
+      // Get current location if "auto" is passed
+      String locationQuery =
+          location.toLowerCase() == "auto"
+              ? await _getLocationQuery()
+              : location;
+
+      // Ensure days is within API limits (1-30)
+      int forecastDays = days.clamp(1, 30);
+
+      List<Map<String, dynamic>> extendedForecast = [];
+
+      for (int i = 0; i < forecastDays; i++) {
+        final date = DateTime.now().add(Duration(days: i));
+        final formattedDate =
+            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+
+        if (i < 14) {
+          // Use forecast.json for dates within the next 14 days
+          final response = await http.get(
+            Uri.parse(
+              '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$locationQuery&days=${i + 1}',
+            ),
+          );
+
+          if (response.statusCode != 200) {
+            throw Exception('Failed to load forecast data');
+          }
+
+          final data = json.decode(response.body);
+          final forecast = data['forecast']['forecastday'];
+
+          extendedForecast.addAll(
+            forecast.map<Map<String, dynamic>>((day) {
+              return {
+                'date': day['date'],
+                'temperature': {
+                  'min': day['day']['mintemp_c'],
+                  'max': day['day']['maxtemp_c'],
+                },
+                'condition': day['day']['condition']['text'],
+                'rainChance': day['day']['daily_chance_of_rain'],
+              };
+            }),
+          );
+        } else {
+          // Use future.json for dates beyond 14 days
+          final response = await http.get(
+            Uri.parse(
+              '$_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$locationQuery&dt=$formattedDate',
+            ),
+          );
+
+          if (response.statusCode != 200) {
+            throw Exception('Failed to load future weather data');
+          }
+
+          final data = json.decode(response.body);
+          final forecast = data['forecast']['forecastday'];
+
+          extendedForecast.addAll(
+            forecast.map<Map<String, dynamic>>((day) {
+              return {
+                'date': day['date'],
+                'temperature': {
+                  'min': day['day']['mintemp_c'],
+                  'max': day['day']['maxtemp_c'],
+                },
+                'condition': day['day']['condition']['text'],
+                'rainChance': day['day']['daily_chance_of_rain'],
+              };
+            }),
+          );
+        }
+      }
+
+      return extendedForecast;
+    } catch (e) {
+      print('Error fetching future weather data: $e');
+      rethrow;
+    }
+  }
+
+  // Helper method to get location query string
+  Future<String> _getLocationQuery() async {
+    try {
+      Position position = await _getCurrentLocation();
+      return '${position.latitude},${position.longitude}';
+    } catch (e) {
+      print('Error getting location, falling back to IP: $e');
+      return 'auto:ip'; // Fallback to IP-based location
+    }
+  }
 }

@@ -3,8 +3,10 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/services/gemini_service.dart';
+import '../../../../core/utils/formatted_text_utils.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
+import 'extended_forecast_page.dart';
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -193,11 +195,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 16),
                 _buildCurrentWeather(context, current),
                 const Divider(height: 32, color: Colors.teal),
-                Text(
-                  '3-Day Forecast',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.teal.shade700,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '3-Day Forecast',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.teal.shade700,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ExtendedForecastPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'View More',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 _buildForecast(context, forecast),
@@ -388,12 +413,90 @@ class _AIChatScreenState extends State<AIChatScreen> {
   }
 }
 
+class AIChatPage extends StatelessWidget {
+  const AIChatPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AI Chat')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Consumer<WeatherProvider>(
+          builder: (context, weatherProvider, child) {
+            if (weatherProvider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final currentWeather = weatherProvider.weatherData?['current'];
+            if (currentWeather == null) {
+              return const Center(child: Text('Failed to load weather data'));
+            }
+
+            final response = GeminiService().getAgriculturalInsights(
+              temperature: (currentWeather['temperature'] as num).toDouble(),
+              humidity: (currentWeather['humidity'] as num).toDouble(),
+              rainfall:
+                  (currentWeather['precipitation'] as num?)?.toDouble() ?? 0.0,
+              windSpeed: (currentWeather['windSpeed'] as num).toDouble(),
+              condition: currentWeather['condition'],
+            );
+
+            return FutureBuilder<Map<String, String>>(
+              future: response,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                final data = snapshot.data;
+                if (data == null) {
+                  return const Center(child: Text('No data available'));
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Farming Tip:',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      data['farmingTip'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Crop Recommendation:',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      data['cropRecommendation'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class PestDetectionScreen extends StatelessWidget {
   const PestDetectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Pest Detection Screen'));
+    return const Center(child: Text('Pest Detection'));
   }
 }
 
