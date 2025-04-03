@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import '../../../../core/services/weather_service.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/services/gemini_service.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
@@ -141,74 +142,54 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildWeatherCard(BuildContext context) {
-    final weatherService = WeatherService();
+    return Consumer<WeatherProvider>(
+      builder: (context, weatherProvider, child) {
+        if (weatherProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return Card(
-      color: Colors.teal.shade50, // Add a light teal background color
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16), // Rounded corners
-      ),
-      elevation: 4, // Add shadow for depth
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        final weather = weatherProvider.weatherData;
+        if (weather == null) {
+          return const Text('Failed to load weather data');
+        }
+
+        final current = weather['current'];
+        final forecast = weather['forecast'];
+
+        return Card(
+          color: Colors.teal.shade50,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Weather Forecast',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.teal.shade800, // Dark teal for text
+                    color: Colors.teal.shade800,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Icon(Icons.cloud_outlined, size: 28, color: Colors.teal),
+                const SizedBox(height: 16),
+                _buildCurrentWeather(context, current),
+                const Divider(height: 32, color: Colors.teal),
+                Text(
+                  '3-Day Forecast',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.teal.shade700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildForecast(context, forecast),
               ],
             ),
-            const SizedBox(height: 16),
-            FutureBuilder<Map<String, dynamic>>(
-              future: weatherService.getWeatherData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-
-                if (!snapshot.hasData) {
-                  return const Text('No weather data available');
-                }
-
-                final weather = snapshot.data!;
-                final current = weather['current'];
-                final forecast = weather['forecast'];
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildCurrentWeather(context, current),
-                    const Divider(height: 32, color: Colors.teal),
-                    Text(
-                      '3-Day Forecast',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.teal.shade700, // Slightly darker teal
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildForecast(context, forecast),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
