@@ -72,8 +72,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WeatherProvider>(
+        context,
+        listen: false,
+      ).fetchWeatherAndInsights();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -289,28 +305,17 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildInsightsSection(BuildContext context) {
-    return FutureBuilder<Map<String, String>>(
-      future: GeminiService().getAgriculturalInsights(
-        temperature: 30.0, // Example temperature
-        humidity: 70.0, // Example humidity
-        rainfall: 100.0, // Example rainfall
-        windSpeed: 10.0, // Example wind speed
-        condition: 'Rainy', // Example condition
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<WeatherProvider>(
+      builder: (context, weatherProvider, child) {
+        if (weatherProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+        final insights = weatherProvider.insights;
+        if (insights == null) {
+          return const Text('Failed to load insights');
         }
 
-        if (!snapshot.hasData) {
-          return const Text('No insights available');
-        }
-
-        final insights = snapshot.data!;
         return Card(
           color: Colors.teal.shade50,
           shape: RoundedRectangleBorder(

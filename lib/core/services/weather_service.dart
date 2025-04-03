@@ -23,6 +23,7 @@ class WeatherService {
         throw Exception('Failed to load current weather data');
       }
 
+      print('Current Weather Response: ${currentWeatherResponse.body}');
       final currentWeather = json.decode(currentWeatherResponse.body);
 
       // Fetch 3-day forecast data from WeatherAPI
@@ -36,6 +37,7 @@ class WeatherService {
         throw Exception('Failed to load forecast data');
       }
 
+      print('Forecast Weather Response: ${forecastResponse.body}');
       final forecastData = json.decode(forecastResponse.body);
 
       // Parse forecast into 3-day chunks
@@ -95,20 +97,24 @@ class WeatherService {
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      throw Exception('Location services are disabled.');
+      throw Exception(
+        'Location services are disabled. Please enable them to fetch weather data.',
+      );
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception('Location permissions are denied');
+        throw Exception(
+          'Location permissions are denied. Please grant permissions.',
+        );
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       throw Exception(
-        'Location permissions are permanently denied, we cannot request permissions.',
+        'Location permissions are permanently denied. Please enable them in settings.',
       );
     }
 
