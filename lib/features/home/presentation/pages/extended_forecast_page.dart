@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
 
 class ExtendedForecastPage extends StatefulWidget {

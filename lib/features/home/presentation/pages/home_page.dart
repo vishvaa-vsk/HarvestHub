@@ -3,7 +3,6 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
-import '../../../../core/services/gemini_service.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
@@ -44,31 +43,58 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: Colors.green.shade400,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(FeatherIcons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.messageCircle),
-            label: 'AI Chat',
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(16.0), // Added margin for floating effect
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.0), // Rounded edges
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.0),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.green.shade700,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home, color: Colors.green),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_outlined),
+                activeIcon: Icon(Icons.chat, color: Colors.green),
+                label: 'AI Chat',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.warning_amber_outlined),
+                activeIcon: Icon(Icons.warning_amber, color: Colors.green),
+                label: 'Pest Detection',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.group_outlined),
+                activeIcon: Icon(Icons.group, color: Colors.green),
+                label: 'Community',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.alertTriangle),
-            label: 'Pest Detection',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.users),
-            label: 'Community',
-          ),
-        ],
+        ),
       ),
     );
   }
