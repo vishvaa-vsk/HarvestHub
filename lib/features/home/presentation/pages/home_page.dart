@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
-import '../../../../core/services/gemini_service.dart';
-import '../../../../core/utils/formatted_text_utils.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
@@ -35,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const AIChatScreen(),
+    const AIChatPage(), // Correctly linked AIChatPage
     const PestDetectionScreen(),
     const CommunityScreen(),
   ];
@@ -44,31 +43,58 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: Colors.green.shade400,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(FeatherIcons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.messageCircle),
-            label: 'AI Chat',
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(16.0), // Added margin for floating effect
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.0), // Rounded edges
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.0),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.green.shade700,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home, color: Colors.green),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_outlined),
+                activeIcon: Icon(Icons.chat, color: Colors.green),
+                label: 'AI Chat',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.warning_amber_outlined),
+                activeIcon: Icon(Icons.warning_amber, color: Colors.green),
+                label: 'Pest Detection',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.group_outlined),
+                activeIcon: Icon(Icons.group, color: Colors.green),
+                label: 'Community',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.alertTriangle),
-            label: 'Pest Detection',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.users),
-            label: 'Community',
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -82,15 +108,77 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isLocationEnabled = true;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WeatherProvider>(
-        context,
-        listen: false,
-      ).fetchWeatherAndInsights();
+    _checkLocationServices();
+  }
+
+  Future<void> _checkLocationServices() async {
+    debugPrint('Requesting location permissions...');
+    final permission = await Geolocator.requestPermission();
+    debugPrint('Location permission status: $permission');
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      debugPrint('Location permission denied.');
+      setState(() {
+        _isLocationEnabled = false;
+      });
+      return;
+    }
+
+    debugPrint('Checking if location services are enabled...');
+    final isEnabled = await Geolocator.isLocationServiceEnabled();
+    debugPrint('Location services enabled: $isEnabled');
+
+    setState(() {
+      _isLocationEnabled = isEnabled;
     });
+
+    if (isEnabled) {
+      debugPrint('Fetching weather and insights...');
+      _fetchWeatherAndInsights();
+    } else {
+      debugPrint('Prompting user to enable location services...');
+      final context = this.context;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Enable Location Services'),
+            content: const Text(
+              'Location services are required to use this app. Please enable them in your device settings.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Geolocator.openLocationSettings();
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+  }
+
+  Future<void> _fetchWeatherAndInsights() async {
+    Provider.of<WeatherProvider>(
+      context,
+      listen: false,
+    ).fetchWeatherAndInsights();
   }
 
   @override
@@ -145,17 +233,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildWeatherCard(context),
-            const SizedBox(height: 16),
-            _buildInsightsSection(context),
-          ],
-        ),
-      ),
+      body:
+          _isLocationEnabled
+              ? SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWeatherCard(context),
+                    const SizedBox(height: 16),
+                    _buildInsightsSection(context),
+                  ],
+                ),
+              )
+              : const Center(
+                child: Text(
+                  'Location services are required to use this app.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
     );
   }
 
@@ -175,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final forecast = weather['forecast'];
 
         return Card(
-          color: Colors.teal.shade50,
+          color: Colors.teal.shade50, // Reverted to blue background
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -188,7 +284,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'Weather Forecast',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.teal.shade800,
+                    color:
+                        Colors
+                            .black, // Darker text color for better readability
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -201,11 +299,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '3-Day Forecast',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.teal.shade700,
+                        color: Colors.black87, // Improved text contrast
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -213,13 +318,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'View More',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
@@ -304,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: Colors.green.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -370,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   insights['farmingTip'] ?? 'No farming tip available',
                   style: const TextStyle(fontSize: 16),
                 ),
-                const Divider(height: 32),
+                const Divider(height: 32, color: Colors.teal),
                 Row(
                   children: const [
                     Icon(Icons.grass, color: Colors.brown),
@@ -410,84 +511,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
   @override
   Widget build(BuildContext context) {
     return const AIChatPage();
-  }
-}
-
-class AIChatPage extends StatelessWidget {
-  const AIChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('AI Chat')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Consumer<WeatherProvider>(
-          builder: (context, weatherProvider, child) {
-            if (weatherProvider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final currentWeather = weatherProvider.weatherData?['current'];
-            if (currentWeather == null) {
-              return const Center(child: Text('Failed to load weather data'));
-            }
-
-            final response = GeminiService().getAgriculturalInsights(
-              temperature: (currentWeather['temperature'] as num).toDouble(),
-              humidity: (currentWeather['humidity'] as num).toDouble(),
-              rainfall:
-                  (currentWeather['precipitation'] as num?)?.toDouble() ?? 0.0,
-              windSpeed: (currentWeather['windSpeed'] as num).toDouble(),
-              condition: currentWeather['condition'],
-            );
-
-            return FutureBuilder<Map<String, String>>(
-              future: response,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-
-                final data = snapshot.data;
-                if (data == null) {
-                  return const Center(child: Text('No data available'));
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Farming Tip:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data['farmingTip'] ?? '',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Crop Recommendation:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data['cropRecommendation'] ?? '',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
   }
 }
 

@@ -7,15 +7,22 @@ class WeatherService {
   static const String _weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
   final String? _weatherApiKey = dotenv.env['WEATHER_API_KEY'];
 
-  Future<Map<String, dynamic>> getWeatherData() async {
+  Future<Map<String, dynamic>> getWeatherData({
+    double? latitude,
+    double? longitude,
+  }) async {
     try {
-      // Get current location
-      Position position = await _getCurrentLocation();
+      // Use provided latitude and longitude or fetch current location
+      if (latitude == null || longitude == null) {
+        Position position = await _getCurrentLocation();
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
 
       // Fetch current weather data from WeatherAPI
       final currentWeatherResponse = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}',
+          '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=$latitude,$longitude',
         ),
       );
 
@@ -29,7 +36,7 @@ class WeatherService {
       // Fetch 3-day forecast data from WeatherAPI
       final forecastResponse = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=${position.latitude},${position.longitude}&days=3',
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$latitude,$longitude&days=3',
         ),
       );
 

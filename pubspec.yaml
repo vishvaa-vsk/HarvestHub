@@ -51,6 +51,10 @@ dependencies:
   provider: ^6.0.5
   intl: ^0.18.0
   table_calendar: ^3.0.9
+  lottie: ^3.3.1
+  phone_numbers_parser: ^9.0.3
+  countries: ^0.0.5+2
+  # Removed phone_validator as it is no longer necessary
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +89,7 @@ flutter:
     - .env
     - lib/core/services/gemini_service_account.json
     - assets/icon/app_icon.png
+    - assets/lottie/farming_animation.json
   
   # To add assets to your application, add an assets section, like this:
   # assets:

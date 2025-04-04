@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
 
 class ExtendedForecastPage extends StatefulWidget {
@@ -105,7 +104,7 @@ class CalendarWidget extends StatelessWidget {
   final List<Map<String, dynamic>> forecastData;
   final bool allowMonthNavigation;
 
-  const CalendarWidget({
+  const CalendarWidget({super.key, 
     required this.forecastData,
     this.allowMonthNavigation = false,
   });
