@@ -82,10 +82,73 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isLocationEnabled = true;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    _checkLocationServices();
+  }
+
+  Future<void> _checkLocationServices() async {
+    debugPrint('Requesting location permissions...');
+    final permission = await Geolocator.requestPermission();
+    debugPrint('Location permission status: $permission');
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      debugPrint('Location permission denied.');
+      setState(() {
+        _isLocationEnabled = false;
+      });
+      return;
+    }
+
+    debugPrint('Checking if location services are enabled...');
+    final isEnabled = await Geolocator.isLocationServiceEnabled();
+    debugPrint('Location services enabled: $isEnabled');
+
+    setState(() {
+      _isLocationEnabled = isEnabled;
+    });
+
+    if (isEnabled) {
+      debugPrint('Fetching weather and insights...');
+      _fetchWeatherAndInsights();
+    } else {
+      debugPrint('Prompting user to enable location services...');
+      final context = this.context;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Enable Location Services'),
+            content: const Text(
+              'Location services are required to use this app. Please enable them in your device settings.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Geolocator.openLocationSettings();
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+  }
+
+  Future<void> _fetchWeatherAndInsights() async {
       Provider.of<WeatherProvider>(
         context,
         listen: false,
@@ -145,7 +208,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
+      body:
+          _isLocationEnabled
+              ? SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,6 +220,12 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildInsightsSection(context),
           ],
         ),
+              )
+              : const Center(
+                child: Text(
+                  'Location services are required to use this app.',
+                  textAlign: TextAlign.center,
+                ),
       ),
     );
   }
