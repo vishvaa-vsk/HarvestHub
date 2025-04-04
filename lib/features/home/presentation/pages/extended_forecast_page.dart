@@ -105,7 +105,7 @@ class CalendarWidget extends StatelessWidget {
   final List<Map<String, dynamic>> forecastData;
   final bool allowMonthNavigation;
 
-  const CalendarWidget({
+  const CalendarWidget({super.key, 
     required this.forecastData,
     this.allowMonthNavigation = false,
   });

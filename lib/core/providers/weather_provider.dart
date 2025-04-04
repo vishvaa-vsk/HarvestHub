@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../services/gemini_service.dart';
-import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class WeatherProvider extends ChangeNotifier {
   final WeatherService _weatherService = WeatherService();
@@ -38,8 +38,29 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Fetch weather data
-      _weatherData = await _weatherService.getWeatherData();
+      // Check and acquire location
+      final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isLocationEnabled) {
+        throw Exception('Location services are disabled.');
+      }
+
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        final newPermission = await Geolocator.requestPermission();
+        if (newPermission == LocationPermission.denied ||
+            newPermission == LocationPermission.deniedForever) {
+          throw Exception('Location permission denied.');
+        }
+      }
+
+      final position = await Geolocator.getCurrentPosition();
+
+      // Fetch weather data using acquired location
+      _weatherData = await _weatherService.getWeatherData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
 
       // Fetch insights using GeminiService
       final geminiService = GeminiService();

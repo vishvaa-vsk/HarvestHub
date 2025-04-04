@@ -149,11 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchWeatherAndInsights() async {
-      Provider.of<WeatherProvider>(
-        context,
-        listen: false,
-      ).fetchWeatherAndInsights();
-    });
+    Provider.of<WeatherProvider>(
+      context,
+      listen: false,
+    ).fetchWeatherAndInsights();
   }
 
   @override
@@ -211,22 +210,22 @@ class _HomeScreenState extends State<HomeScreen> {
       body:
           _isLocationEnabled
               ? SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildWeatherCard(context),
-            const SizedBox(height: 16),
-            _buildInsightsSection(context),
-          ],
-        ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWeatherCard(context),
+                    const SizedBox(height: 16),
+                    _buildInsightsSection(context),
+                  ],
+                ),
               )
               : const Center(
                 child: Text(
                   'Location services are required to use this app.',
                   textAlign: TextAlign.center,
                 ),
-      ),
+              ),
     );
   }
 
