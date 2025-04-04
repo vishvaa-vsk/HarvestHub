@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/services/gemini_service.dart';
 import '../../../../core/utils/formatted_text_utils.dart';
