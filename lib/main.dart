@@ -36,6 +36,9 @@ class MyApp extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
         ),
       ),
+      routes: {
+        '/home': (context) => const MainScreen(), // Defined the '/home' route
+      },
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {

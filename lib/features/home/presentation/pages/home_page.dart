@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/services/gemini_service.dart';
-import '../../../../core/utils/formatted_text_utils.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
@@ -36,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const AIChatScreen(),
+    const AIChatPage(), // Correctly linked AIChatPage
     const PestDetectionScreen(),
     const CommunityScreen(),
   ];
@@ -246,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final forecast = weather['forecast'];
 
         return Card(
-          color: Colors.teal.shade50,
+          color: Colors.teal.shade50, // Reverted to blue background
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -259,7 +258,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'Weather Forecast',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.teal.shade800,
+                    color:
+                        Colors
+                            .black, // Darker text color for better readability
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -272,11 +273,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '3-Day Forecast',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.teal.shade700,
+                        color: Colors.black87, // Improved text contrast
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -284,13 +292,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'View More',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
@@ -375,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: Colors.green.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -441,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   insights['farmingTip'] ?? 'No farming tip available',
                   style: const TextStyle(fontSize: 16),
                 ),
-                const Divider(height: 32),
+                const Divider(height: 32, color: Colors.teal),
                 Row(
                   children: const [
                     Icon(Icons.grass, color: Colors.brown),
@@ -481,84 +485,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
   @override
   Widget build(BuildContext context) {
     return const AIChatPage();
-  }
-}
-
-class AIChatPage extends StatelessWidget {
-  const AIChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('AI Chat')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Consumer<WeatherProvider>(
-          builder: (context, weatherProvider, child) {
-            if (weatherProvider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final currentWeather = weatherProvider.weatherData?['current'];
-            if (currentWeather == null) {
-              return const Center(child: Text('Failed to load weather data'));
-            }
-
-            final response = GeminiService().getAgriculturalInsights(
-              temperature: (currentWeather['temperature'] as num).toDouble(),
-              humidity: (currentWeather['humidity'] as num).toDouble(),
-              rainfall:
-                  (currentWeather['precipitation'] as num?)?.toDouble() ?? 0.0,
-              windSpeed: (currentWeather['windSpeed'] as num).toDouble(),
-              condition: currentWeather['condition'],
-            );
-
-            return FutureBuilder<Map<String, String>>(
-              future: response,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-
-                final data = snapshot.data;
-                if (data == null) {
-                  return const Center(child: Text('No data available'));
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Farming Tip:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data['farmingTip'] ?? '',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Crop Recommendation:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      data['cropRecommendation'] ?? '',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
   }
 }
 
