@@ -118,6 +118,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>(); // Added GlobalKey
+
   bool _isLocationEnabled = true;
 
   @override
@@ -194,18 +197,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey, // Assigned the GlobalKey to the Scaffold
       appBar: AppBar(
         title: const Text('HarvestHub'),
-        leading: Builder(
-          builder:
-              (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(
-                    context,
-                  ).openDrawer(); // Open the drawer when the hamburger icon is clicked
-                },
-              ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState
+                ?.openDrawer(); // Used GlobalKey to open the drawer
+          },
         ),
         actions: [
           IconButton(
