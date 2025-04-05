@@ -51,6 +51,7 @@ class _AIChatPageState extends State<AIChatPage> {
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const CircleAvatar(
                 backgroundColor: Colors.white,
@@ -67,6 +68,7 @@ class _AIChatPageState extends State<AIChatPage> {
               ),
             ],
           ),
+          centerTitle: true, // Ensures the entire row is centered
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(

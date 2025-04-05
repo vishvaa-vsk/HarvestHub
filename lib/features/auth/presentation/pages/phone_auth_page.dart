@@ -211,15 +211,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                   ),
                   const SizedBox(height: 32),
                   if (!_showOtpField) ...[
-                    if (_errorMessage != null) ...[
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
@@ -307,13 +298,13 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     ),
                   ] else ...[
                     if (_errorMessage != null) ...[
+                      const SizedBox(height: 8),
                       Text(
                         _errorMessage!,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                         ),
                       ),
-                      const SizedBox(height: 8),
                     ],
                     TextField(
                       controller: _otpController,
@@ -363,15 +354,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     Lottie.asset(
                       'assets/lottie/farming_animation.json',
                       height: 270,
-                    ),
-                  ],
-                  if (_errorMessage != null) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
                     ),
                   ],
                 ],
