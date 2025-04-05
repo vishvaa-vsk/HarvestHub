@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseAuth
+import 'package:cloud_firestore/cloud_firestore.dart'; // Added import for Firestore
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
+import '../../../auth/presentation/pages/phone_auth_page.dart'; // Added import for PhoneAuthPage
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
+import 'profile_page.dart'; // Added import for ProfilePage
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -207,24 +211,88 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              // Add functionality for the profile icon here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
             },
           ),
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.green.shade400),
-              child: const Text(
-                'HarvestHub Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.green.shade700, Colors.green.shade400],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: FutureBuilder<DocumentSnapshot>(
+                future:
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+                        .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError ||
+                      !snapshot.hasData ||
+                      !snapshot.data!.exists) {
+                    return const Text(
+                      'Error loading user data',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    );
+                  }
+
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userData['name'] ?? 'User',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            userData['phoneNumber'] ?? '',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
+              leading: const Icon(Icons.settings, color: Colors.green),
               title: const Text('Edit Profile Settings'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
@@ -234,6 +302,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => const EditProfilePage(),
                   ),
                 );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout'),
+              onTap: () async {
+                try {
+                  await FirebaseAuth.instance.signOut(); // Sign out the user
+                  Navigator.pop(context); // Close the drawer
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              const PhoneAuthPage(), // Redirect to PhoneAuthPage
+                    ),
+                    (route) => false, // Remove all previous routes
+                  );
+                } catch (e) {
+                  debugPrint('Error during logout: $e');
+                }
               },
             ),
           ],
