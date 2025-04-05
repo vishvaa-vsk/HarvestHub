@@ -9,6 +9,18 @@ plugins {
     
 }
 
+// Added missing imports for Properties and FileInputStream
+
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.harvesthub"
     compileSdk = flutter.compileSdkVersion
@@ -34,11 +46,20 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"]?.toString() ?: ""
+            keyPassword = keystoreProperties["keyPassword"]?.toString() ?: ""
+            storeFile = file("upload-keystore.jks") // Corrected path
+            storePassword = keystoreProperties["storePassword"]?.toString() ?: ""
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false // Disabled shrinkResources
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
