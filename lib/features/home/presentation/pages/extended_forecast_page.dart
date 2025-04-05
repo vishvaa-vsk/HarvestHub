@@ -100,22 +100,56 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   }
 }
 
-class CalendarWidget extends StatelessWidget {
+// Enabled month navigation in the CalendarWidget
+
+class CalendarWidget extends StatefulWidget {
   final List<Map<String, dynamic>> forecastData;
   final bool allowMonthNavigation;
 
-  const CalendarWidget({super.key, 
+  const CalendarWidget({
+    super.key,
     required this.forecastData,
     this.allowMonthNavigation = false,
   });
 
   @override
+  _CalendarWidgetState createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  late DateTime _focusedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusedDate = DateTime.now();
+  }
+
+  void _navigateToPreviousMonth() {
+    setState(() {
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+    });
+    Provider.of<WeatherProvider>(
+      context,
+      listen: false,
+    ).fetchMonthlyForecast(monthOffset: -1);
+  }
+
+  void _navigateToNextMonth() {
+    setState(() {
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
+    });
+    Provider.of<WeatherProvider>(
+      context,
+      listen: false,
+    ).fetchMonthlyForecast(monthOffset: 1);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final startDate = today; // Start from today
-    final endDate = today.add(
-      const Duration(days: 29),
-    ); // Ensure 30 days are included
+    final startDate = DateTime(_focusedDate.year, _focusedDate.month, 1);
+    final endDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
 
     return SafeArea(
       child: Column(
@@ -128,21 +162,25 @@ class CalendarWidget extends StatelessWidget {
             ),
           ),
           // Month navigation
-          if (allowMonthNavigation)
+          if (widget.allowMonthNavigation)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   icon: const Icon(Icons.chevron_left),
-                  onPressed: null, // Disable going back before current month
+                  onPressed:
+                      _focusedDate.month > today.month ||
+                              _focusedDate.year > today.year
+                          ? _navigateToPreviousMonth
+                          : null, // Disable going back before current month
                 ),
                 Text(
-                  DateFormat('MMMM yyyy').format(today),
+                  DateFormat('MMMM yyyy').format(_focusedDate),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
-                  onPressed: null, // Disable going forward
+                  onPressed: _navigateToNextMonth, // Enable going forward
                 ),
               ],
             ),
@@ -189,8 +227,8 @@ class CalendarWidget extends StatelessWidget {
             child: SingleChildScrollView(
               child: _buildCalendarGrid(
                 context,
-                today,
-                forecastData,
+                _focusedDate,
+                widget.forecastData,
                 startDate,
                 endDate,
               ),

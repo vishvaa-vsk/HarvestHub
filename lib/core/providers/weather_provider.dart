@@ -32,6 +32,7 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
+  // Optimized fetchWeatherAndInsights to reduce loading times
   Future<void> fetchWeatherAndInsights() async {
     if (_weatherData != null && _insights != null) return; // Fetch only once
     _isLoading = true;
@@ -56,24 +57,34 @@ class WeatherProvider extends ChangeNotifier {
 
       final position = await Geolocator.getCurrentPosition();
 
-      // Fetch weather data using acquired location
-      _weatherData = await _weatherService.getWeatherData(
+      // Fetch weather data and insights in parallel
+      final weatherFuture = _weatherService.getWeatherData(
         latitude: position.latitude,
         longitude: position.longitude,
       );
 
-      // Fetch insights using GeminiService
-      final geminiService = GeminiService();
-      final current = _weatherData?['current'];
-      if (current != null) {
-        _insights = await geminiService.getAgriculturalInsights(
-          temperature: (current['temperature'] as num).toDouble(),
-          humidity: (current['humidity'] as num).toDouble(),
-          rainfall: (current['precipitation'] as num?)?.toDouble() ?? 0.0,
-          windSpeed: (current['windSpeed'] as num).toDouble(),
-          condition: current['condition'],
-        );
-      }
+      // Fixed the type mismatch for insightsFuture
+      final insightsFuture = weatherFuture.then<Map<String, String>>((
+        weatherData,
+      ) {
+        final current = weatherData['current'];
+        if (current != null) {
+          final geminiService = GeminiService();
+          return geminiService.getAgriculturalInsights(
+            temperature: (current['temperature'] as num).toDouble(),
+            humidity: (current['humidity'] as num).toDouble(),
+            rainfall: (current['precipitation'] as num?)?.toDouble() ?? 0.0,
+            windSpeed: (current['windSpeed'] as num).toDouble(),
+            condition: current['condition'],
+          );
+        }
+        return Future.value({}); // Return an empty map if current is null
+      });
+
+      // Wait for both API calls to complete
+      final results = await Future.wait([weatherFuture, insightsFuture]);
+      _weatherData = results[0] as Map<String, dynamic>?;
+      _insights = results[1] as Map<String, String>?;
     } catch (e) {
       print('Error fetching weather or insights: $e');
     } finally {
@@ -82,13 +93,21 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchMonthlyForecast() async {
+  // Optimized fetchMonthlyForecast to support pagination and reduce loading times
+  Future<void> fetchMonthlyForecast({int monthOffset = 0}) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Fetch monthly weather data from WeatherAPI
-      final forecastResponse = await _weatherService.getMonthlyForecast();
+      // Calculate the target month and year based on the offset
+      final now = DateTime.now();
+      final targetDate = DateTime(now.year, now.month + monthOffset);
+
+      // Fetch monthly weather data for the target month
+      final forecastResponse = await _weatherService.getMonthlyForecast(
+        year: targetDate.year,
+        month: targetDate.month,
+      );
       _monthlyForecast = forecastResponse;
     } catch (e) {
       print('Error fetching monthly forecast: $e');

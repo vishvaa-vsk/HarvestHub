@@ -73,23 +73,29 @@ class _MainScreenState extends State<MainScreen> {
             showUnselectedLabels: true,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home, color: Colors.green),
+                icon: Icon(FeatherIcons.home),
+                activeIcon: Icon(FeatherIcons.home, color: Colors.green),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.chat_outlined),
-                activeIcon: Icon(Icons.chat, color: Colors.green),
-                label: 'AI Chat',
+                icon: Icon(FeatherIcons.messageCircle),
+                activeIcon: Icon(
+                  FeatherIcons.messageCircle,
+                  color: Colors.green,
+                ),
+                label: 'HarvestBot',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.warning_amber_outlined),
-                activeIcon: Icon(Icons.warning_amber, color: Colors.green),
+                icon: Icon(FeatherIcons.alertTriangle),
+                activeIcon: Icon(
+                  FeatherIcons.alertTriangle,
+                  color: Colors.green,
+                ),
                 label: 'Pest Detection',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.group_outlined),
-                activeIcon: Icon(Icons.group, color: Colors.green),
+                icon: Icon(FeatherIcons.users),
+                activeIcon: Icon(FeatherIcons.users, color: Colors.green),
                 label: 'Community',
               ),
             ],
