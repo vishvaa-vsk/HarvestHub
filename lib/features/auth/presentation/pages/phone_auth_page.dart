@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/services/auth_service.dart';
-import '../../../home/presentation/pages/home_page.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});
@@ -13,16 +17,38 @@ class PhoneAuthPage extends StatefulWidget {
 }
 
 class _PhoneAuthPageState extends State<PhoneAuthPage> {
+  final _nameController = TextEditingController(); // Added name controller
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
   final _authService = AuthService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isLoading = false;
   bool _showOtpField = false;
   String? _errorMessage;
   String _selectedCountryCode = '+91'; // Default country code
 
-  // Removed the invalid import for `countries` and fixed the logic to use `IsoCode` directly
+  // Added debugging logs to verify the phone number and name being stored
+  Future<void> _storeUserData(String phoneNumber) async {
+    try {
+      debugPrint('Storing user data:');
+      debugPrint('Name: ${_nameController.text}');
+      debugPrint('Phone Number: $phoneNumber');
+
+      await _firestore.collection('users').doc(phoneNumber).set({
+        'name': _nameController.text,
+        'phoneNumber': phoneNumber,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      debugPrint('User data stored successfully');
+    } catch (e) {
+      debugPrint('Error storing user data: $e');
+    }
+  }
+
   Future<void> _onPhoneNumberChanged(String value) async {
+    if (value.isEmpty) return;
+
     try {
       final isoCode = IsoCode.values.firstWhere(
         (code) =>
@@ -31,6 +57,8 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       );
       final phoneNumber = PhoneNumber.parse(value, destinationCountry: isoCode);
       if (phoneNumber.isValid()) {
+        // Store the valid phone number in Firestore
+        await _storeUserData(phoneNumber.international);
         setState(() {
           // Phone number is valid, no additional action needed
         });
@@ -40,13 +68,14 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         });
       }
     } catch (e) {
-      // Handle parsing or validation errors silently
+      debugPrint('Error parsing phone number: $e');
     }
   }
 
+  // Updated _sendOTP to check for existing user data in Firestore
   Future<void> _sendOTP() async {
-    if (_phoneController.text.isEmpty) {
-      setState(() => _errorMessage = 'Please enter a phone number');
+    if (_phoneController.text.isEmpty || _nameController.text.isEmpty) {
+      setState(() => _errorMessage = 'Please enter your name and phone number');
       return;
     }
 
@@ -56,23 +85,48 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     });
 
     String phoneNumber = '+91${_phoneController.text}'; // Add your country code
-    await _authService.sendOTP(
-      phoneNumber,
-      (verificationId) {
-        setState(() {
-          _showOtpField = true;
-          _isLoading = false;
+
+    try {
+      // Check if user data already exists in Firestore
+      final userDoc =
+          await _firestore.collection('users').doc(phoneNumber).get();
+      if (userDoc.exists) {
+        debugPrint('User data already exists for phone number: $phoneNumber');
+      } else {
+        // Create a new user entry if it doesn't exist
+        await _firestore.collection('users').doc(phoneNumber).set({
+          'name': _nameController.text,
+          'phoneNumber': phoneNumber,
+          'createdAt': FieldValue.serverTimestamp(),
         });
-      },
-      (error) {
-        setState(() {
-          _errorMessage = error;
-          _isLoading = false;
-        });
-      },
-    );
+        debugPrint('New user data created for phone number: $phoneNumber');
+      }
+
+      await _authService.sendOTP(
+        phoneNumber,
+        (verificationId) {
+          setState(() {
+            _showOtpField = true;
+            _isLoading = false;
+          });
+        },
+        (error) {
+          setState(() {
+            _errorMessage = error;
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to send OTP. Please try again.';
+        _isLoading = false;
+      });
+      debugPrint('Error during OTP sending: $e');
+    }
   }
 
+  // Ensure verificationId is non-null before using it
   Future<void> _verifyOTP() async {
     if (_otpController.text.isEmpty) {
       setState(() => _errorMessage = 'Please enter the OTP');
@@ -84,19 +138,148 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       _errorMessage = null;
     });
 
-    bool verified = await _authService.verifyOTP(_otpController.text);
-    if (mounted) {
-      if (verified) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+    try {
+      final verificationId = _authService.verificationId;
+      if (verificationId == null) {
+        setState(() {
+          _errorMessage = 'Verification ID is missing. Please resend the OTP.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final credential = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: _otpController.text,
+      );
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      if (userCredential.user != null) {
+        debugPrint(
+          'User signed in: UID = ${userCredential.user!.uid}, Phone = ${userCredential.user!.phoneNumber}',
         );
+        await _storeUserData(userCredential.user!.phoneNumber!);
+        await _onOtpVerified(
+          context,
+        ); // Call the function to set preferred language
       } else {
         setState(() {
-          _errorMessage = 'Invalid OTP';
+          _errorMessage = 'Failed to sign in';
           _isLoading = false;
         });
       }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Invalid OTP';
+        _isLoading = false;
+      });
+      debugPrint('Error during OTP verification: $e');
+    }
+  }
+
+  Future<void> _setPreferredLanguage(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedLanguage = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.selectLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.english),
+                onTap: () => Navigator.pop(context, 'en'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.spanish),
+                onTap: () => Navigator.pop(context, 'es'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.french),
+                onTap: () => Navigator.pop(context, 'fr'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.german),
+                onTap: () => Navigator.pop(context, 'de'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.hindi),
+                onTap: () => Navigator.pop(context, 'hi'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.tamil),
+                onTap: () => Navigator.pop(context, 'ta'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.telugu),
+                onTap: () => Navigator.pop(context, 'te'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.kannada),
+                onTap: () => Navigator.pop(context, 'kn'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.malayalam),
+                onTap: () => Navigator.pop(context, 'ml'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.bengali),
+                onTap: () => Navigator.pop(context, 'bn'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.gujarati),
+                onTap: () => Navigator.pop(context, 'gu'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.marathi),
+                onTap: () => Navigator.pop(context, 'mr'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.punjabi),
+                onTap: () => Navigator.pop(context, 'pa'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.odia),
+                onTap: () => Navigator.pop(context, 'or'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.chinese),
+                onTap: () => Navigator.pop(context, 'zh'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.japanese),
+                onTap: () => Navigator.pop(context, 'ja'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.russian),
+                onTap: () => Navigator.pop(context, 'ru'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.arabic),
+                onTap: () => Navigator.pop(context, 'ar'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selectedLanguage != null) {
+      await prefs.setString('preferred_language', selectedLanguage);
+      Intl.defaultLocale = selectedLanguage;
+    }
+  }
+
+  Future<void> _onOtpVerified(BuildContext context) async {
+    // Ensure the language selection dialog is shown after OTP verification
+    await _setPreferredLanguage(context);
+
+    // Navigate to the home screen only after the user selects a language
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -104,145 +287,170 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 24),
-                Text(
-                  'HarvestHub',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                if (!_showOtpField) ...[
-                  TextFormField(
-                    controller: _phoneController,
-                    onTap: () {
-                      setState(() {
-                        // Change the prefix icon to the country code when the field is focused
-                      });
-                    },
-                    onChanged:
-                        (value) => _onPhoneNumberChanged(
-                          value,
-                        ), // Detect changes dynamically
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 8.0), // Added padding to the left
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.phone), // Default icon
-                            const VerticalDivider(width: 1, thickness: 1),
-                          ],
-                        ),
-                      ),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF1B5E20,
-                        ), // Dark green color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onPressed: _isLoading ? null : _sendOTP,
-                      child:
-                          _isLoading
-                              ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(
-                                  Colors.white,
-                                ),
-                              )
-                              : const Text(
-                                'Send OTP',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                    ),
-                  ),
+        child: SingleChildScrollView(
+          // Added SingleChildScrollView to prevent overflow
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
                   const SizedBox(height: 24),
-                  Lottie.asset(
-                    'assets/lottie/farming_animation.json',
-                    height: 250, // Increased animation size
-                  ),
-                ] else ...[
-                  TextFormField(
-                    controller: _otpController,
-                    decoration: InputDecoration(
-                      labelText: 'Enter OTP',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF1B5E20,
-                        ), // Dark green color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onPressed: _isLoading ? null : _verifyOTP,
-                      child:
-                          _isLoading
-                              ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(
-                                  Colors.white,
-                                ),
-                              )
-                              : const Text(
-                                'Verify OTP',
-                                style: TextStyle(color: Colors.white), // Updated text color to white
-                              ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Lottie.asset(
-                    'assets/lottie/farming_animation.json',
-                    height: 250,
-                  ),
-                ],
-                if (_errorMessage != null) ...[
-                  const SizedBox(height: 16),
                   Text(
-                    _errorMessage!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
+                    'HarvestHub',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 32),
+                  if (!_showOtpField) ...[
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        prefixIcon: const Icon(Icons.person),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _phoneController,
+                      onTap: () {
+                        setState(() {
+                          // Change the prefix icon to the country code when the field is focused
+                        });
+                      },
+                      onChanged:
+                          (value) => _onPhoneNumberChanged(
+                            value,
+                          ), // Detect changes dynamically
+                      decoration: InputDecoration(
+                        labelText: 'Phone Number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color:
+                                _errorMessage != null
+                                    ? Theme.of(context).colorScheme.error
+                                    : Colors.grey,
+                          ),
+                        ),
+                        errorText: _errorMessage,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                          ), // Added padding to the left
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.phone), // Default icon
+                              const VerticalDivider(width: 1, thickness: 1),
+                            ],
+                          ),
+                        ),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(
+                            0xFF1B5E20,
+                          ), // Dark green color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        onPressed: _isLoading ? null : _sendOTP,
+                        child:
+                            _isLoading
+                                ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
+                                  ),
+                                )
+                                : const Text(
+                                  'Send OTP',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Lottie.asset(
+                      'assets/lottie/farming_animation.json',
+                      height: 270, // Increased animation size
+                    ),
+                  ] else ...[
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _errorMessage!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ],
+                    TextField(
+                      controller: _otpController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter OTP',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        errorText:
+                            _errorMessage, // Correctly used errorText for validation messages
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                        ), // Moved the lock icon to prefixIcon for better alignment
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(
+                            0xFF1B5E20,
+                          ), // Dark green color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        onPressed: _isLoading ? null : _verifyOTP,
+                        child:
+                            _isLoading
+                                ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
+                                  ),
+                                )
+                                : const Text(
+                                  'Verify OTP',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ), // Updated text color to white
+                                ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Lottie.asset(
+                      'assets/lottie/farming_animation.json',
+                      height: 270,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -254,6 +462,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   void dispose() {
     _phoneController.dispose();
     _otpController.dispose();
+    _nameController.dispose(); // Dispose name controller
     super.dispose();
   }
 }

@@ -7,6 +7,9 @@ class AuthService {
   // Get current user
   User? get currentUser => _auth.currentUser;
 
+  // Added a public getter for the verificationId
+  String? get verificationId => _verificationId;
+
   // Sign in with email and password
   Future<UserCredential> signInWithEmailAndPassword(
     String email,
@@ -47,10 +50,14 @@ class AuthService {
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
+          print('Verification ID set: $_verificationId'); // Logging with print
           onCodeSent(verificationId);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
+          print(
+            'Verification ID set during timeout: $_verificationId',
+          ); // Logging with print
         },
         timeout: const Duration(seconds: 60),
       );

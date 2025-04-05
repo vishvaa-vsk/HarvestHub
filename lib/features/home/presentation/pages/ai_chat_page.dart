@@ -47,27 +47,44 @@ class _AIChatPageState extends State<AIChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'AI Chat Assistant',
-          style: TextStyle(color: Colors.white), // Updated text color to white
-        ),
-        backgroundColor: Colors.green.shade300,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else {
-              Navigator.pushReplacementNamed(
-                context,
-                '/home',
-              ); // Navigate to home page
-            }
-          },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.eco, color: Colors.green),
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'HarvestBot',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          centerTitle: true, // Ensures the entire row is centered
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.green, Colors.lightGreen],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
+              ),
+            ),
+          ),
+          elevation: 0,
         ),
       ),
-      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
@@ -82,19 +99,27 @@ class _AIChatPageState extends State<AIChatPage> {
                       isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
                   children: [
                     if (!isUser)
-                      CircleAvatar(
-                        backgroundColor: Colors.green.shade400,
-                        child: const Icon(Icons.eco, color: Colors.white),
+                      const CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Icon(Icons.eco, color: Colors.white),
                       ),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        padding: const EdgeInsets.all(12.0),
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                        padding: EdgeInsets.only(
+                          left: 16.0,
+                          right:
+                              isUser
+                                  ? 16.0
+                                  : 8.0, // Reduced right padding for AI responses
+                          top: 10.0,
+                          bottom: 10.0,
+                        ),
                         decoration: BoxDecoration(
                           color:
                               isUser
-                                  ? Colors.blue.shade100
+                                  ? Colors.lightGreen.shade100
                                   : Colors.green.shade100,
                           borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(16),
@@ -118,12 +143,6 @@ class _AIChatPageState extends State<AIChatPage> {
                         ),
                       ),
                     ),
-                    if (isUser) const SizedBox(width: 8),
-                    if (isUser)
-                      CircleAvatar(
-                        backgroundColor: Colors.blue.shade400,
-                        child: const Icon(Icons.person, color: Colors.white),
-                      ),
                   ],
                 );
               },
@@ -144,7 +163,12 @@ class _AIChatPageState extends State<AIChatPage> {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(
+              16.0,
+              8.0,
+              16.0,
+              4.5,
+            ), // Adjusted bottom padding to 0
             child: Row(
               children: [
                 Expanded(
@@ -166,7 +190,7 @@ class _AIChatPageState extends State<AIChatPage> {
                 ),
                 const SizedBox(width: 8),
                 CircleAvatar(
-                  backgroundColor: Colors.green.shade400,
+                  backgroundColor: Colors.green,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
                     onPressed: () {
@@ -189,7 +213,7 @@ class _AIChatPageState extends State<AIChatPage> {
 class AnimatedDot extends StatefulWidget {
   final Duration delay;
 
-  const AnimatedDot({Key? key, this.delay = Duration.zero}) : super(key: key);
+  const AnimatedDot({super.key, this.delay = Duration.zero});
 
   @override
   _AnimatedDotState createState() => _AnimatedDotState();

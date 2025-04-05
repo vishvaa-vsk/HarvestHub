@@ -1,0 +1,23 @@
+{
+  "appTitle": "HarvestHub",
+  "welcomeMessage": "Welcome to HarvestHub!",
+  "selectLanguage": "Select Preferred Language",
+  "english": "English",
+  "spanish": "Spanish",
+  "french": "French",
+  "german": "German",
+  "hindi": "Hindi",
+  "tamil": "Tamil",
+  "telugu": "Telugu",
+  "kannada": "Kannada",
+  "malayalam": "Malayalam",
+  "bengali": "Bengali",
+  "gujarati": "Gujarati",
+  "marathi": "Marathi",
+  "punjabi": "Punjabi",
+  "odia": "Odia",
+  "chinese": "Chinese",
+  "japanese": "Japanese",
+  "russian": "Russian",
+  "arabic": "Arabic"
+}

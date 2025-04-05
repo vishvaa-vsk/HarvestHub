@@ -128,12 +128,23 @@ class WeatherService {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<List<Map<String, dynamic>>> getMonthlyForecast() async {
+  Future<List<Map<String, dynamic>>> getMonthlyForecast({
+    int? year,
+    int? month,
+  }) async {
     try {
-      // Fetch 30-day forecast data from WeatherAPI
+      // Use current year and month if not provided
+      final now = DateTime.now();
+      year ??= now.year;
+      month ??= now.month;
+
+      // Construct the query for the specified year and month
+      final startDate = DateTime(year, month, 1);
+      final endDate = DateTime(year, month + 1, 0);
+
       final response = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=auto:ip&days=30',
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=auto:ip&dt=${startDate.toIso8601String()}&end_dt=${endDate.toIso8601String()}',
         ),
       );
 
