@@ -30,7 +30,7 @@ class GeminiService {
 
         Response Format:
         Farming Tip: <Provide only the farming tip here>
-        Recommended Crop: <Provide only the recommended crop advice in few lines here>
+        Recommended Crop: <Provide only the recommended crop advice in few lines (not more than 4 lines) here>
         '''),
       ];
 
