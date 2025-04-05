@@ -44,8 +44,16 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    # Build the APK
-    - name: Build APK
+    # Add keystore file for signing
+    - name: Add keystore file
+      run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+
+    # Add key.properties file
+    - name: Add key.properties file
+      run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/key.properties
+
+    # Build the signed APK
+    - name: Build Signed APK
       run: flutter build apk --release --split-per-abi
 
     # Create a release and upload the APK
