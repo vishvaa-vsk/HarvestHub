@@ -4,8 +4,10 @@ import 'package:lottie/lottie.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/services/auth_service.dart';
-import '../../../home/presentation/pages/home_page.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});
@@ -159,10 +161,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
           'User signed in: UID = ${userCredential.user!.uid}, Phone = ${userCredential.user!.phoneNumber}',
         );
         await _storeUserData(userCredential.user!.phoneNumber!);
-        Navigator.pushReplacement(
+        await _onOtpVerified(
           context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
+        ); // Call the function to set preferred language
       } else {
         setState(() {
           _errorMessage = 'Failed to sign in';
@@ -178,15 +179,107 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     }
   }
 
-  // Added debugging logs to verify authentication flow
-  Future<void> _verifyAuthentication() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      debugPrint(
-        'User is signed in: UID = ${user.uid}, Phone = ${user.phoneNumber}',
-      );
-    } else {
-      debugPrint('No user is signed in');
+  Future<void> _setPreferredLanguage(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedLanguage = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.selectLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.english),
+                onTap: () => Navigator.pop(context, 'en'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.spanish),
+                onTap: () => Navigator.pop(context, 'es'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.french),
+                onTap: () => Navigator.pop(context, 'fr'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.german),
+                onTap: () => Navigator.pop(context, 'de'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.hindi),
+                onTap: () => Navigator.pop(context, 'hi'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.tamil),
+                onTap: () => Navigator.pop(context, 'ta'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.telugu),
+                onTap: () => Navigator.pop(context, 'te'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.kannada),
+                onTap: () => Navigator.pop(context, 'kn'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.malayalam),
+                onTap: () => Navigator.pop(context, 'ml'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.bengali),
+                onTap: () => Navigator.pop(context, 'bn'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.gujarati),
+                onTap: () => Navigator.pop(context, 'gu'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.marathi),
+                onTap: () => Navigator.pop(context, 'mr'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.punjabi),
+                onTap: () => Navigator.pop(context, 'pa'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.odia),
+                onTap: () => Navigator.pop(context, 'or'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.chinese),
+                onTap: () => Navigator.pop(context, 'zh'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.japanese),
+                onTap: () => Navigator.pop(context, 'ja'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.russian),
+                onTap: () => Navigator.pop(context, 'ru'),
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.arabic),
+                onTap: () => Navigator.pop(context, 'ar'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selectedLanguage != null) {
+      await prefs.setString('preferred_language', selectedLanguage);
+      Intl.defaultLocale = selectedLanguage;
+    }
+  }
+
+  Future<void> _onOtpVerified(BuildContext context) async {
+    // Ensure the language selection dialog is shown after OTP verification
+    await _setPreferredLanguage(context);
+
+    // Navigate to the home screen only after the user selects a language
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 

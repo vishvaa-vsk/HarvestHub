@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/phone_auth_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
@@ -15,19 +17,53 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => WeatherProvider())],
-      child: const MyApp(),
+      child: const HarvestHubApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HarvestHubApp extends StatelessWidget {
+  const HarvestHubApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HarvestHub',
-      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English
+        Locale('es', ''), // Spanish
+        Locale('fr', ''), // French
+        Locale('de', ''), // German
+        Locale('hi', ''), // Hindi
+        Locale('ta', ''), // Tamil
+        Locale('te', ''), // Telugu
+        Locale('kn', ''), // Kannada
+        Locale('ml', ''), // Malayalam
+        Locale('bn', ''), // Bengali
+        Locale('gu', ''), // Gujarati
+        Locale('mr', ''), // Marathi
+        Locale('pa', ''), // Punjabi
+        Locale('or', ''), // Odia
+        Locale('zh', ''), // Chinese
+        Locale('ja', ''), // Japanese
+        Locale('ru', ''), // Russian
+        Locale('ar', ''), // Arabic
+      ],
+      localeResolutionCallback: (locale, supportedLocales) {
+        // Check if the current locale is supported
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        // If the locale is not supported, use the default locale
+        return const Locale('en', '');
+      },
       theme: AppTheme.lightTheme.copyWith(
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.green, // Match the floating chat icon color
@@ -36,6 +72,7 @@ class MyApp extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
         ),
       ),
+      debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => const MainScreen(), // Defined the '/home' route
       },
