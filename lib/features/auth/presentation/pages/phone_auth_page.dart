@@ -32,22 +32,15 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   String? _errorMessage;
   String _selectedCountryCode = '+91'; // Default country code
 
-  // Added debugging logs to verify the phone number and name being stored
   Future<void> _storeUserData(String phoneNumber) async {
     try {
-      debugPrint('Storing user data:');
-      debugPrint('Name: ${_nameController.text}');
-      debugPrint('Phone Number: $phoneNumber');
-
       await _firestore.collection('users').doc(phoneNumber).set({
         'name': _nameController.text,
         'phoneNumber': phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
       });
-
-      debugPrint('User data stored successfully');
     } catch (e) {
-      debugPrint('Error storing user data: $e');
+      // Handle error
     }
   }
 
@@ -73,7 +66,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         });
       }
     } catch (e) {
-      debugPrint('Error parsing phone number: $e');
+      // Handle error
     }
   }
 
@@ -96,7 +89,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       final userDoc =
           await _firestore.collection('users').doc(phoneNumber).get();
       if (userDoc.exists) {
-        debugPrint('User data already exists for phone number: $phoneNumber');
+        // User data already exists
       } else {
         // Create a new user entry if it doesn't exist
         await _firestore.collection('users').doc(phoneNumber).set({
@@ -104,7 +97,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
           'phoneNumber': phoneNumber,
           'createdAt': FieldValue.serverTimestamp(),
         });
-        debugPrint('New user data created for phone number: $phoneNumber');
       }
 
       await _authService.sendOTP(
@@ -127,7 +119,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         _errorMessage = 'Failed to send OTP. Please try again.';
         _isLoading = false;
       });
-      debugPrint('Error during OTP sending: $e');
+      // Handle error
     }
   }
 
@@ -162,9 +154,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       );
 
       if (userCredential.user != null) {
-        debugPrint(
-          'User signed in: UID = ${userCredential.user!.uid}, Phone = ${userCredential.user!.phoneNumber}',
-        );
         await _storeUserData(userCredential.user!.phoneNumber!);
         await _onOtpVerified(
           context,
@@ -180,7 +169,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         _errorMessage = 'Invalid OTP';
         _isLoading = false;
       });
-      debugPrint('Error during OTP verification: $e');
+      // Handle error
     }
   }
 

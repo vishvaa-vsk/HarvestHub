@@ -35,7 +35,6 @@ class WeatherService {
         throw Exception('Failed to load current weather data');
       }
 
-      print('Current Weather Response: ${currentWeatherResponse.body}');
       final currentWeather = json.decode(currentWeatherResponse.body);
 
       // Fetch 3-day forecast data from WeatherAPI
@@ -49,7 +48,6 @@ class WeatherService {
         throw Exception('Failed to load forecast data');
       }
 
-      print('Forecast Weather Response: ${forecastResponse.body}');
       final forecastData = json.decode(forecastResponse.body);
 
       // Parse forecast into 3-day chunks
@@ -92,7 +90,6 @@ class WeatherService {
         },
       };
     } catch (e) {
-      print('Error fetching weather data: $e');
       return {
         'current': {
           'temperature': 0,
@@ -172,7 +169,6 @@ class WeatherService {
         };
       }).toList();
     } catch (e) {
-      print('Error fetching monthly forecast: $e');
       rethrow;
     }
   }
@@ -188,12 +184,6 @@ class WeatherService {
           '$_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$location&dt=$date',
         ),
       );
-
-      print(
-        'Fetching future weather data from: $_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$location&dt=$date',
-      );
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode != 200) {
         throw Exception('Failed to load future weather data');
@@ -214,7 +204,6 @@ class WeatherService {
         };
       }).toList();
     } catch (e) {
-      print('Error fetching future weather data: $e');
       rethrow;
     }
   }
@@ -301,7 +290,6 @@ class WeatherService {
 
       return extendedForecast;
     } catch (e) {
-      print('Error fetching future weather data: $e');
       rethrow;
     }
   }
@@ -312,7 +300,6 @@ class WeatherService {
       Position position = await _getCurrentLocation();
       return '${position.latitude},${position.longitude}';
     } catch (e) {
-      print('Error getting location, falling back to IP: $e');
       return 'auto:ip'; // Fallback to IP-based location
     }
   }

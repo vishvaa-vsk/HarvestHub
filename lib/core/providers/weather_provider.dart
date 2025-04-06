@@ -30,7 +30,6 @@ class WeatherProvider extends ChangeNotifier {
     try {
       _weatherData = await _weatherService.getWeatherData();
     } catch (e) {
-      print('Error fetching weather data: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -91,7 +90,6 @@ class WeatherProvider extends ChangeNotifier {
       _weatherData = results[0] as Map<String, dynamic>?;
       _insights = results[1] as Map<String, String>?;
     } catch (e) {
-      print('Error fetching weather or insights: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -115,7 +113,6 @@ class WeatherProvider extends ChangeNotifier {
       );
       _monthlyForecast = forecastResponse;
     } catch (e) {
-      print('Error fetching monthly forecast: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -130,7 +127,6 @@ class WeatherProvider extends ChangeNotifier {
       // Fetch future weather data from WeatherAPI
       _futureWeather = await _weatherService.getFutureWeather(location, date);
     } catch (e) {
-      print('Error fetching future weather: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -160,7 +156,6 @@ class WeatherProvider extends ChangeNotifier {
             };
           }).toList();
     } catch (e) {
-      print('Error fetching future weather range: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -178,7 +173,6 @@ class WeatherProvider extends ChangeNotifier {
         days,
       );
     } catch (e) {
-      print('Error fetching extended forecast: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -199,7 +193,6 @@ class WeatherProvider extends ChangeNotifier {
       );
       return recommendation;
     } catch (e) {
-      print('Error fetching crop recommendation: $e');
       return null;
     }
   }

@@ -30,7 +30,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = FirebaseAuth.instance.currentUser; // Get the current user
 
     if (user == null) {
-      debugPrint('No logged-in user found');
       return;
     }
 
@@ -50,7 +49,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } catch (e) {
         retryCount++;
         if (retryCount >= maxRetries) {
-          debugPrint('Error loading user data after $retryCount retries: $e');
           return;
         }
         await Future.delayed(
@@ -67,74 +65,61 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = FirebaseAuth.instance.currentUser; // Get the current user
 
     if (user == null) {
-      debugPrint('No logged-in user found');
       return;
     }
 
     // Check if the phone number has been changed
     if (_phoneController.text != user.phoneNumber) {
       // Send OTP to the new phone number
-      await _authService.sendOTP(
-        _phoneController.text,
-        (verificationId) async {
-          // Show a dialog to enter the OTP
-          final otp = await _showOtpDialog();
-          if (otp == null || otp.isEmpty) {
-            debugPrint('OTP verification canceled');
-            return;
-          }
+      await _authService.sendOTP(_phoneController.text, (verificationId) async {
+        // Show a dialog to enter the OTP
+        final otp = await _showOtpDialog();
+        if (otp == null || otp.isEmpty) {
+          return;
+        }
 
-          // Verify the OTP
-          final isVerified = await _authService.verifyOTP(otp);
-          if (!isVerified) {
-            debugPrint('OTP verification failed');
-            return;
-          }
+        // Verify the OTP
+        final isVerified = await _authService.verifyOTP(otp);
+        if (!isVerified) {
+          return;
+        }
 
-          // Replace old phone number data with new phone number data
-          while (retryCount < maxRetries) {
-            try {
-              final oldPhoneNumber = user.phoneNumber;
-              await _firestore.collection('users').doc(oldPhoneNumber).delete();
-              await _firestore
-                  .collection('users')
-                  .doc(_phoneController.text)
-                  .set({
-                    'name': _nameController.text,
-                    'email': _emailController.text,
-                    'phoneNumber': _phoneController.text,
-                  });
-              debugPrint('User data updated successfully');
+        // Replace old phone number data with new phone number data
+        while (retryCount < maxRetries) {
+          try {
+            final oldPhoneNumber = user.phoneNumber;
+            await _firestore.collection('users').doc(oldPhoneNumber).delete();
+            await _firestore
+                .collection('users')
+                .doc(_phoneController.text)
+                .set({
+                  'name': _nameController.text,
+                  'email': _emailController.text,
+                  'phoneNumber': _phoneController.text,
+                });
 
-              // Show a confirmation message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Your mobile number has been updated successfully.',
-                  ),
+            // Show a confirmation message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Your mobile number has been updated successfully.',
                 ),
-              );
+              ),
+            );
 
-              Navigator.pop(context);
-              return; // Exit the loop if successful
-            } catch (e) {
-              retryCount++;
-              if (retryCount >= maxRetries) {
-                debugPrint(
-                  'Error saving user data after $retryCount retries: $e',
-                );
-                return;
-              }
-              await Future.delayed(
-                Duration(seconds: 2 * retryCount),
-              ); // Exponential backoff
+            Navigator.pop(context);
+            return; // Exit the loop if successful
+          } catch (e) {
+            retryCount++;
+            if (retryCount >= maxRetries) {
+              return;
             }
+            await Future.delayed(
+              Duration(seconds: 2 * retryCount),
+            ); // Exponential backoff
           }
-        },
-        (error) {
-          debugPrint('Error sending OTP: $error');
-        },
-      );
+        }
+      }, (error) {});
     } else {
       // Save data without phone number change
       while (retryCount < maxRetries) {
@@ -144,7 +129,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             'email': _emailController.text,
             'phoneNumber': _phoneController.text,
           });
-          debugPrint('User data saved successfully');
 
           // Show a confirmation message
           ScaffoldMessenger.of(context).showSnackBar(
@@ -158,7 +142,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         } catch (e) {
           retryCount++;
           if (retryCount >= maxRetries) {
-            debugPrint('Error saving user data after $retryCount retries: $e');
             return;
           }
           await Future.delayed(
