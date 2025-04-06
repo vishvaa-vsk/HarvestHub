@@ -110,6 +110,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+/// The home page of the HarvestHub application.
+///
+/// This page displays weather data, agricultural insights, and navigation
+/// options. It also includes a drawer for accessing profile settings and
+/// changing the app's language.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 

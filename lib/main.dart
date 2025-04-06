@@ -1,3 +1,13 @@
+/// The main entry point of the HarvestHub application.
+///
+/// This file initializes Firebase, loads environment variables, and sets up
+/// the `MultiProvider` for state management. It also defines the `HarvestHubApp`
+/// widget, which serves as the root of the application.
+///
+/// The app dynamically updates its locale and theme based on user preferences.
+/// It also handles authentication state changes to navigate between the
+/// authentication and home screens.
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';

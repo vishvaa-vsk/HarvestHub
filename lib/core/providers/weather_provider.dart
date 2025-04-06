@@ -3,6 +3,11 @@ import '../services/weather_service.dart';
 import '../services/gemini_service.dart';
 import 'package:geolocator/geolocator.dart';
 
+/// A provider class for managing weather data and agricultural insights.
+///
+/// This class fetches weather data from the Weather API and agricultural
+/// insights from the GeminiService. It also manages the loading state and
+/// provides methods for fetching monthly forecasts and extended weather data.
 class WeatherProvider extends ChangeNotifier {
   final WeatherService _weatherService = WeatherService();
   Map<String, dynamic>? _weatherData;
