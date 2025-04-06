@@ -63,7 +63,6 @@ class GeminiService {
         'cropRecommendation': cropRecommendation,
       };
     } catch (e) {
-      print('Error calling Generative Language API: $e');
       return {
         'farmingTip': 'Error fetching farming tip',
         'cropRecommendation': 'Error fetching crop recommendation',
@@ -95,7 +94,6 @@ class GeminiService {
       return response.candidates.first.text?.trim() ??
           'No recommendation available';
     } catch (e) {
-      print('Error fetching crop recommendation: $e');
       return 'Error fetching crop recommendation';
     }
   }
