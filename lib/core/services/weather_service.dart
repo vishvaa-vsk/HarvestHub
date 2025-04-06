@@ -3,6 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 
+/// A service class for interacting with the Weather API.
+///
+/// This class fetches current weather data, 3-day forecasts, and monthly
+/// forecasts. It also provides methods for fetching future weather data
+/// and extended forecasts.
 class WeatherService {
   static const String _weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
   final String? _weatherApiKey = dotenv.env['WEATHER_API_KEY'];

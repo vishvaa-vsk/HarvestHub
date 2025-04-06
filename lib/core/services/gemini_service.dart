@@ -1,6 +1,11 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// A service class for interacting with the Gemini API.
+///
+/// This class generates prompts and sends them to the Gemini API to fetch
+/// agricultural insights and crop recommendations. It also parses the
+/// responses to extract relevant information.
 class GeminiService {
   Future<Map<String, String>> getAgriculturalInsights({
     required double temperature,

@@ -9,6 +9,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/services/auth_service.dart';
 
+/// A widget for handling phone number authentication.
+///
+/// This page allows users to enter their phone number and OTP for
+/// authentication. It also provides options for selecting a preferred
+/// language after successful OTP verification.
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});
 
