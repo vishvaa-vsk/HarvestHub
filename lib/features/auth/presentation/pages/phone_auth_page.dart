@@ -5,7 +5,7 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/services/auth_service.dart';
 

@@ -29,7 +29,6 @@ class WeatherProvider extends ChangeNotifier {
 
     try {
       _weatherData = await _weatherService.getWeatherData();
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -89,7 +88,6 @@ class WeatherProvider extends ChangeNotifier {
       final results = await Future.wait([weatherFuture, insightsFuture]);
       _weatherData = results[0] as Map<String, dynamic>?;
       _insights = results[1] as Map<String, String>?;
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -112,7 +110,6 @@ class WeatherProvider extends ChangeNotifier {
         month: targetDate.month,
       );
       _monthlyForecast = forecastResponse;
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -126,7 +123,6 @@ class WeatherProvider extends ChangeNotifier {
     try {
       // Fetch future weather data from WeatherAPI
       _futureWeather = await _weatherService.getFutureWeather(location, date);
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -155,7 +151,6 @@ class WeatherProvider extends ChangeNotifier {
               'rainChance': day['day']['daily_chance_of_rain'],
             };
           }).toList();
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -172,7 +167,6 @@ class WeatherProvider extends ChangeNotifier {
         location,
         days,
       );
-    } catch (e) {
     } finally {
       _isLoading = false;
       notifyListeners();

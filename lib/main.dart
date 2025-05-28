@@ -7,6 +7,7 @@
 /// The app dynamically updates its locale and theme based on user preferences.
 /// It also handles authentication state changes to navigate between the
 /// authentication and home screens.
+library;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/phone_auth_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
@@ -38,32 +39,13 @@ class HarvestHubApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
+      localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en', ''), // English
-        Locale('es', ''), // Spanish
-        Locale('fr', ''), // French
-        Locale('de', ''), // German
-        Locale('hi', ''), // Hindi
-        Locale('ta', ''), // Tamil
-        Locale('te', ''), // Telugu
-        Locale('kn', ''), // Kannada
-        Locale('ml', ''), // Malayalam
-        Locale('bn', ''), // Bengali
-        Locale('gu', ''), // Gujarati
-        Locale('mr', ''), // Marathi
-        Locale('pa', ''), // Punjabi
-        Locale('or', ''), // Odia
-        Locale('zh', ''), // Chinese
-        Locale('ja', ''), // Japanese
-        Locale('ru', ''), // Russian
-        Locale('ar', ''), // Arabic
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       localeResolutionCallback: (locale, supportedLocales) {
         // Check if the current locale is supported
         for (var supportedLocale in supportedLocales) {
