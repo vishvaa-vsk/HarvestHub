@@ -1,9 +1,88 @@
 {
-  "appTitle": "ഹാർവെസ്റ്റ് ഹബ്",
-  "welcomeMessage": "ഹാർവെസ്റ്റ് ഹബിലേക്ക് സ്വാഗതം!",
+  "@@locale": "ml",
+  "appTitle": "HarvestHub",
+  "welcomeMessage": "HarvestHub-ലേക്ക് സ്വാഗതം!",
   "selectLanguage": "ഇഷ്ടപ്പെട്ട ഭാഷ തിരഞ്ഞെടുക്കുക",
   "english": "ഇംഗ്ലീഷ്",
-  "spanish": "സ്പാനിഷ്",
-  "french": "ഫ്രഞ്ച്",
-  "german": "ജർമ്മൻ"
+  "hindi": "ഹിന്ദി",
+  "tamil": "തമിഴ്",
+  "telugu": "తెలుగు",
+  "malayalam": "മലയാളം",
+  "home": "മുക്‌ക്കപ്പ്",
+  "harvestBot": "HarvestBot",
+  "pestDetection": "പൂച്ചിക്കണ്ടൽ",
+  "community": "സമൂഹം",
+  "yourFarmingCompanion": "നിങ്ങളുടെ കൃഷി കൂട്ടുകാരൻ",
+  "editProfileSettings": "പ്രൊഫൈൽ ക്രമീകരണങ്ങൾ എഡിറ്റ് ചെയ്യുക",
+  "logout": "ലോഗ് ഔട്ട്",
+  "errorLoadingUserData": "ഉപയോക്തൃ ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പിഴവ്",
+  "weatherForecast": "കാലാവസ്ഥാ പ്രവചനങ്ങൾ",
+  "feelsLike": "മനസ്സിലാക്കുന്നത്: {value}°C",
+  "@feelsLike": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "wind": "കാറ്റ്: {speed} കിമീ/മണിക്കൂർ ({dir})",
+  "@wind": {
+    "placeholders": {
+      "speed": {},
+      "dir": {}
+    }
+  },
+  "pressure": "അഴുത്തം: {value} mb",
+  "@pressure": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "humidity": "ആർദ്രത: {value}%",
+  "@humidity": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "visibility": "തെളിവ്: {value} കിമീ",
+  "@visibility": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "uvIndex": "UV സൂചിക: {value}",
+  "@uvIndex": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "cloudCover": "മേകക്കവര: {value}%",
+  "@cloudCover": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "threeDayForecast": "3-ദിവസ പ്രവചനങ്ങൾ",
+  "viewMore": "കൂടുതൽ കാണുക",
+  "failedToLoadWeather": "കാലാവസ്ഥാ ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പരാജയം",
+  "farmingTip": "കൃഷി ടിപ്പ്",
+  "noFarmingTip": "കൃഷി ടിപ്പ് ലഭ്യമല്ല",
+  "recommendedCrop": "ശുപാർശ ചെയ്ത വിള",
+  "noCropRecommendation": "വിള ശുപാർശ ലഭ്യമല്ല",
+  "locationServicesRequired": "ഈ ആപ്പ് ഉപയോഗിക്കാൻ സ്ഥാനം സേവനങ്ങൾ ആവശ്യമാണ്.",
+  "failedToLoadInsights": "അന്തർദൃഷ്ടി ലോഡ് ചെയ്യുന്നതിൽ പരാജയം",
+  "sendOTP": "OTP അയയ്ക്കുക",
+  "verifyOTP": "OTP സ്ഥിരീകരിക്കുക",
+  "name": "പേര്",
+  "phoneNumber": "ഫോൺ നമ്പർ",
+  "enterOTP": "OTP നൽകുക",
+  "pleaseEnterNameAndPhone": "ദയവായി നിങ്ങളുടെ പേര് மற்றும் ഫോൺ നമ്പർ നൽകുക",
+  "invalidOTP": "അസാധുവായ OTP",
+  "failedToSendOTP": "OTP അയയ്ക്കുന്നതിൽ പരാജയം. ദയവായി വീണ്ടും ശ്രമിക്കുക.",
+  "failedToSignIn": "ഉള്പ്പെടുത്തുന്നതിൽ പരാജയം",
+  "enableLocationServices": "സ്ഥാനം സേവനങ്ങൾ സജീവമാക്കുക",
+  "openSettings": "അமைപ്പുകൾ തുറക്കുക",
+  "cancel": "റദ്ദാക്കുക",
+  "nextContinue": "തുടരുക",
+  "proceed": "മുന്നോട്ട് പോകുക",
+  "changeLanguage": "ഭാഷ മാറ്റുക",
+  "talkToHarvestBot": "HarvestBot-നോട് സംസാരിക്കുക"
 }

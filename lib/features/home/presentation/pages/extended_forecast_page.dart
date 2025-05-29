@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 import '../../../../core/providers/weather_provider.dart';
 
 class ExtendedForecastPage extends StatefulWidget {
@@ -32,8 +33,9 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('30-Day Weather Forecast')),
+      appBar: AppBar(title: Text(loc.threeDayForecast)),
       body: Consumer<WeatherProvider>(
         builder: (context, weatherProvider, child) {
           if (weatherProvider.isLoading &&
@@ -44,7 +46,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
           final forecastData = weatherProvider.futureWeather;
           if (forecastData == null || forecastData.isEmpty) {
-            return const Center(child: Text('No forecast data available'));
+            return Center(child: Text(loc.noFarmingTip));
           }
 
           return Column(
@@ -69,12 +71,12 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          children: const [
-                            Icon(Icons.grass, color: Colors.green),
-                            SizedBox(width: 8),
+                          children: [
+                            const Icon(Icons.grass, color: Colors.green),
+                            const SizedBox(width: 8),
                             Text(
-                              'Recommended Crop',
-                              style: TextStyle(
+                              loc.recommendedCrop,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -84,7 +86,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                         const SizedBox(height: 8),
                         Text(
                           weatherProvider.insights?['cropRecommendation'] ??
-                              'No crop recommendation available',
+                              loc.noCropRecommendation,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],

@@ -13,6 +13,7 @@ class GeminiService {
     required double rainfall,
     required double windSpeed,
     required String condition,
+    String lang = 'en',
   }) async {
     try {
       // Initialize the GenerativeModel client
@@ -20,10 +21,27 @@ class GeminiService {
         model: 'models/gemini-1.5-pro',
         apiKey: dotenv.env['GEMINI_API_KEY']!,
       );
-
+      String langInstruction = '';
+      switch (lang) {
+        case 'ta':
+          langInstruction = 'Respond in Tamil.';
+          break;
+        case 'te':
+          langInstruction = 'Respond in Telugu.';
+          break;
+        case 'hi':
+          langInstruction = 'Respond in Hindi.';
+          break;
+        case 'ml':
+          langInstruction = 'Respond in Malayalam.';
+          break;
+        default:
+          langInstruction = 'Respond in English.';
+      }
       // Call the Generative Language API using the client
       final content = [
         Content.text('''
+        $langInstruction
         You are an AI-powered agricultural assistant. Based on the given weather conditions, provide a crisp farming tip and a crop recommendation.
 
         Weather Data:

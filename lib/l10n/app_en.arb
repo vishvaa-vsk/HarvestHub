@@ -1,23 +1,88 @@
 {
+  "@@locale": "en",
   "appTitle": "HarvestHub",
   "welcomeMessage": "Welcome to HarvestHub!",
   "selectLanguage": "Select Preferred Language",
   "english": "English",
-  "spanish": "Spanish",
-  "french": "French",
-  "german": "German",
   "hindi": "Hindi",
   "tamil": "Tamil",
   "telugu": "Telugu",
-  "kannada": "Kannada",
   "malayalam": "Malayalam",
-  "bengali": "Bengali",
-  "gujarati": "Gujarati",
-  "marathi": "Marathi",
-  "punjabi": "Punjabi",
-  "odia": "Odia",
-  "chinese": "Chinese",
-  "japanese": "Japanese",
-  "russian": "Russian",
-  "arabic": "Arabic"
+  "home": "Home",
+  "harvestBot": "HarvestBot",
+  "pestDetection": "Pest Detection",
+  "community": "Community",
+  "yourFarmingCompanion": "Your farming companion",
+  "editProfileSettings": "Edit Profile Settings",
+  "logout": "Logout",
+  "errorLoadingUserData": "Error loading user data",
+  "weatherForecast": "Weather Forecast",
+  "feelsLike": "Feels Like: {value}°C",
+  "@feelsLike": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "wind": "Wind: {speed} km/h ({dir})",
+  "@wind": {
+    "placeholders": {
+      "speed": {},
+      "dir": {}
+    }
+  },
+  "pressure": "Pressure: {value} mb",
+  "@pressure": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "humidity": "Humidity: {value}%",
+  "@humidity": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "visibility": "Visibility: {value} km",
+  "@visibility": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "uvIndex": "UV Index: {value}",
+  "@uvIndex": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "cloudCover": "Cloud Cover: {value}%",
+  "@cloudCover": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "threeDayForecast": "3-Day Forecast",
+  "viewMore": "View More",
+  "failedToLoadWeather": "Failed to load weather data",
+  "farmingTip": "Farming Tip",
+  "noFarmingTip": "No farming tip available",
+  "recommendedCrop": "Recommended Crop",
+  "noCropRecommendation": "No crop recommendation available",
+  "locationServicesRequired": "Location services are required to use this app.",
+  "failedToLoadInsights": "Failed to load insights",
+  "sendOTP": "Send OTP",
+  "verifyOTP": "Verify OTP",
+  "name": "Name",
+  "phoneNumber": "Phone Number",
+  "enterOTP": "Enter OTP",
+  "pleaseEnterNameAndPhone": "Please enter your name and phone number",
+  "invalidOTP": "Invalid OTP",
+  "failedToSendOTP": "Failed to send OTP. Please try again.",
+  "failedToSignIn": "Failed to sign in",
+  "enableLocationServices": "Enable Location Services",
+  "openSettings": "Open Settings",
+  "cancel": "Cancel",
+  "nextContinue": "CONTINUE",
+  "proceed": "PROCEED",
+  "changeLanguage": "Change Language",
+  "talkToHarvestBot": "Talk to HarvestBot"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 import '../../../../core/services/gemini_service.dart';
 import '../../../../core/providers/weather_provider.dart';
 
@@ -71,8 +72,11 @@ class _SmartAgricultureInsightsPageState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Smart Agricultural Insights')),
+      appBar: AppBar(
+        title: Text(loc.farmingTip),
+      ), // fallback to farmingTip as section title
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child:
@@ -90,12 +94,12 @@ class _SmartAgricultureInsightsPageState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Row(
-                          children: const [
-                            Icon(Icons.eco, color: Colors.green),
-                            SizedBox(width: 8),
+                          children: [
+                            const Icon(Icons.eco, color: Colors.green),
+                            const SizedBox(width: 8),
                             Text(
-                              'Farming Tip',
-                              style: TextStyle(
+                              loc.farmingTip,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -104,17 +108,17 @@ class _SmartAgricultureInsightsPageState
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _farmingTip ?? 'No tip available',
+                          _farmingTip ?? loc.noFarmingTip,
                           style: const TextStyle(fontSize: 16),
                         ),
-                        const Divider(height: 32),
+                        const SizedBox(height: 24),
                         Row(
-                          children: const [
-                            Icon(Icons.grass, color: Colors.brown),
-                            SizedBox(width: 8),
+                          children: [
+                            const Icon(Icons.grass, color: Colors.green),
+                            const SizedBox(width: 8),
                             Text(
-                              'Recommended Crop',
-                              style: TextStyle(
+                              loc.recommendedCrop,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -123,7 +127,7 @@ class _SmartAgricultureInsightsPageState
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _cropRecommendation ?? 'No recommendation available',
+                          _cropRecommendation ?? loc.noCropRecommendation,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
