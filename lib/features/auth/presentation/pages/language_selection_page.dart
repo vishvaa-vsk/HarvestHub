@@ -1,27 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
-class LanguageSelectionPage extends StatelessWidget {
+class LanguageSelectionPage extends StatefulWidget {
   final void Function(String)? onLanguageSelected;
   const LanguageSelectionPage({super.key, this.onLanguageSelected});
 
   static const List<Map<String, String>> languages = [
-    {'code': 'en', 'labelKey': 'english'},
-    {'code': 'hi', 'labelKey': 'hindi'},
-    {'code': 'ta', 'labelKey': 'tamil'},
-    {'code': 'te', 'labelKey': 'telugu'},
-    {'code': 'ml', 'labelKey': 'malayalam'},
+    {'code': 'en', 'native': 'English'},
+    {'code': 'hi', 'native': 'हिंदी'},
+    {'code': 'ta', 'native': 'தமிழ்'},
+    {'code': 'te', 'native': 'తెలుగు'},
+    {'code': 'ml', 'native': 'മലയാളം'},
   ];
 
-  Future<void> _selectLanguage(BuildContext context, String code) async {
+  @override
+  State<LanguageSelectionPage> createState() => _LanguageSelectionPageState();
+}
+
+class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
+  String? _selectedCode;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCode = 'en'; // Default selection
+  }
+
+  Future<void> _selectLanguage(String code) async {
+    setState(() {
+      _selectedCode = code;
+    });
+  }
+
+  Future<void> _onContinue() async {
+    if (_selectedCode == null) return;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('preferred_language', code);
-    Intl.defaultLocale = code;
-    if (onLanguageSelected != null) {
-      onLanguageSelected!(code);
-      // Do not navigate here; let the parent widget handle navigation after locale update
+    await prefs.setString('preferred_language', _selectedCode!);
+    Intl.defaultLocale = _selectedCode!;
+    if (widget.onLanguageSelected != null) {
+      widget.onLanguageSelected!(_selectedCode!);
       return;
     }
     if (context.mounted) {
@@ -31,144 +50,161 @@ class LanguageSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final green = Colors.green.shade700;
+    final greyTile = const Color(0xFFF3F3F3);
+    // Set system navigation bar color to white for seamless background
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F7),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            // Brand name aligned left, like screenshot
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Row(
                 children: [
-                  // App logo or illustration
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 24),
-                    child: CircleAvatar(
-                      radius: 44,
-                      backgroundColor: Colors.green.shade100,
-                      child: Icon(
-                        Icons.eco,
-                        size: 48,
-                        color: Colors.green.shade700,
-                      ),
-                    ),
-                  ),
                   Text(
-                    loc.selectLanguage,
-                    style: theme.textTheme.headlineSmall?.copyWith(
+                    'HarvestHub', // Corrected app name
+                    style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.green.shade700,
-                      fontFamily: 'NotoSans',
+                      color: Colors.black,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: languages.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      final lang = languages[index];
-                      final label =
-                          {
-                            'english': loc.english,
-                            'hindi': loc.hindi,
-                            'tamil': loc.tamil,
-                            'telugu': loc.telugu,
-                            'malayalam': loc.malayalam,
-                          }[lang['labelKey']] ??
-                          lang['labelKey'];
-                      final icon = _getLanguageIcon(lang['code']!);
-                      final color = _getLanguageColor(lang['code']!, theme);
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: () => _selectLanguage(context, lang['code']!),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.06),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                            border: Border.all(color: color, width: 1.2),
-                          ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: color.withOpacity(0.15),
-                              child: icon,
-                            ),
-                            title: Text(
-                              label ?? '',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'NotoSans',
-                                color: Colors.black87,
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios,
-                              size: 18,
-                              color: color,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                  Container(
+                    margin: const EdgeInsets.only(left: 3, top: 2),
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: green,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
-          ),
+            const SizedBox(height: 28),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Choose your preferred language',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
+                childAspectRatio: 2.2,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  for (final lang in LanguageSelectionPage.languages)
+                    _LanguageTile(
+                      label: lang['native']!,
+                      selected: _selectedCode == lang['code'],
+                      onTap: () => _selectLanguage(lang['code']!),
+                      accent: green,
+                      grey: greyTile,
+                    ),
+                ],
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: _onContinue,
+                  child: Text(
+                    'Continue',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );
   }
+}
 
-  // Helper for language icons
-  Icon _getLanguageIcon(String code) {
-    switch (code) {
-      case 'en':
-        return const Icon(Icons.language, color: Colors.green);
-      case 'hi':
-        return const Icon(Icons.translate, color: Colors.deepOrange);
-      case 'ta':
-        return const Icon(Icons.text_fields, color: Colors.purple);
-      case 'te':
-        return const Icon(Icons.text_format, color: Colors.blue);
-      case 'ml':
-        return const Icon(Icons.menu_book, color: Colors.green);
-      default:
-        return const Icon(Icons.language, color: Colors.green);
-    }
-  }
+class _LanguageTile extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final Color accent;
+  final Color grey;
+  const _LanguageTile({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.accent,
+    required this.grey,
+  });
 
-  // Helper for language colors
-  Color _getLanguageColor(String code, ThemeData theme) {
-    switch (code) {
-      case 'en':
-        return Colors.green.shade700;
-      case 'hi':
-        return Colors.deepOrange;
-      case 'ta':
-        return Colors.purple;
-      case 'te':
-        return Colors.blue;
-      case 'ml':
-        return Colors.green;
-      default:
-        return Colors.green.shade700;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: selected ? accent.withOpacity(0.08) : grey,
+          border: Border.all(
+            color: selected ? accent : grey,
+            width: selected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            color: Colors.black87,
+            fontSize: 18,
+          ),
+        ),
+      ),
+    );
   }
 }

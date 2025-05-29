@@ -23,9 +23,18 @@ import 'features/home/presentation/pages/home_page.dart';
 import 'core/providers/weather_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.white, // or your app's background color
+      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   runApp(
@@ -45,6 +54,7 @@ class HarvestHubApp extends StatefulWidget {
 
 class _HarvestHubAppState extends State<HarvestHubApp> {
   Locale? _locale;
+  bool _languagePicked = false;
 
   @override
   void initState() {
@@ -55,24 +65,25 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('preferred_language');
-    if (langCode != null) {
-      setState(() {
+    setState(() {
+      _languagePicked = langCode != null;
+      if (langCode != null) {
         _locale = Locale(langCode);
-      });
-      // Set WeatherProvider language
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final provider = Provider.of<WeatherProvider>(context, listen: false);
-        provider.setLanguage(langCode);
-      });
-    }
+        // Set WeatherProvider language
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final provider = Provider.of<WeatherProvider>(context, listen: false);
+          provider.setLanguage(langCode);
+        });
+      }
+    });
   }
 
-  // Call this after language selection
   Future<void> setLocale(String langCode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('preferred_language', langCode);
     setState(() {
       _locale = Locale(langCode);
+      _languagePicked = true;
     });
     // Set WeatherProvider language
     final provider = Provider.of<WeatherProvider>(context, listen: false);
@@ -132,37 +143,23 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
       ),
       debugShowCheckedModeBanner: false,
       routes: {'/home': (context) => const MainScreen()},
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData) {
-            return const PhoneAuthPage();
-          }
-          return FutureBuilder<String?>(
-            future: _getPreferredLanguage(),
-            builder: (context, langSnapshot) {
-              if (langSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (langSnapshot.data == null) {
-                return LanguageSelectionPage(
-                  onLanguageSelected: (code) => setLocale(code),
-                );
-              }
-              return const MainScreen();
-            },
-          );
-        },
-      ),
+      home:
+          !_languagePicked
+              ? LanguageSelectionPage(
+                onLanguageSelected: (code) => setLocale(code),
+              )
+              : StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData) {
+                    return const PhoneAuthPage();
+                  }
+                  return const MainScreen();
+                },
+              ),
     );
   }
-}
-
-// Add this function to the HarvestHubApp class (as a static helper or top-level function)
-Future<String?> _getPreferredLanguage() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString('preferred_language');
 }

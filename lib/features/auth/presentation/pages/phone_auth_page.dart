@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
-import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/services/auth_service.dart';
@@ -28,7 +27,8 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   bool _isLoading = false;
   bool _showOtpField = false;
   String? _errorMessage;
-  String _selectedCountryCode = '+91'; // Default country code
+  final FocusNode _phoneFocusNode = FocusNode();
+  final FocusNode _otpFocusNode = FocusNode(); // Dedicated FocusNode for OTP
 
   Future<void> _storeUserData(String phoneNumber) async {
     try {
@@ -37,32 +37,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         'phoneNumber': phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
       });
-    } catch (e) {
-      // Handle error
-    }
-  }
-
-  Future<void> _onPhoneNumberChanged(String value) async {
-    if (value.isEmpty) return;
-
-    try {
-      final isoCode = IsoCode.values.firstWhere(
-        (code) =>
-            code.name.toUpperCase() == _selectedCountryCode.replaceAll('+', ''),
-        orElse: () => IsoCode.IN, // Default to India if not found
-      );
-      final phoneNumber = PhoneNumber.parse(value, destinationCountry: isoCode);
-      if (phoneNumber.isValid()) {
-        // Store the valid phone number in Firestore
-        await _storeUserData(phoneNumber.international);
-        setState(() {
-          // Phone number is valid, no additional action needed
-        });
-      } else {
-        setState(() {
-          _selectedCountryCode = '+91'; // Reset to default if invalid
-        });
-      }
     } catch (e) {
       // Handle error
     }
@@ -182,8 +156,29 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _phoneFocusNode.addListener(() {
+      setState(() {});
+    });
+    // Set navigation bar color to match background
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: const Color(
+          0xFFF6F8F7,
+        ), // or Colors.white if your background is white
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: SingleChildScrollView(
           // Added SingleChildScrollView to prevent overflow
@@ -209,21 +204,20 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Colors.green.shade700,
+                            width: 2,
+                          ),
+                        ),
                         prefixIcon: const Icon(Icons.person),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneController,
-                      onTap: () {
-                        setState(() {
-                          // Change the prefix icon to the country code when the field is focused
-                        });
-                      },
-                      onChanged:
-                          (value) => _onPhoneNumberChanged(
-                            value,
-                          ), // Detect changes dynamically
+                      focusNode: _phoneFocusNode,
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
                         border: OutlineInputBorder(
@@ -235,18 +229,32 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                     : Colors.grey,
                           ),
                         ),
-                        errorText: _errorMessage,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                          ), // Added padding to the left
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.phone), // Default icon
-                              const VerticalDivider(width: 1, thickness: 1),
-                            ],
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Colors.green.shade700,
+                            width: 2,
                           ),
+                        ),
+                        errorText: _errorMessage,
+                        prefixIcon:
+                            _phoneFocusNode.hasFocus
+                                ? Container(
+                                  alignment: Alignment.center,
+                                  width: 48,
+                                  child: Text(
+                                    '+91',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                )
+                                : const Icon(Icons.phone),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 48,
+                          minHeight: 48,
                         ),
                       ),
                       keyboardType: TextInputType.phone,
@@ -261,9 +269,10 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                            0xFF1B5E20,
-                          ), // Dark green color
+                          backgroundColor:
+                              Colors
+                                  .green
+                                  .shade700, // Use same green as language selection
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -288,29 +297,157 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       height: 270, // Increased animation size
                     ),
                   ] else ...[
-                    if (_errorMessage != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
+                    // OTP Input UI
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Enter the 6 digit OTP sent to',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '+91${_phoneController.text}',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  FocusScope.of(
+                                    context,
+                                  ).requestFocus(_otpFocusNode);
+                                  Future.delayed(
+                                    const Duration(milliseconds: 100),
+                                    () {
+                                      SystemChannels.textInput.invokeMethod(
+                                        'TextInput.show',
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: List.generate(6, (index) {
+                                    final isActive =
+                                        _otpController.text.length == index &&
+                                        _otpFocusNode.hasFocus;
+                                    final isFilled =
+                                        index < _otpController.text.length;
+                                    return AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 150,
+                                      ),
+                                      width: 48,
+                                      height: 56,
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color:
+                                              isActive
+                                                  ? Colors.green.shade700
+                                                  : isFilled
+                                                  ? Colors.green.shade400
+                                                  : Colors.grey.shade400,
+                                          width: 2,
+                                        ),
+                                        boxShadow:
+                                            isActive
+                                                ? [
+                                                  BoxShadow(
+                                                    color: Colors.green
+                                                        .withOpacity(0.15),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ]
+                                                : [],
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        isFilled
+                                            ? _otpController.text[index]
+                                            : '',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.headlineSmall?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                              // Hidden TextField for OTP input, always focusable
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  ignoring: false,
+                                  child: Opacity(
+                                    opacity: 0.0,
+                                    child: TextField(
+                                      focusNode: _otpFocusNode,
+                                      controller: _otpController,
+                                      maxLength: 6,
+                                      keyboardType: TextInputType.number,
+                                      autofocus: true,
+                                      style: const TextStyle(
+                                        color: Colors.transparent,
+                                      ),
+                                      cursorColor: Colors.green,
+                                      decoration: const InputDecoration(
+                                        counterText: '',
+                                        border: InputBorder.none,
+                                        fillColor: Colors.transparent,
+                                        filled: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                      onChanged: (value) {
+                                        setState(() {});
+                                      },
+                                      enableInteractiveSelection: false,
+                                      showCursor: false,
+                                      obscureText: false,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ), // Reduced space before button
+                          if (_errorMessage != null) ...[
+                            Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ],
                       ),
-                    ],
-                    TextField(
-                      controller: _otpController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter OTP',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        errorText:
-                            _errorMessage, // Correctly used errorText for validation messages
-                        prefixIcon: const Icon(
-                          Icons.lock,
-                        ), // Moved the lock icon to prefixIcon for better alignment
-                      ),
-                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 24),
                     SizedBox(
@@ -318,14 +455,15 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                            0xFF1B5E20,
-                          ), // Dark green color
+                          backgroundColor: Colors.green.shade700,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                        onPressed: _isLoading ? null : _verifyOTP,
+                        onPressed:
+                            _otpController.text.length == 6 && !_isLoading
+                                ? _verifyOTP
+                                : null,
                         child:
                             _isLoading
                                 ? const CircularProgressIndicator(
@@ -334,10 +472,8 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                   ),
                                 )
                                 : const Text(
-                                  'Verify OTP',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ), // Updated text color to white
+                                  'Proceed',
+                                  style: TextStyle(color: Colors.white),
                                 ),
                       ),
                     ),
@@ -360,7 +496,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   void dispose() {
     _phoneController.dispose();
     _otpController.dispose();
-    _nameController.dispose(); // Dispose name controller
+    _nameController.dispose();
+    _phoneFocusNode.dispose();
+    _otpFocusNode.dispose(); // Dispose the dedicated FocusNode for OTP
     super.dispose();
   }
 }
