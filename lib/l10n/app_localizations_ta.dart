@@ -156,4 +156,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get cancel => 'ரத்து செய்';
+
+  @override
+  String get nextContinue => 'தொடர்க';
+
+  @override
+  String get proceed => 'முன்னேறு';
 }

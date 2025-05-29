@@ -80,5 +80,7 @@
   "failedToSignIn": "Failed to sign in",
   "enableLocationServices": "Enable Location Services",
   "openSettings": "Open Settings",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "nextContinue": "CONTINUE",
+  "proceed": "PROCEED"
 }

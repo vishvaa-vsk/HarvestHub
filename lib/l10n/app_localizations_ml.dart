@@ -156,4 +156,10 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get cancel => 'റദ്ദാക്കുക';
+
+  @override
+  String get nextContinue => 'തുടരുക';
+
+  @override
+  String get proceed => 'മുന്നോട്ട് പോകുക';
 }

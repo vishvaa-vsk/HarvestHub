@@ -80,5 +80,7 @@
   "failedToSignIn": "Failed to sign in",
   "enableLocationServices": "स्थान सेवाएँ सक्षम करें",
   "openSettings": "सेटिंग्स खोलें",
-  "cancel": "रद्द करें"
+  "cancel": "रद्द करें",
+  "nextContinue": "जारी रखें",
+  "proceed": "आगे बढ़ें"
 }

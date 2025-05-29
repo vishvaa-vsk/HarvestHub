@@ -156,4 +156,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get nextContinue => 'CONTINUE';
+
+  @override
+  String get proceed => 'PROCEED';
 }

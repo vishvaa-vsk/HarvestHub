@@ -370,6 +370,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @nextContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUE'**
+  String get nextContinue;
+
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'PROCEED'**
+  String get proceed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

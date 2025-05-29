@@ -80,5 +80,7 @@
   "failedToSignIn": "ഉള്പ്പെടുത്തുന്നതിൽ പരാജയം",
   "enableLocationServices": "സ്ഥാനം സേവനങ്ങൾ സജീവമാക്കുക",
   "openSettings": "അமைപ്പുകൾ തുറക്കുക",
-  "cancel": "റദ്ദാക്കുക"
+  "cancel": "റദ്ദാക്കുക",
+  "nextContinue": "തുടരുക",
+  "proceed": "മുന്നോട്ട് പോകുക"
 }

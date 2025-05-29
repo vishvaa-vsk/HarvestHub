@@ -9,10 +9,10 @@ class LanguageSelectionPage extends StatefulWidget {
 
   static const List<Map<String, String>> languages = [
     {'code': 'en', 'native': 'English'},
-    {'code': 'hi', 'native': 'हिंदी'},
     {'code': 'ta', 'native': 'தமிழ்'},
     {'code': 'te', 'native': 'తెలుగు'},
     {'code': 'ml', 'native': 'മലയാളം'},
+    {'code': 'hi', 'native': 'हिंदी'}
   ];
 
   @override

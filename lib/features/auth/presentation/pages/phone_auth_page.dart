@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 import '../../../../core/services/auth_service.dart';
 import 'language_selection_page.dart';
 
@@ -176,6 +177,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
@@ -200,7 +202,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        labelText: 'Name',
+                        labelText: loc.name,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -219,7 +221,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       controller: _phoneController,
                       focusNode: _phoneFocusNode,
                       decoration: InputDecoration(
-                        labelText: 'Phone Number',
+                        labelText: loc.phoneNumber,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: BorderSide(
@@ -269,10 +271,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors
-                                  .green
-                                  .shade700, // Use same green as language selection
+                          backgroundColor: Colors.green.shade700,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -285,9 +284,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                     Colors.white,
                                   ),
                                 )
-                                : const Text(
-                                  'Send OTP',
-                                  style: TextStyle(color: Colors.white),
+                                : Text(
+                                  loc.nextContinue,
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                       ),
                     ),
@@ -304,7 +303,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Enter the 6 digit OTP sent to',
+                            loc.enterOTP, // Localized
                             style: Theme.of(
                               context,
                             ).textTheme.titleLarge?.copyWith(
@@ -471,9 +470,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                     Colors.white,
                                   ),
                                 )
-                                : const Text(
-                                  'Proceed',
-                                  style: TextStyle(color: Colors.white),
+                                : Text(
+                                  loc.proceed,
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                       ),
                     ),

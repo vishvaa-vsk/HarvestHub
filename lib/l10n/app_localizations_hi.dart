@@ -156,4 +156,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cancel => 'रद्द करें';
+
+  @override
+  String get nextContinue => 'जारी रखें';
+
+  @override
+  String get proceed => 'आगे बढ़ें';
 }

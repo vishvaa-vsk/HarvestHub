@@ -156,4 +156,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get cancel => 'రద్దు చేయండి';
+
+  @override
+  String get nextContinue => 'జారీ रखें';
+
+  @override
+  String get proceed => 'ముందుకు సాగండి';
 }

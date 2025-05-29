@@ -80,5 +80,7 @@
   "failedToSignIn": "உள்நுழைவதில் தோல்வி",
   "enableLocationServices": "இடம் சேவைகளை இயக்கவும்",
   "openSettings": "அமைப்புகளை திறக்கவும்",
-  "cancel": "ரத்து செய்"
+  "cancel": "ரத்து செய்",
+  "nextContinue": "தொடர்க",
+  "proceed": "முன்னேறு"
 }

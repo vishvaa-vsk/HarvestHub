@@ -8,7 +8,7 @@ class AppTheme {
       seedColor: const Color(0xFF2E7D32), // Green shade for agriculture theme
       brightness: Brightness.light,
     ),
-    textTheme: GoogleFonts.notoSansTextTheme(),
+    textTheme: GoogleFonts.poppinsTextTheme(),
     appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
     cardTheme: const CardThemeData(
       elevation: 2,

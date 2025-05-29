@@ -80,5 +80,7 @@
   "failedToSignIn": "సైన్ ఇన్ చేయడంలో విఫలమైంది",
   "enableLocationServices": "స్థానం సేవలను ప్రారంభించండి",
   "openSettings": "సెట్టింగ్స్ తెరవండి",
-  "cancel": "రద్దు చేయండి"
+  "cancel": "రద్దు చేయండి",
+  "nextContinue": "జారీ रखें",
+  "proceed": "ముందుకు సాగండి"
 }
