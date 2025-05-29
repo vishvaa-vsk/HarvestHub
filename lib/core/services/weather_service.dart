@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'google_translate_api.dart';
 
 /// A service class for interacting with the Weather API.
 ///
@@ -11,10 +12,26 @@ import 'package:geolocator/geolocator.dart';
 class WeatherService {
   static const String _weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
   final String? _weatherApiKey = dotenv.env['WEATHER_API_KEY'];
+  final String? _googleTranslateApiKey = dotenv.env['GOOGLE_TRANSLATE_API_KEY'];
+
+  // Helper to map locale to supported weatherapi lang
+  String _getWeatherApiLang(String langCode) {
+    switch (langCode) {
+      case 'ta':
+        return 'ta';
+      case 'te':
+        return 'te';
+      case 'hi':
+        return 'hi';
+      default:
+        return 'en';
+    }
+  }
 
   Future<Map<String, dynamic>> getWeatherData({
     double? latitude,
     double? longitude,
+    String lang = 'en',
   }) async {
     try {
       // Use provided latitude and longitude or fetch current location
@@ -23,55 +40,61 @@ class WeatherService {
         latitude = position.latitude;
         longitude = position.longitude;
       }
-
-      // Fetch current weather data from WeatherAPI
+      final apiLang = _getWeatherApiLang(lang);
+      // Fetch current weather data
       final currentWeatherResponse = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=$latitude,$longitude',
+          '$_weatherApiBaseUrl/current.json?key=$_weatherApiKey&q=$latitude,$longitude&lang=$apiLang',
         ),
       );
-
       if (currentWeatherResponse.statusCode != 200) {
         throw Exception('Failed to load current weather data');
       }
-
       final currentWeather = json.decode(currentWeatherResponse.body);
-
-      // Fetch 3-day forecast data from WeatherAPI
+      // Fetch 3-day forecast data
       final forecastResponse = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$latitude,$longitude&days=3',
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$latitude,$longitude&days=3&lang=$apiLang',
         ),
       );
-
       if (forecastResponse.statusCode != 200) {
         throw Exception('Failed to load forecast data');
       }
-
       final forecastData = json.decode(forecastResponse.body);
-
-      // Parse forecast into 3-day chunks
       final List<dynamic> forecastList =
           forecastData['forecast']['forecastday'];
-      final List<Map<String, dynamic>> forecast =
-          forecastList.map((day) {
-            return {
-              'date': day['date'],
-              'temperature': {
-                'min': day['day']['mintemp_c'],
-                'max': day['day']['maxtemp_c'],
-              },
-              'condition': day['day']['condition']['text'],
-              'rainChance': day['day']['daily_chance_of_rain'],
-            };
-          }).toList();
-
-      // Parse current weather and agricultural metrics
+      final List<Map<String, dynamic>> forecast = await Future.wait(
+        forecastList.map((day) async {
+          final condition = day['day']['condition']['text'];
+          String translatedCondition = condition;
+          if (lang == 'ml' && _googleTranslateApiKey != null) {
+            final translator = GoogleTranslateApi(_googleTranslateApiKey);
+            translatedCondition = await translator.translate(condition, 'ml');
+          }
+          return {
+            'date': day['date'],
+            'temperature': {
+              'min': day['day']['mintemp_c'],
+              'max': day['day']['maxtemp_c'],
+            },
+            'condition': translatedCondition,
+            'rainChance': day['day']['daily_chance_of_rain'],
+          };
+        }).toList(),
+      );
+      final currentCondition = currentWeather['current']['condition']['text'];
+      String translatedCurrentCondition = currentCondition;
+      if (lang == 'ml' && _googleTranslateApiKey != null) {
+        final translator = GoogleTranslateApi(_googleTranslateApiKey);
+        translatedCurrentCondition = await translator.translate(
+          currentCondition,
+          'ml',
+        );
+      }
       final current = {
         'temperature': currentWeather['current']['temp_c'] ?? 0,
         'humidity': currentWeather['current']['humidity'] ?? 0,
-        'condition':
-            currentWeather['current']['condition']['text'] ?? 'Unknown',
+        'condition': translatedCurrentCondition,
         'windSpeed': currentWeather['current']['wind_kph'] ?? 0,
         'wind_dir': currentWeather['current']['wind_dir'] ?? 'Unknown',
         'feelslike_c': currentWeather['current']['feelslike_c'] ?? 0,
@@ -80,7 +103,6 @@ class WeatherService {
         'uv': currentWeather['current']['uv'] ?? 0,
         'cloud': currentWeather['current']['cloud'] ?? 0,
       };
-
       return {
         'current': current,
         'forecast': forecast,

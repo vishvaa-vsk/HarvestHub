@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // Added import for Firestore
+import 'package:harvesthub/l10n/app_localizations.dart';
+
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import '../../../auth/presentation/pages/phone_auth_page.dart'; // Added import for PhoneAuthPage
@@ -45,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: Container(
@@ -75,11 +78,11 @@ class _MainScreenState extends State<MainScreen> {
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            items: const [
+            items: [
               BottomNavigationBarItem(
                 icon: Icon(FeatherIcons.home),
                 activeIcon: Icon(FeatherIcons.home, color: Colors.green),
-                label: 'Home',
+                label: loc.home,
               ),
               BottomNavigationBarItem(
                 icon: Icon(FeatherIcons.messageCircle),
@@ -87,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
                   FeatherIcons.messageCircle,
                   color: Colors.green,
                 ),
-                label: 'HarvestBot',
+                label: loc.harvestBot,
               ),
               BottomNavigationBarItem(
                 icon: Icon(FeatherIcons.alertTriangle),
@@ -95,12 +98,12 @@ class _MainScreenState extends State<MainScreen> {
                   FeatherIcons.alertTriangle,
                   color: Colors.green,
                 ),
-                label: 'Pest Detection',
+                label: loc.pestDetection,
               ),
               BottomNavigationBarItem(
                 icon: Icon(FeatherIcons.users),
                 activeIcon: Icon(FeatherIcons.users, color: Colors.green),
-                label: 'Community',
+                label: loc.community,
               ),
             ],
           ),
@@ -155,27 +158,26 @@ class _HomeScreenState extends State<HomeScreen> {
       _fetchWeatherAndInsights();
     } else {
       final context = this.context;
+      final loc = AppLocalizations.of(context)!;
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Enable Location Services'),
-            content: const Text(
-              'Location services are required to use this app. Please enable them in your device settings.',
-            ),
+            title: Text(loc.enableLocationServices),
+            content: Text(loc.locationServicesRequired),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Cancel'),
+                child: Text(loc.cancel),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   Geolocator.openLocationSettings();
                 },
-                child: const Text('Open Settings'),
+                child: Text(loc.openSettings),
               ),
             ],
           );
@@ -194,23 +196,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      key: _scaffoldKey, // Assigned the GlobalKey to the Scaffold
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'HarvestHub',
-              style: TextStyle(
+              loc.appTitle,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
             Text(
-              'Your farming companion',
-              style: TextStyle(fontSize: 14, color: Colors.white70),
+              loc.yourFarmingCompanion,
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
           ],
         ),
@@ -333,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Colors.green),
-              title: const Text('Edit Profile Settings'),
+              title: Text(loc.editProfileSettings),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
                 Navigator.push(
@@ -347,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout'),
+              title: Text(loc.logout),
               onTap: () async {
                 try {
                   await FirebaseAuth.instance.signOut(); // Sign out the user
@@ -382,9 +385,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               )
-              : const Center(
+              : Center(
                 child: Text(
-                  'Location services are required to use this app.',
+                  loc.locationServicesRequired,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -392,6 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildWeatherCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Consumer<WeatherProvider>(
       builder: (context, weatherProvider, child) {
         if (weatherProvider.isLoading) {
@@ -400,14 +404,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
         final weather = weatherProvider.weatherData;
         if (weather == null) {
-          return const Text('Failed to load weather data');
+          return Center(child: Text(loc.failedToLoadWeather));
         }
 
         final current = weather['current'];
         final forecast = weather['forecast'];
 
         return Card(
-          color: Colors.teal.shade50, // Reverted to blue background
+          color: Colors.teal.shade50,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -418,45 +422,118 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Weather Forecast',
+                  loc.weatherForecast,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color:
-                        Colors
-                            .black, // Darker text color for better readability
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
-                _buildCurrentWeather(context, current),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${current['temperature']}°C',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          Text(
+                            current['condition'],
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${loc.humidity(current['humidity'])}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            '${loc.visibility(current['vis_km'])}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            loc.feelsLike(current['feelslike_c']),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            loc.wind(current['windSpeed'], current['wind_dir']),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            loc.pressure(current['pressure_mb']),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            loc.uvIndex(current['uv']),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            loc.cloudCover(current['cloud']),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const Divider(height: 32, color: Colors.teal),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '3-Day Forecast',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.black87, // Improved text contrast
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        loc.threeDayForecast,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue.shade700,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ExtendedForecastPage(),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'View More',
-                        style: TextStyle(color: Colors.white),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => const ExtendedForecastPage(),
+                            ),
+                          );
+                        },
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            loc.viewMore,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -481,28 +558,46 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${current['temperature']}°C',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  current['condition'],
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${current['temperature']}°C',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  Text(
+                    current['condition'],
+                    style: Theme.of(context).textTheme.titleMedium,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('Feels Like: ${current['feelslike_c']}°C'),
-                Text(
-                  'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
-                ),
-                Text('Pressure: ${current['pressure_mb']} mb'),
-              ],
+            const SizedBox(width: 8),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Feels Like: ${current['feelslike_c']}°C',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    'Pressure: ${current['pressure_mb']} mb',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -510,34 +605,56 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Humidity: ${current['humidity']}%'),
-                Text('Visibility: ${current['vis_km']} km'),
-              ],
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Humidity: ${current['humidity']}%',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    'Visibility: ${current['vis_km']} km',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('UV Index: ${current['uv']}'),
-                Text('Cloud Cover: ${current['cloud']}%'),
-              ],
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'UV: ${current['uv']}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    'Precip: ${current['precip_mm']} mm',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 16),
       ],
     );
   }
 
   Widget _buildForecast(BuildContext context, List<dynamic> forecast) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+    return SizedBox(
+      height: 130,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
         children:
-            forecast.map((day) {
+            forecast.map<Widget>((day) {
               return Container(
-                width: 120,
+                width: 140,
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -550,6 +667,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       day['date'],
                       style: Theme.of(context).textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -557,7 +676,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 8),
-                    Text('${day['rainChance']}% Rain'),
+                    Text(
+                      '${day['rainChance']}% Rain',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               );
@@ -569,6 +693,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildInsightsSection(BuildContext context) {
     return Consumer<WeatherProvider>(
       builder: (context, weatherProvider, child) {
+        final loc = AppLocalizations.of(context)!;
         if (weatherProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -590,12 +715,12 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: const [
-                    Icon(Icons.eco, color: Colors.green),
-                    SizedBox(width: 8),
+                  children: [
+                    const Icon(Icons.eco, color: Colors.green),
+                    const SizedBox(width: 8),
                     Text(
-                      'Farming Tip',
-                      style: TextStyle(
+                      loc.farmingTip,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -609,12 +734,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const Divider(height: 32, color: Colors.teal),
                 Row(
-                  children: const [
-                    Icon(Icons.grass, color: Colors.brown),
-                    SizedBox(width: 8),
+                  children: [
+                    const Icon(Icons.grass, color: Colors.brown),
+                    const SizedBox(width: 8),
                     Text(
-                      'Recommended Crop',
-                      style: TextStyle(
+                      loc.recommendedCrop,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

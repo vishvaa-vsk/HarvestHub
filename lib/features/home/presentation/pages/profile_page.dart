@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Profile'),
-        backgroundColor: Colors.green,
-      ),
+      appBar: AppBar(title: Text(loc.appTitle), backgroundColor: Colors.green),
       body: FutureBuilder<DocumentSnapshot>(
         future:
             FirebaseFirestore.instance
@@ -26,7 +25,7 @@ class ProfilePage extends StatelessWidget {
           if (snapshot.hasError ||
               !snapshot.hasData ||
               !snapshot.data!.exists) {
-            return const Center(child: Text('Error loading profile data'));
+            return Center(child: Text(loc.errorLoadingUserData));
           }
 
           final userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -75,16 +74,16 @@ class ProfilePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Agricultural Details',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Country: ${userData['country'] ?? 'Not specified'}',
+                          'Country: ${userData['country'] ?? 'Not specified'}',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 8),

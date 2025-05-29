@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/core/services/auth_service.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -153,16 +154,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<String?> _showOtpDialog() async {
+    final loc = AppLocalizations.of(context)!;
     String? otp;
     await showDialog(
       context: context,
       builder: (context) {
         final otpController = TextEditingController();
         return AlertDialog(
-          title: const Text('Enter OTP'),
+          title: Text(loc.enterOTP),
           content: TextField(
             controller: otpController,
-            decoration: const InputDecoration(labelText: 'OTP'),
+            decoration: InputDecoration(labelText: loc.enterOTP),
             keyboardType: TextInputType.number,
           ),
           actions: [
@@ -170,14 +172,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text(loc.cancel),
             ),
             TextButton(
               onPressed: () {
                 otp = otpController.text;
                 Navigator.of(context).pop();
               },
-              child: const Text('Verify'),
+              child: Text(loc.verifyOTP),
             ),
           ],
         );
@@ -196,11 +198,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          title: const Text('Edit Profile Settings'),
+          title: Text(loc.editProfileSettings),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(

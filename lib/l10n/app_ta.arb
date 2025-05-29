@@ -1,9 +1,84 @@
 {
-  "appTitle": "ஹார்வெஸ்ட் ஹப்",
-  "welcomeMessage": "ஹார்வெஸ்ட் ஹபுக்கு வரவேற்கிறோம்!",
+  "@@locale": "ta",
+  "appTitle": "ஹார்வெஸ்ட்ஹப்",
+  "welcomeMessage": "ஹார்வெஸ்ட்ஹப்-க்கு வரவேற்கிறோம்!",
   "selectLanguage": "விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்",
   "english": "ஆங்கிலம்",
-  "spanish": "ஸ்பானிஷ்",
-  "french": "பிரெஞ்சு",
-  "german": "ஜெர்மன்"
+  "hindi": "இந்தி",
+  "tamil": "தமிழ்",
+  "telugu": "తెలుగు",
+  "malayalam": "മലയാളം",
+  "home": "முகப்பு",
+  "harvestBot": "ஹார்வெஸ்ட்பாட்",
+  "pestDetection": "பூச்சி கண்டறிதல்",
+  "community": "சமூகம்",
+  "yourFarmingCompanion": "உங்கள் விவசாய நண்பன்",
+  "editProfileSettings": "சுயவிவர அமைப்புகளைத் திருத்தவும்",
+  "logout": "லாக்அவுட்",
+  "errorLoadingUserData": "பயனர் தரவுகளை ஏற்றுவதில் பிழை",
+  "weatherForecast": "காலநிலை முன்னறிவிப்பு",
+  "feelsLike": "மனிதன் உணர்கிறார்: {value}°C",
+  "@feelsLike": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "wind": "காற்று: {speed} கிமீ/மணிநேரம் ({dir})",
+  "@wind": {
+    "placeholders": {
+      "speed": {},
+      "dir": {}
+    }
+  },
+  "pressure": "அழுத்தம்: {value} mb",
+  "@pressure": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "humidity": "ஈரப்பதம்: {value}%",
+  "@humidity": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "visibility": "தெளிவுத்தன்மை: {value} கிமீ",
+  "@visibility": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "uvIndex": "UV குறியீடு: {value}",
+  "@uvIndex": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "cloudCover": "மேகக் கவர்: {value}%",
+  "@cloudCover": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "threeDayForecast": "3-நாள் முன்னறிவிப்பு",
+  "viewMore": "மேலும் காண்க",
+  "failedToLoadWeather": "காலநிலை தரவுகளை ஏற்றுவதில் தோல்வி",
+  "farmingTip": "விவசாய குறிப்புகள்",
+  "noFarmingTip": "குறிப்பு கிடைக்கவில்லை",
+  "recommendedCrop": "பரிந்துரைக்கப்பட்ட பயிர்",
+  "noCropRecommendation": "பயிர் பரிந்துரை இல்லை",
+  "locationServicesRequired": "இப்பயன்பாட்டைப் பயன்படுத்த இடம் சேவைகள் தேவை.",
+  "failedToLoadInsights": "உள்ளடக்கம் ஏற்றுவதில் தோல்வி",
+  "sendOTP": "OTP அனுப்பவும்",
+  "verifyOTP": "OTP சரிபார்க்கவும்",
+  "name": "பெயர்",
+  "phoneNumber": "தொலைபேசி எண்",
+  "enterOTP": "OTP உள்ளிடவும்",
+  "pleaseEnterNameAndPhone": "தயவுசெய்து உங்கள் பெயர் மற்றும் தொலைபேசி எண்ணை உள்ளிடவும்",
+  "invalidOTP": "தவறான OTP",
+  "failedToSendOTP": "OTP அனுப்புவதில் தோல்வி. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+  "failedToSignIn": "உள்நுழைவதில் தோல்வி",
+  "enableLocationServices": "இடம் சேவைகளை இயக்கவும்",
+  "openSettings": "அமைப்புகளை திறக்கவும்",
+  "cancel": "ரத்து செய்"
 }

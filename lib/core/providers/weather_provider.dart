@@ -15,39 +15,41 @@ class WeatherProvider extends ChangeNotifier {
   List<Map<String, dynamic>>? _monthlyForecast;
   List<Map<String, dynamic>>? _futureWeather;
   bool _isLoading = true;
+  String _lang = 'en';
 
   Map<String, dynamic>? get weatherData => _weatherData;
   Map<String, String>? get insights => _insights;
   List<Map<String, dynamic>>? get monthlyForecast => _monthlyForecast;
   List<Map<String, dynamic>>? get futureWeather => _futureWeather;
   bool get isLoading => _isLoading;
+  String get lang => _lang;
+
+  void setLanguage(String langCode) {
+    _lang = langCode;
+    notifyListeners();
+  }
 
   Future<void> fetchWeatherData() async {
-    if (_weatherData != null) return; // Fetch only once
+    if (_weatherData != null) return;
     _isLoading = true;
     notifyListeners();
-
     try {
-      _weatherData = await _weatherService.getWeatherData();
+      _weatherData = await _weatherService.getWeatherData(lang: _lang);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Optimized fetchWeatherAndInsights to reduce loading times
   Future<void> fetchWeatherAndInsights() async {
-    if (_weatherData != null && _insights != null) return; // Fetch only once
+    if (_weatherData != null && _insights != null) return;
     _isLoading = true;
     notifyListeners();
-
     try {
-      // Check and acquire location
       final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isLocationEnabled) {
         throw Exception('Location services are disabled.');
       }
-
       final permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
@@ -57,16 +59,12 @@ class WeatherProvider extends ChangeNotifier {
           throw Exception('Location permission denied.');
         }
       }
-
       final position = await Geolocator.getCurrentPosition();
-
-      // Fetch weather data and insights in parallel
       final weatherFuture = _weatherService.getWeatherData(
         latitude: position.latitude,
         longitude: position.longitude,
+        lang: _lang,
       );
-
-      // Fixed the type mismatch for insightsFuture
       final insightsFuture = weatherFuture.then<Map<String, String>>((
         weatherData,
       ) {
@@ -79,12 +77,11 @@ class WeatherProvider extends ChangeNotifier {
             rainfall: (current['precipitation'] as num?)?.toDouble() ?? 0.0,
             windSpeed: (current['windSpeed'] as num).toDouble(),
             condition: current['condition'],
+            lang: _lang,
           );
         }
-        return Future.value({}); // Return an empty map if current is null
+        return Future.value({});
       });
-
-      // Wait for both API calls to complete
       final results = await Future.wait([weatherFuture, insightsFuture]);
       _weatherData = results[0] as Map<String, dynamic>?;
       _insights = results[1] as Map<String, String>?;

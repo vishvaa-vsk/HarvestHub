@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:harvesthub/l10n/app_localizations.dart';
 
 class AIChatPage extends StatefulWidget {
   const AIChatPage({super.key});
@@ -46,6 +47,7 @@ class _AIChatPageState extends State<AIChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
@@ -58,9 +60,9 @@ class _AIChatPageState extends State<AIChatPage> {
                 child: Icon(Icons.eco, color: Colors.green),
               ),
               const SizedBox(width: 8),
-              const Text(
-                'HarvestBot',
-                style: TextStyle(
+              Text(
+                loc.harvestBot,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -163,12 +165,7 @@ class _AIChatPageState extends State<AIChatPage> {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              16.0,
-              8.0,
-              16.0,
-              4.5,
-            ), // Adjusted bottom padding to 0
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.5),
             child: Row(
               children: [
                 Expanded(
@@ -177,7 +174,7 @@ class _AIChatPageState extends State<AIChatPage> {
                     maxLines: null,
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
-                      hintText: 'Ask a question...',
+                      hintText: loc.viewMore, // fallback to a defined ARB key
                       hintStyle: const TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.grey.shade200,

@@ -8,7 +8,7 @@ class AppTheme {
       seedColor: const Color(0xFF2E7D32), // Green shade for agriculture theme
       brightness: Brightness.light,
     ),
-    textTheme: GoogleFonts.poppinsTextTheme(),
+    textTheme: GoogleFonts.notoSansTextTheme(),
     appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
     cardTheme: const CardThemeData(
       elevation: 2,
@@ -25,4 +25,28 @@ class AppTheme {
       ),
     ),
   );
+
+  static String fontFamilyForLocale(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'Poppins';
+      case 'ta':
+        return 'NotoSansTamil';
+      case 'te':
+        return 'NotoSansTelugu';
+      case 'ml':
+        return 'NotoSansMalayalam';
+      case 'hi':
+        return 'NotoSansDevanagari';
+      default:
+        return 'Poppins';
+    }
+  }
+
+  static ThemeData themedForLocale(Locale locale) {
+    final fontFamily = fontFamilyForLocale(locale);
+    return lightTheme.copyWith(
+      textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
+    );
+  }
 }

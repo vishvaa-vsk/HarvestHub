@@ -21,15 +21,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get spanish => 'Spanish';
-
-  @override
-  String get french => 'French';
-
-  @override
-  String get german => 'German';
-
-  @override
   String get hindi => 'Hindi';
 
   @override
@@ -39,35 +30,130 @@ class AppLocalizationsEn extends AppLocalizations {
   String get telugu => 'Telugu';
 
   @override
-  String get kannada => 'Kannada';
-
-  @override
   String get malayalam => 'Malayalam';
 
   @override
-  String get bengali => 'Bengali';
+  String get home => 'Home';
 
   @override
-  String get gujarati => 'Gujarati';
+  String get harvestBot => 'HarvestBot';
 
   @override
-  String get marathi => 'Marathi';
+  String get pestDetection => 'Pest Detection';
 
   @override
-  String get punjabi => 'Punjabi';
+  String get community => 'Community';
 
   @override
-  String get odia => 'Odia';
+  String get yourFarmingCompanion => 'Your farming companion';
 
   @override
-  String get chinese => 'Chinese';
+  String get editProfileSettings => 'Edit Profile Settings';
 
   @override
-  String get japanese => 'Japanese';
+  String get logout => 'Logout';
 
   @override
-  String get russian => 'Russian';
+  String get errorLoadingUserData => 'Error loading user data';
 
   @override
-  String get arabic => 'Arabic';
+  String get weatherForecast => 'Weather Forecast';
+
+  @override
+  String feelsLike(Object value) {
+    return 'Feels Like: $value°C';
+  }
+
+  @override
+  String wind(Object speed, Object dir) {
+    return 'Wind: $speed km/h ($dir)';
+  }
+
+  @override
+  String pressure(Object value) {
+    return 'Pressure: $value mb';
+  }
+
+  @override
+  String humidity(Object value) {
+    return 'Humidity: $value%';
+  }
+
+  @override
+  String visibility(Object value) {
+    return 'Visibility: $value km';
+  }
+
+  @override
+  String uvIndex(Object value) {
+    return 'UV Index: $value';
+  }
+
+  @override
+  String cloudCover(Object value) {
+    return 'Cloud Cover: $value%';
+  }
+
+  @override
+  String get threeDayForecast => '3-Day Forecast';
+
+  @override
+  String get viewMore => 'View More';
+
+  @override
+  String get failedToLoadWeather => 'Failed to load weather data';
+
+  @override
+  String get farmingTip => 'Farming Tip';
+
+  @override
+  String get noFarmingTip => 'No farming tip available';
+
+  @override
+  String get recommendedCrop => 'Recommended Crop';
+
+  @override
+  String get noCropRecommendation => 'No crop recommendation available';
+
+  @override
+  String get locationServicesRequired => 'Location services are required to use this app.';
+
+  @override
+  String get failedToLoadInsights => 'Failed to load insights';
+
+  @override
+  String get sendOTP => 'Send OTP';
+
+  @override
+  String get verifyOTP => 'Verify OTP';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get enterOTP => 'Enter OTP';
+
+  @override
+  String get pleaseEnterNameAndPhone => 'Please enter your name and phone number';
+
+  @override
+  String get invalidOTP => 'Invalid OTP';
+
+  @override
+  String get failedToSendOTP => 'Failed to send OTP. Please try again.';
+
+  @override
+  String get failedToSignIn => 'Failed to sign in';
+
+  @override
+  String get enableLocationServices => 'Enable Location Services';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get cancel => 'Cancel';
 }

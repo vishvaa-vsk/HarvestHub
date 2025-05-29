@@ -5,21 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_ar.dart';
-import 'app_localizations_bn.dart';
 import 'app_localizations_en.dart';
-import 'app_localizations_gu.dart';
 import 'app_localizations_hi.dart';
-import 'app_localizations_ja.dart';
-import 'app_localizations_kn.dart';
 import 'app_localizations_ml.dart';
-import 'app_localizations_mr.dart';
-import 'app_localizations_or.dart';
-import 'app_localizations_pa.dart';
-import 'app_localizations_ru.dart';
 import 'app_localizations_ta.dart';
 import 'app_localizations_te.dart';
-import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -104,21 +94,11 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('ar'),
-    Locale('bn'),
     Locale('en'),
-    Locale('gu'),
     Locale('hi'),
-    Locale('ja'),
-    Locale('kn'),
     Locale('ml'),
-    Locale('mr'),
-    Locale('or'),
-    Locale('pa'),
-    Locale('ru'),
     Locale('ta'),
-    Locale('te'),
-    Locale('zh')
+    Locale('te')
   ];
 
   /// No description provided for @appTitle.
@@ -145,24 +125,6 @@ abstract class AppLocalizations {
   /// **'English'**
   String get english;
 
-  /// No description provided for @spanish.
-  ///
-  /// In en, this message translates to:
-  /// **'Spanish'**
-  String get spanish;
-
-  /// No description provided for @french.
-  ///
-  /// In en, this message translates to:
-  /// **'French'**
-  String get french;
-
-  /// No description provided for @german.
-  ///
-  /// In en, this message translates to:
-  /// **'German'**
-  String get german;
-
   /// No description provided for @hindi.
   ///
   /// In en, this message translates to:
@@ -181,71 +143,233 @@ abstract class AppLocalizations {
   /// **'Telugu'**
   String get telugu;
 
-  /// No description provided for @kannada.
-  ///
-  /// In en, this message translates to:
-  /// **'Kannada'**
-  String get kannada;
-
   /// No description provided for @malayalam.
   ///
   /// In en, this message translates to:
   /// **'Malayalam'**
   String get malayalam;
 
-  /// No description provided for @bengali.
+  /// No description provided for @home.
   ///
   /// In en, this message translates to:
-  /// **'Bengali'**
-  String get bengali;
+  /// **'Home'**
+  String get home;
 
-  /// No description provided for @gujarati.
+  /// No description provided for @harvestBot.
   ///
   /// In en, this message translates to:
-  /// **'Gujarati'**
-  String get gujarati;
+  /// **'HarvestBot'**
+  String get harvestBot;
 
-  /// No description provided for @marathi.
+  /// No description provided for @pestDetection.
   ///
   /// In en, this message translates to:
-  /// **'Marathi'**
-  String get marathi;
+  /// **'Pest Detection'**
+  String get pestDetection;
 
-  /// No description provided for @punjabi.
+  /// No description provided for @community.
   ///
   /// In en, this message translates to:
-  /// **'Punjabi'**
-  String get punjabi;
+  /// **'Community'**
+  String get community;
 
-  /// No description provided for @odia.
+  /// No description provided for @yourFarmingCompanion.
   ///
   /// In en, this message translates to:
-  /// **'Odia'**
-  String get odia;
+  /// **'Your farming companion'**
+  String get yourFarmingCompanion;
 
-  /// No description provided for @chinese.
+  /// No description provided for @editProfileSettings.
   ///
   /// In en, this message translates to:
-  /// **'Chinese'**
-  String get chinese;
+  /// **'Edit Profile Settings'**
+  String get editProfileSettings;
 
-  /// No description provided for @japanese.
+  /// No description provided for @logout.
   ///
   /// In en, this message translates to:
-  /// **'Japanese'**
-  String get japanese;
+  /// **'Logout'**
+  String get logout;
 
-  /// No description provided for @russian.
+  /// No description provided for @errorLoadingUserData.
   ///
   /// In en, this message translates to:
-  /// **'Russian'**
-  String get russian;
+  /// **'Error loading user data'**
+  String get errorLoadingUserData;
 
-  /// No description provided for @arabic.
+  /// No description provided for @weatherForecast.
   ///
   /// In en, this message translates to:
-  /// **'Arabic'**
-  String get arabic;
+  /// **'Weather Forecast'**
+  String get weatherForecast;
+
+  /// No description provided for @feelsLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Feels Like: {value}°C'**
+  String feelsLike(Object value);
+
+  /// No description provided for @wind.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind: {speed} km/h ({dir})'**
+  String wind(Object speed, Object dir);
+
+  /// No description provided for @pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure: {value} mb'**
+  String pressure(Object value);
+
+  /// No description provided for @humidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity: {value}%'**
+  String humidity(Object value);
+
+  /// No description provided for @visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility: {value} km'**
+  String visibility(Object value);
+
+  /// No description provided for @uvIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'UV Index: {value}'**
+  String uvIndex(Object value);
+
+  /// No description provided for @cloudCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Cover: {value}%'**
+  String cloudCover(Object value);
+
+  /// No description provided for @threeDayForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'3-Day Forecast'**
+  String get threeDayForecast;
+
+  /// No description provided for @viewMore.
+  ///
+  /// In en, this message translates to:
+  /// **'View More'**
+  String get viewMore;
+
+  /// No description provided for @failedToLoadWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load weather data'**
+  String get failedToLoadWeather;
+
+  /// No description provided for @farmingTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Farming Tip'**
+  String get farmingTip;
+
+  /// No description provided for @noFarmingTip.
+  ///
+  /// In en, this message translates to:
+  /// **'No farming tip available'**
+  String get noFarmingTip;
+
+  /// No description provided for @recommendedCrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Crop'**
+  String get recommendedCrop;
+
+  /// No description provided for @noCropRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'No crop recommendation available'**
+  String get noCropRecommendation;
+
+  /// No description provided for @locationServicesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are required to use this app.'**
+  String get locationServicesRequired;
+
+  /// No description provided for @failedToLoadInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load insights'**
+  String get failedToLoadInsights;
+
+  /// No description provided for @sendOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOTP;
+
+  /// No description provided for @verifyOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP'**
+  String get verifyOTP;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @enterOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter OTP'**
+  String get enterOTP;
+
+  /// No description provided for @pleaseEnterNameAndPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name and phone number'**
+  String get pleaseEnterNameAndPhone;
+
+  /// No description provided for @invalidOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid OTP'**
+  String get invalidOTP;
+
+  /// No description provided for @failedToSendOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send OTP. Please try again.'**
+  String get failedToSendOTP;
+
+  /// No description provided for @failedToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to sign in'**
+  String get failedToSignIn;
+
+  /// No description provided for @enableLocationServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Location Services'**
+  String get enableLocationServices;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
@@ -257,7 +381,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'bn', 'en', 'gu', 'hi', 'ja', 'kn', 'ml', 'mr', 'or', 'pa', 'ru', 'ta', 'te', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'hi', 'ml', 'ta', 'te'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -268,21 +392,11 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar': return AppLocalizationsAr();
-    case 'bn': return AppLocalizationsBn();
     case 'en': return AppLocalizationsEn();
-    case 'gu': return AppLocalizationsGu();
     case 'hi': return AppLocalizationsHi();
-    case 'ja': return AppLocalizationsJa();
-    case 'kn': return AppLocalizationsKn();
     case 'ml': return AppLocalizationsMl();
-    case 'mr': return AppLocalizationsMr();
-    case 'or': return AppLocalizationsOr();
-    case 'pa': return AppLocalizationsPa();
-    case 'ru': return AppLocalizationsRu();
     case 'ta': return AppLocalizationsTa();
     case 'te': return AppLocalizationsTe();
-    case 'zh': return AppLocalizationsZh();
   }
 
   throw FlutterError(

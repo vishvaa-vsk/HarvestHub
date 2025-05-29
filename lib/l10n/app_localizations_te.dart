@@ -21,53 +21,139 @@ class AppLocalizationsTe extends AppLocalizations {
   String get english => 'ఆంగ్లం';
 
   @override
-  String get spanish => 'స్పానిష్';
+  String get hindi => 'హిందీ';
 
   @override
-  String get french => 'ఫ్రెంచ్';
+  String get tamil => 'తమిళం';
 
   @override
-  String get german => 'జర్మన్';
+  String get telugu => 'తెలుగు';
 
   @override
-  String get hindi => 'Hindi';
+  String get malayalam => 'మలయాళం';
 
   @override
-  String get tamil => 'Tamil';
+  String get home => 'హోమ్';
 
   @override
-  String get telugu => 'Telugu';
+  String get harvestBot => 'హార్వెస్ట్ బాట్';
 
   @override
-  String get kannada => 'Kannada';
+  String get pestDetection => 'పొత్తికాయ గుర్తింపు';
 
   @override
-  String get malayalam => 'Malayalam';
+  String get community => 'సమూహం';
 
   @override
-  String get bengali => 'Bengali';
+  String get yourFarmingCompanion => 'మీ కృషి సహచరుడు';
 
   @override
-  String get gujarati => 'Gujarati';
+  String get editProfileSettings => 'ప్రొఫైల్ సెట్టింగ్స్ ఎడిట్ చేయండి';
 
   @override
-  String get marathi => 'Marathi';
+  String get logout => 'లాగ్ అవుట్';
 
   @override
-  String get punjabi => 'Punjabi';
+  String get errorLoadingUserData => 'ఉపయోగదారు డేటా లోడ్ చేయడంలో పొరపాటు';
 
   @override
-  String get odia => 'Odia';
+  String get weatherForecast => 'కాలావస్థా అంచనాలు';
 
   @override
-  String get chinese => 'Chinese';
+  String feelsLike(Object value) {
+    return 'అనుభవం: $value°C';
+  }
 
   @override
-  String get japanese => 'Japanese';
+  String wind(Object speed, Object dir) {
+    return 'గాలి: $speed కిమీ/గంట ($dir)';
+  }
 
   @override
-  String get russian => 'Russian';
+  String pressure(Object value) {
+    return 'అళుత్తం: $value mb';
+  }
 
   @override
-  String get arabic => 'Arabic';
+  String humidity(Object value) {
+    return 'ఆర్ద్రత: $value%';
+  }
+
+  @override
+  String visibility(Object value) {
+    return 'తెళివు: $value కిమీ';
+  }
+
+  @override
+  String uvIndex(Object value) {
+    return 'UV సూచిక: $value';
+  }
+
+  @override
+  String cloudCover(Object value) {
+    return 'మెగ కవర్: $value%';
+  }
+
+  @override
+  String get threeDayForecast => '3-రోజుల అంచనాలు';
+
+  @override
+  String get viewMore => 'మరింత చూడండి';
+
+  @override
+  String get failedToLoadWeather => 'కాలావస్థా డేటా లోడ్ చేయడంలో విఫలమైంది';
+
+  @override
+  String get farmingTip => 'కృషి సూచన';
+
+  @override
+  String get noFarmingTip => 'కృషి సూచన అందుబాటులో లేదు';
+
+  @override
+  String get recommendedCrop => 'శ్రేష్ఠమైన పంట';
+
+  @override
+  String get noCropRecommendation => 'పంట సూచన అందుబాటులో లేదు';
+
+  @override
+  String get locationServicesRequired => 'ఈ యాప్‌ను ఉపయోగించడానికి స్థానం సేవలు అవసరం.';
+
+  @override
+  String get failedToLoadInsights => 'అంతర్దృష్టి లోడ్ చేయడంలో విఫలమైంది';
+
+  @override
+  String get sendOTP => 'OTP పంపండి';
+
+  @override
+  String get verifyOTP => 'OTP ధృవీకరించండి';
+
+  @override
+  String get name => 'పేరు';
+
+  @override
+  String get phoneNumber => 'ఫోన్ నంబర్';
+
+  @override
+  String get enterOTP => 'OTP నమోదు చేయండి';
+
+  @override
+  String get pleaseEnterNameAndPhone => 'దయచేసి మీ పేరు మరియు ఫోన్ నంబర్ నమోదు చేయండి';
+
+  @override
+  String get invalidOTP => 'అసాధువైన OTP';
+
+  @override
+  String get failedToSendOTP => 'OTP పంపడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get failedToSignIn => 'సైన్ ఇన్ చేయడంలో విఫలమైంది';
+
+  @override
+  String get enableLocationServices => 'స్థానం సేవలను ప్రారంభించండి';
+
+  @override
+  String get openSettings => 'సెట్టింగ్స్ తెరవండి';
+
+  @override
+  String get cancel => 'రద్దు చేయండి';
 }

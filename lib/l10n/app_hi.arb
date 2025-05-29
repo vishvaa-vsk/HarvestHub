@@ -1,9 +1,84 @@
 {
+  "@@locale": "hi",
   "appTitle": "हार्वेस्टहब",
   "welcomeMessage": "हार्वेस्टहब में आपका स्वागत है!",
   "selectLanguage": "पसंदीदा भाषा चुनें",
   "english": "अंग्रेज़ी",
-  "spanish": "स्पेनिश",
-  "french": "फ्रेंच",
-  "german": "जर्मन"
+  "hindi": "हिंदी",
+  "tamil": "तमिल",
+  "telugu": "तेलुगु",
+  "malayalam": "मलयालम",
+  "home": "होम",
+  "harvestBot": "हार्वेस्टबॉट",
+  "pestDetection": "कीट पहचान",
+  "community": "समुदाय",
+  "yourFarmingCompanion": "आपका कृषि साथी",
+  "editProfileSettings": "प्रोफ़ाइल सेटिंग्स संपादित करें",
+  "logout": "लॉगआउट",
+  "errorLoadingUserData": "उपयोगकर्ता डेटा लोड करने में त्रुटि",
+  "weatherForecast": "मौसम पूर्वानुमान",
+  "feelsLike": "महसूस होता है: {value}°C",
+  "@feelsLike": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "wind": "हवा: {speed} किमी/घंटा ({dir})",
+  "@wind": {
+    "placeholders": {
+      "speed": {},
+      "dir": {}
+    }
+  },
+  "pressure": "दबाव: {value} mb",
+  "@pressure": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "humidity": "आर्द्रता: {value}%",
+  "@humidity": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "visibility": "दृश्यता: {value} किमी",
+  "@visibility": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "uvIndex": "यूवी इंडेक्स: {value}",
+  "@uvIndex": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "cloudCover": "मेघ आवरण: {value}%",
+  "@cloudCover": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "threeDayForecast": "3-दिन का पूर्वानुमान",
+  "viewMore": "और देखें",
+  "failedToLoadWeather": "मौसम डेटा लोड करने में विफल",
+  "farmingTip": "कृषि टिप",
+  "noFarmingTip": "कोई कृषि टिप उपलब्ध नहीं है",
+  "recommendedCrop": "अनुशंसित फसल",
+  "noCropRecommendation": "कोई फसल अनुशंसा उपलब्ध नहीं है",
+  "locationServicesRequired": "इस ऐप का उपयोग करने के लिए स्थान सेवाएँ आवश्यक हैं।",
+  "failedToLoadInsights": "अंतर्दृष्टि लोड करने में विफल",
+  "sendOTP": "OTP भेजें",
+  "verifyOTP": "OTP सत्यापित करें",
+  "name": "नाम",
+  "phoneNumber": "फोन नंबर",
+  "enterOTP": "OTP दर्ज करें",
+  "pleaseEnterNameAndPhone": "कृपया अपना नाम और फोन नंबर दर्ज करें",
+  "invalidOTP": "अमान्य OTP",
+  "failedToSendOTP": "OTP भेजने में विफल। कृपया पुनः प्रयास करें।",
+  "failedToSignIn": "Failed to sign in",
+  "enableLocationServices": "स्थान सेवाएँ सक्षम करें",
+  "openSettings": "सेटिंग्स खोलें",
+  "cancel": "रद्द करें"
 }

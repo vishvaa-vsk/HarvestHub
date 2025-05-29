@@ -1,9 +1,84 @@
 {
+  "@@locale": "te",
   "appTitle": "హార్వెస్ట్ హబ్",
   "welcomeMessage": "హార్వెస్ట్ హబ్‌కు స్వాగతం!",
   "selectLanguage": "ఇష్టమైన భాషను ఎంచుకోండి",
   "english": "ఆంగ్లం",
-  "spanish": "స్పానిష్",
-  "french": "ఫ్రెంచ్",
-  "german": "జర్మన్"
+  "hindi": "హిందీ",
+  "tamil": "తమిళం",
+  "telugu": "తెలుగు",
+  "malayalam": "మలయాళం",
+  "home": "హోమ్",
+  "harvestBot": "హార్వెస్ట్ బాట్",
+  "pestDetection": "పొత్తికాయ గుర్తింపు",
+  "community": "సమూహం",
+  "yourFarmingCompanion": "మీ కృషి సహచరుడు",
+  "editProfileSettings": "ప్రొఫైల్ సెట్టింగ్స్ ఎడిట్ చేయండి",
+  "logout": "లాగ్ అవుట్",
+  "errorLoadingUserData": "ఉపయోగదారు డేటా లోడ్ చేయడంలో పొరపాటు",
+  "weatherForecast": "కాలావస్థా అంచనాలు",
+  "feelsLike": "అనుభవం: {value}°C",
+  "@feelsLike": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "wind": "గాలి: {speed} కిమీ/గంట ({dir})",
+  "@wind": {
+    "placeholders": {
+      "speed": {},
+      "dir": {}
+    }
+  },
+  "pressure": "అళుత్తం: {value} mb",
+  "@pressure": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "humidity": "ఆర్ద్రత: {value}%",
+  "@humidity": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "visibility": "తెళివు: {value} కిమీ",
+  "@visibility": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "uvIndex": "UV సూచిక: {value}",
+  "@uvIndex": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "cloudCover": "మెగ కవర్: {value}%",
+  "@cloudCover": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "threeDayForecast": "3-రోజుల అంచనాలు",
+  "viewMore": "మరింత చూడండి",
+  "failedToLoadWeather": "కాలావస్థా డేటా లోడ్ చేయడంలో విఫలమైంది",
+  "farmingTip": "కృషి సూచన",
+  "noFarmingTip": "కృషి సూచన అందుబాటులో లేదు",
+  "recommendedCrop": "శ్రేష్ఠమైన పంట",
+  "noCropRecommendation": "పంట సూచన అందుబాటులో లేదు",
+  "locationServicesRequired": "ఈ యాప్‌ను ఉపయోగించడానికి స్థానం సేవలు అవసరం.",
+  "failedToLoadInsights": "అంతర్దృష్టి లోడ్ చేయడంలో విఫలమైంది",
+  "sendOTP": "OTP పంపండి",
+  "verifyOTP": "OTP ధృవీకరించండి",
+  "name": "పేరు",
+  "phoneNumber": "ఫోన్ నంబర్",
+  "enterOTP": "OTP నమోదు చేయండి",
+  "pleaseEnterNameAndPhone": "దయచేసి మీ పేరు మరియు ఫోన్ నంబర్ నమోదు చేయండి",
+  "invalidOTP": "అసాధువైన OTP",
+  "failedToSendOTP": "OTP పంపడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  "failedToSignIn": "సైన్ ఇన్ చేయడంలో విఫలమైంది",
+  "enableLocationServices": "స్థానం సేవలను ప్రారంభించండి",
+  "openSettings": "సెట్టింగ్స్ తెరవండి",
+  "cancel": "రద్దు చేయండి"
 }
