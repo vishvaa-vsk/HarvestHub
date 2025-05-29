@@ -162,4 +162,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get proceed => 'முன்னேறு';
+
+  @override
+  String get changeLanguage => 'மொழி மாற்றவும்';
+
+  @override
+  String get talkToHarvestBot => 'ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்';
 }

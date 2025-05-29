@@ -174,7 +174,7 @@ class _AIChatPageState extends State<AIChatPage> {
                     maxLines: null,
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
-                      hintText: loc.viewMore, // fallback to a defined ARB key
+                      hintText: loc.talkToHarvestBot, // fallback to a defined ARB key
                       hintStyle: const TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.grey.shade200,

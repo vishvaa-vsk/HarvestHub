@@ -82,5 +82,7 @@
   "openSettings": "सेटिंग्स खोलें",
   "cancel": "रद्द करें",
   "nextContinue": "जारी रखें",
-  "proceed": "आगे बढ़ें"
+  "proceed": "आगे बढ़ें",
+  "changeLanguage": "भाषा बदलें",
+  "talkToHarvestBot": "हार्वेस्टबॉट से बात करें"
 }

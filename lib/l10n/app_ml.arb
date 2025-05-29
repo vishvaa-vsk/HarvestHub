@@ -82,5 +82,7 @@
   "openSettings": "അமைപ്പുകൾ തുറക്കുക",
   "cancel": "റദ്ദാക്കുക",
   "nextContinue": "തുടരുക",
-  "proceed": "മുന്നോട്ട് പോകുക"
+  "proceed": "മുന്നോട്ട് പോകുക",
+  "changeLanguage": "ഭാഷ മാറ്റുക",
+  "talkToHarvestBot": "HarvestBot-നോട് സംസാരിക്കുക"
 }

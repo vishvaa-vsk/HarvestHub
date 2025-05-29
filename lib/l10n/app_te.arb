@@ -82,5 +82,7 @@
   "openSettings": "సెట్టింగ్స్ తెరవండి",
   "cancel": "రద్దు చేయండి",
   "nextContinue": "జారీ रखें",
-  "proceed": "ముందుకు సాగండి"
+  "proceed": "ముందుకు సాగండి",
+  "changeLanguage": "భాష మార్చండి",
+  "talkToHarvestBot": "హార్వెస్ట్ బాట్‌తో మాట్లాడండి"
 }

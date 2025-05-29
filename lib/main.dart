@@ -25,6 +25,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 
+final GlobalKey<_HarvestHubAppState> harvestHubAppKey =
+    GlobalKey<_HarvestHubAppState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
@@ -40,7 +43,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => WeatherProvider())],
-      child: const HarvestHubApp(),
+      child: HarvestHubApp(key: harvestHubAppKey),
     ),
   );
 }

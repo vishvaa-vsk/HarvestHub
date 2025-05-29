@@ -162,4 +162,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get proceed => 'आगे बढ़ें';
+
+  @override
+  String get changeLanguage => 'भाषा बदलें';
+
+  @override
+  String get talkToHarvestBot => 'हार्वेस्टबॉट से बात करें';
 }

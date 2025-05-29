@@ -26,6 +26,8 @@ class WeatherProvider extends ChangeNotifier {
 
   void setLanguage(String langCode) {
     _lang = langCode;
+    _weatherData = null;
+    _insights = null;
     notifyListeners();
   }
 

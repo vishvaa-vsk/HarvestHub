@@ -162,4 +162,10 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get proceed => 'മുന്നോട്ട് പോകുക';
+
+  @override
+  String get changeLanguage => 'ഭാഷ മാറ്റുക';
+
+  @override
+  String get talkToHarvestBot => 'HarvestBot-നോട് സംസാരിക്കുക';
 }

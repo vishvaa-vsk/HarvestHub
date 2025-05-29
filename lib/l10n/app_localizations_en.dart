@@ -162,4 +162,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proceed => 'PROCEED';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get talkToHarvestBot => 'Talk to HarvestBot';
 }

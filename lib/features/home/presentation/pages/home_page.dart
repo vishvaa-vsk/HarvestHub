@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // Added import for Firestore
 import 'package:harvesthub/l10n/app_localizations.dart';
+import 'package:harvesthub/main.dart'; // Import the file where the GlobalKey is defined
 
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
@@ -93,9 +94,9 @@ class _MainScreenState extends State<MainScreen> {
                 label: loc.harvestBot,
               ),
               BottomNavigationBarItem(
-                icon: Icon(FeatherIcons.alertTriangle),
+                icon: Icon(Icons.pest_control),
                 activeIcon: Icon(
-                  FeatherIcons.alertTriangle,
+                  Icons.pest_control,
                   color: Colors.green,
                 ),
                 label: loc.pestDetection,
@@ -345,6 +346,120 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => const EditProfilePage(),
                   ),
                 );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.language, color: Colors.blue),
+              title: Text(loc.changeLanguage),
+              onTap: () async {
+                Navigator.pop(context); // Close the drawer
+                final languages = [
+                  {'code': 'en', 'label': loc.english, 'icon': Icons.language},
+                  {'code': 'hi', 'label': loc.hindi, 'icon': Icons.translate},
+                  {'code': 'ta', 'label': loc.tamil, 'icon': Icons.g_translate},
+                  {
+                    'code': 'te',
+                    'label': loc.telugu,
+                    'icon': Icons.g_translate,
+                  },
+                  {
+                    'code': 'ml',
+                    'label': loc.malayalam,
+                    'icon': Icons.g_translate,
+                  },
+                ];
+                final selected = await showModalBottomSheet<String>(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    final theme = Theme.of(context);
+                    final green = Colors.green.shade700;
+                    final greyTile = const Color(0xFFF3F3F3);
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(28),
+                        ),
+                      ),
+                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'HarvestHub',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 3, top: 2),
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: green,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 18),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              loc.selectLanguage,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            childAspectRatio: 2.2,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              for (final lang in languages)
+                                _LanguageTileModal(
+                                  label: lang['label'] as String,
+                                  icon: lang['icon'] as IconData,
+                                  onTap:
+                                      () => Navigator.pop(
+                                        context,
+                                        lang['code'] as String,
+                                      ),
+                                  accent: green,
+                                  grey: greyTile,
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    );
+                  },
+                );
+                if (selected != null) {
+                  final rootState = harvestHubAppKey.currentState;
+                  if (rootState != null) {
+                    await rootState.setLocale(selected);
+                    // Fetch new weather and insights in the new language
+                    final provider = Provider.of<WeatherProvider>(
+                      context,
+                      listen: false,
+                    );
+                    await provider.fetchWeatherAndInsights();
+                  }
+                }
               },
             ),
             const Divider(),
@@ -790,5 +905,53 @@ class CommunityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('Community Screen'));
+  }
+}
+
+class _LanguageTileModal extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color accent;
+  final Color grey;
+  const _LanguageTileModal({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    required this.accent,
+    required this.grey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: grey,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(icon, color: accent, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

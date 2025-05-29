@@ -82,5 +82,7 @@
   "openSettings": "அமைப்புகளை திறக்கவும்",
   "cancel": "ரத்து செய்",
   "nextContinue": "தொடர்க",
-  "proceed": "முன்னேறு"
+  "proceed": "முன்னேறு",
+  "changeLanguage": "மொழி மாற்றவும்",
+  "talkToHarvestBot": "ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்"
 }

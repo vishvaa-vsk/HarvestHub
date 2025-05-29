@@ -162,4 +162,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get proceed => 'ముందుకు సాగండి';
+
+  @override
+  String get changeLanguage => 'భాష మార్చండి';
+
+  @override
+  String get talkToHarvestBot => 'హార్వెస్ట్ బాట్‌తో మాట్లాడండి';
 }

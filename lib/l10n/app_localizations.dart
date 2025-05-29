@@ -382,6 +382,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PROCEED'**
   String get proceed;
+
+  /// No description provided for @changeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Language'**
+  String get changeLanguage;
+
+  /// No description provided for @talkToHarvestBot.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to HarvestBot'**
+  String get talkToHarvestBot;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

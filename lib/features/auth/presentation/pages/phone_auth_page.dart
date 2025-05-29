@@ -45,8 +45,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
 
   // Updated _sendOTP to check for existing user data in Firestore
   Future<void> _sendOTP() async {
+    final loc = AppLocalizations.of(context)!;
     if (_phoneController.text.isEmpty || _nameController.text.isEmpty) {
-      setState(() => _errorMessage = 'Please enter your name and phone number');
+      setState(() => _errorMessage = loc.pleaseEnterNameAndPhone);
       return;
     }
 
@@ -89,7 +90,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       );
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to send OTP. Please try again.';
+        _errorMessage = loc.failedToSendOTP;
         _isLoading = false;
       });
       // Handle error
@@ -98,8 +99,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
 
   // Ensure verificationId is non-null before using it
   Future<void> _verifyOTP() async {
+    final loc = AppLocalizations.of(context)!;
     if (_otpController.text.isEmpty) {
-      setState(() => _errorMessage = 'Please enter the OTP');
+      setState(() => _errorMessage = loc.enterOTP);
       return;
     }
 
@@ -133,13 +135,13 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         ); // Call the function to set preferred language
       } else {
         setState(() {
-          _errorMessage = 'Failed to sign in';
+          _errorMessage = loc.failedToSignIn;
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Invalid OTP';
+        _errorMessage = loc.invalidOTP;
         _isLoading = false;
       });
       // Handle error

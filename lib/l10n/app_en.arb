@@ -82,5 +82,7 @@
   "openSettings": "Open Settings",
   "cancel": "Cancel",
   "nextContinue": "CONTINUE",
-  "proceed": "PROCEED"
+  "proceed": "PROCEED",
+  "changeLanguage": "Change Language",
+  "talkToHarvestBot": "Talk to HarvestBot"
 }
