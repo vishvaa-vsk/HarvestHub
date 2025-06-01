@@ -16,7 +16,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
-import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/phone_auth_page.dart';
 import 'features/auth/presentation/pages/language_selection_page.dart';
 import 'features/home/presentation/pages/home_page.dart';

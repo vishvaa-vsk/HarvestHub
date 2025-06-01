@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseA
 import 'package:cloud_firestore/cloud_firestore.dart'; // Added import for Firestore
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:harvesthub/main.dart'; // Import the file where the GlobalKey is defined
+import 'package:flutter/services.dart';
 
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
@@ -95,10 +96,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.pest_control),
-                activeIcon: Icon(
-                  Icons.pest_control,
-                  color: Colors.green,
-                ),
+                activeIcon: Icon(Icons.pest_control, color: Colors.green),
                 label: loc.pestDetection,
               ),
               BottomNavigationBarItem(
@@ -452,6 +450,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   final rootState = harvestHubAppKey.currentState;
                   if (rootState != null) {
                     await rootState.setLocale(selected);
+                    // Reset system navigation bar color after locale change
+                    SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                        systemNavigationBarColor: Color(0xFFF6F8F7),
+                        systemNavigationBarIconBrightness: Brightness.dark,
+                        statusBarColor: Colors.transparent,
+                        statusBarIconBrightness: Brightness.dark,
+                      ),
+                    );
                     // Fetch new weather and insights in the new language
                     final provider = Provider.of<WeatherProvider>(
                       context,
@@ -561,11 +568,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${loc.humidity(current['humidity'])}',
+                            loc.humidity(current['humidity']),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            '${loc.visibility(current['vis_km'])}',
+                            loc.visibility(current['vis_km']),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
