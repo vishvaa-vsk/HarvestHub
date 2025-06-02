@@ -15,13 +15,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get welcomeMessage => 'हार्वेस्टहब में आपका स्वागत है!';
 
   @override
-  String get selectLanguage => 'पसंदीदा भाषा चुनें';
+  String get selectLanguage => 'भाषा चुनें';
 
   @override
   String get english => 'अंग्रेज़ी';
 
   @override
-  String get hindi => 'हिंदी';
+  String get hindi => 'हिन्दी';
 
   @override
   String get tamil => 'तमिल';
@@ -168,4 +168,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get talkToHarvestBot => 'हार्वेस्टबॉट से बात करें';
+
+  @override
+  String get createPost => 'पोस्ट बनाएँ';
+
+  @override
+  String get addComment => 'टिप्पणी जोड़ें...';
+
+  @override
+  String get post => 'पोस्ट';
+
+  @override
+  String get noPostsYet => 'अभी तक कोई पोस्ट नहीं है।';
+
+  @override
+  String get whatsOnYourMind => 'आपके मन में क्या है?';
 }

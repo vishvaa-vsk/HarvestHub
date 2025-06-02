@@ -15,7 +15,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get welcomeMessage => 'ஹார்வெஸ்ட்ஹப்-க்கு வரவேற்கிறோம்!';
 
   @override
-  String get selectLanguage => 'விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
+  String get selectLanguage => 'மொழியைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get english => 'ஆங்கிலம்';
@@ -27,10 +27,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get tamil => 'தமிழ்';
 
   @override
-  String get telugu => 'తెలుగు';
+  String get telugu => 'தெலுங்கு';
 
   @override
-  String get malayalam => 'മലയാളം';
+  String get malayalam => 'மலையாளம்';
 
   @override
   String get home => 'முகப்பு';
@@ -168,4 +168,19 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get talkToHarvestBot => 'ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்';
+
+  @override
+  String get createPost => 'பதிவு உருவாக்கவும்';
+
+  @override
+  String get addComment => 'கருத்தைச் சேர்க்கவும்...';
+
+  @override
+  String get post => 'பதிவு';
+
+  @override
+  String get noPostsYet => 'இன்னும் பதிவுகள் இல்லை.';
+
+  @override
+  String get whatsOnYourMind => 'உங்கள் மனதில் என்ன உள்ளது?';
 }

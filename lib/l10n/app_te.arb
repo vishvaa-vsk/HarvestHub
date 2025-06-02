@@ -84,5 +84,17 @@
   "nextContinue": "జారీ रखें",
   "proceed": "ముందుకు సాగండి",
   "changeLanguage": "భాష మార్చండి",
-  "talkToHarvestBot": "హార్వెస్ట్ బాట్‌తో మాట్లాడండి"
+  "talkToHarvestBot": "హార్వెస్ట్ బాట్‌తో మాట్లాడండి",
+  "community": "సముదాయం",
+  "createPost": "పోస్ట్ సృష్టించండి",
+  "addComment": "వ్యాఖ్యను జోడించండి...",
+  "post": "పోస్ట్",
+  "noPostsYet": "ఇంకా పోస్టులు లేవు.",
+  "whatsOnYourMind": "మీ మనసులో ఏముంది?",
+  "selectLanguage": "భాషను ఎంచుకోండి",
+  "english": "ఆంగ్లం",
+  "hindi": "హిందీ",
+  "tamil": "తమిళం",
+  "telugu": "తెలుగు",
+  "malayalam": "మలయాళం"
 }

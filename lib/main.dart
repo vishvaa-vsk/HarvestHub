@@ -23,6 +23,7 @@ import 'core/providers/weather_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'screens/community_feed.dart';
 
 final GlobalKey<_HarvestHubAppState> harvestHubAppKey =
     GlobalKey<_HarvestHubAppState>();
@@ -144,7 +145,10 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      routes: {'/home': (context) => const MainScreen()},
+      routes: {
+        '/home': (context) => const MainScreen(),
+        '/community': (context) => CommunityFeedPage(),
+      },
       home:
           !_languagePicked
               ? LanguageSelectionPage(

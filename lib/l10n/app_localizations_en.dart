@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeMessage => 'Welcome to HarvestHub!';
 
   @override
-  String get selectLanguage => 'Select Preferred Language';
+  String get selectLanguage => 'Select Language';
 
   @override
   String get english => 'English';
@@ -168,4 +168,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get talkToHarvestBot => 'Talk to HarvestBot';
+
+  @override
+  String get createPost => 'Create Post';
+
+  @override
+  String get addComment => 'Add a comment...';
+
+  @override
+  String get post => 'Post';
+
+  @override
+  String get noPostsYet => 'No posts yet.';
+
+  @override
+  String get whatsOnYourMind => 'What\'s on your mind?';
 }

@@ -84,5 +84,17 @@
   "nextContinue": "തുടരുക",
   "proceed": "മുന്നോട്ട് പോകുക",
   "changeLanguage": "ഭാഷ മാറ്റുക",
-  "talkToHarvestBot": "HarvestBot-നോട് സംസാരിക്കുക"
+  "talkToHarvestBot": "HarvestBot-നോട് സംസാരിക്കുക",
+  "community": "സമൂഹം",
+  "createPost": "പോസ്റ്റ് സൃഷ്ടിക്കുക",
+  "addComment": "അഭിപ്രായം ചേർക്കുക...",
+  "post": "പോസ്റ്റ്",
+  "noPostsYet": "ഇതുവരെ പോസ്റ്റുകളൊന്നുമില്ല.",
+  "whatsOnYourMind": "നിങ്ങളുടെ മനസ്സിൽ എന്താണ്?",
+  "selectLanguage": "ഭാഷ തിരഞ്ഞെടുക്കുക",
+  "english": "ഇംഗ്ലീഷ്",
+  "hindi": "ഹിന്ദി",
+  "tamil": "തമിഴ്",
+  "telugu": "തെലുങ്ക്",
+  "malayalam": "മലയാളം"
 }

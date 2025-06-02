@@ -14,6 +14,7 @@ import '../../../auth/presentation/pages/phone_auth_page.dart'; // Added import 
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
 import 'profile_page.dart'; // Added import for ProfilePage
+import '../../../../screens/community_feed.dart';
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -42,9 +43,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const AIChatPage(), // Correctly linked AIChatPage
+    const AIChatPage(),
     const PestDetectionScreen(),
-    const CommunityScreen(),
+    CommunityFeedPage(), // Use the new Community Feed
   ];
 
   @override

@@ -84,5 +84,17 @@
   "nextContinue": "தொடர்க",
   "proceed": "முன்னேறு",
   "changeLanguage": "மொழி மாற்றவும்",
-  "talkToHarvestBot": "ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்"
+  "talkToHarvestBot": "ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்",
+  "community": "சமூகம்",
+  "createPost": "பதிவு உருவாக்கவும்",
+  "addComment": "கருத்தைச் சேர்க்கவும்...",
+  "post": "பதிவு",
+  "noPostsYet": "இன்னும் பதிவுகள் இல்லை.",
+  "whatsOnYourMind": "உங்கள் மனதில் என்ன உள்ளது?",
+  "selectLanguage": "மொழியைத் தேர்ந்தெடுக்கவும்",
+  "english": "ஆங்கிலம்",
+  "hindi": "இந்தி",
+  "tamil": "தமிழ்",
+  "telugu": "தெலுங்கு",
+  "malayalam": "மலையாளம்"
 }

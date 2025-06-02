@@ -84,5 +84,17 @@
   "nextContinue": "CONTINUE",
   "proceed": "PROCEED",
   "changeLanguage": "Change Language",
-  "talkToHarvestBot": "Talk to HarvestBot"
+  "talkToHarvestBot": "Talk to HarvestBot",
+  "community": "Community",
+  "createPost": "Create Post",
+  "addComment": "Add a comment...",
+  "post": "Post",
+  "noPostsYet": "No posts yet.",
+  "whatsOnYourMind": "What's on your mind?",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "hindi": "Hindi",
+  "tamil": "Tamil",
+  "telugu": "Telugu",
+  "malayalam": "Malayalam"
 }

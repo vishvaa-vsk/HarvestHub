@@ -15,7 +15,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get welcomeMessage => 'HarvestHub-ലേക്ക് സ്വാഗതം!';
 
   @override
-  String get selectLanguage => 'ഇഷ്ടപ്പെട്ട ഭാഷ തിരഞ്ഞെടുക്കുക';
+  String get selectLanguage => 'ഭാഷ തിരഞ്ഞെടുക്കുക';
 
   @override
   String get english => 'ഇംഗ്ലീഷ്';
@@ -27,7 +27,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get tamil => 'തമിഴ്';
 
   @override
-  String get telugu => 'తెలుగు';
+  String get telugu => 'തെലുങ്ക്';
 
   @override
   String get malayalam => 'മലയാളം';
@@ -168,4 +168,19 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get talkToHarvestBot => 'HarvestBot-നോട് സംസാരിക്കുക';
+
+  @override
+  String get createPost => 'പോസ്റ്റ് സൃഷ്ടിക്കുക';
+
+  @override
+  String get addComment => 'അഭിപ്രായം ചേർക്കുക...';
+
+  @override
+  String get post => 'പോസ്റ്റ്';
+
+  @override
+  String get noPostsYet => 'ഇതുവരെ പോസ്റ്റുകളൊന്നുമില്ല.';
+
+  @override
+  String get whatsOnYourMind => 'നിങ്ങളുടെ മനസ്സിൽ എന്താണ്?';
 }

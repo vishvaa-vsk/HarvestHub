@@ -84,5 +84,17 @@
   "nextContinue": "जारी रखें",
   "proceed": "आगे बढ़ें",
   "changeLanguage": "भाषा बदलें",
-  "talkToHarvestBot": "हार्वेस्टबॉट से बात करें"
+  "talkToHarvestBot": "हार्वेस्टबॉट से बात करें",
+  "community": "समुदाय",
+  "createPost": "पोस्ट बनाएँ",
+  "addComment": "टिप्पणी जोड़ें...",
+  "post": "पोस्ट",
+  "noPostsYet": "अभी तक कोई पोस्ट नहीं है।",
+  "whatsOnYourMind": "आपके मन में क्या है?",
+  "selectLanguage": "भाषा चुनें",
+  "english": "अंग्रेज़ी",
+  "hindi": "हिन्दी",
+  "tamil": "तमिल",
+  "telugu": "तेलुगु",
+  "malayalam": "मलयालम"
 }

@@ -116,7 +116,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Select Preferred Language'**
+  /// **'Select Language'**
   String get selectLanguage;
 
   /// No description provided for @english.
@@ -394,6 +394,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Talk to HarvestBot'**
   String get talkToHarvestBot;
+
+  /// No description provided for @createPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Post'**
+  String get createPost;
+
+  /// No description provided for @addComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment...'**
+  String get addComment;
+
+  /// No description provided for @post.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get post;
+
+  /// No description provided for @noPostsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet.'**
+  String get noPostsYet;
+
+  /// No description provided for @whatsOnYourMind.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get whatsOnYourMind;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

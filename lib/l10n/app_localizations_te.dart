@@ -15,7 +15,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get welcomeMessage => 'హార్వెస్ట్ హబ్‌కు స్వాగతం!';
 
   @override
-  String get selectLanguage => 'ఇష్టమైన భాషను ఎంచుకోండి';
+  String get selectLanguage => 'భాషను ఎంచుకోండి';
 
   @override
   String get english => 'ఆంగ్లం';
@@ -42,7 +42,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get pestDetection => 'పొత్తికాయ గుర్తింపు';
 
   @override
-  String get community => 'సమూహం';
+  String get community => 'సముదాయం';
 
   @override
   String get yourFarmingCompanion => 'మీ కృషి సహచరుడు';
@@ -168,4 +168,19 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get talkToHarvestBot => 'హార్వెస్ట్ బాట్‌తో మాట్లాడండి';
+
+  @override
+  String get createPost => 'పోస్ట్ సృష్టించండి';
+
+  @override
+  String get addComment => 'వ్యాఖ్యను జోడించండి...';
+
+  @override
+  String get post => 'పోస్ట్';
+
+  @override
+  String get noPostsYet => 'ఇంకా పోస్టులు లేవు.';
+
+  @override
+  String get whatsOnYourMind => 'మీ మనసులో ఏముంది?';
 }
