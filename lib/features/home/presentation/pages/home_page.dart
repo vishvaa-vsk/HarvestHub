@@ -15,6 +15,7 @@ import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
 import 'profile_page.dart'; // Added import for ProfilePage
 import '../../../../screens/community_feed.dart';
+import 'package:harvesthub/screens/pest_detect_screen.dart';
 
 class HarvestHubApp extends StatelessWidget {
   const HarvestHubApp({super.key});
@@ -903,7 +904,7 @@ class PestDetectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Pest Detection'));
+    return const PestDetectScreen();
   }
 }
 
