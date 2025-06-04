@@ -18,6 +18,10 @@ class _AIChatPageState extends State<AIChatPage> {
   bool _isLoading = false;
   late String _userAvatarUrl;
 
+  // Context-aware memory variables
+  final List<Content> _conversationHistory = [];
+  final int _maxHistoryLength = 10; // Keep last 10 exchanges for context
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +60,9 @@ Just ask me anything in your preferred language! 🌱''',
       _messages.add({'sender': 'user', 'text': userMessage});
       _isLoading = true;
     });
+
+    // Add user message to conversation history
+    _addToConversationHistory('user', userMessage);
 
     // Auto-scroll to bottom when new message is added
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,6 +107,13 @@ CRITICAL: Always respond in the SAME LANGUAGE the user writes in. Language detec
 • **Malayalam (മലയാളം)**: Use for users writing in Malayalam script
 • **English**: Use for users writing in Latin script
 
+**CONTEXT AWARENESS & MEMORY:**
+• Remember previous questions and answers in this conversation
+• Build upon earlier discussions and refer back to them when relevant
+• Maintain context about the farmer's specific crops, location, or farming methods mentioned
+• Provide follow-up suggestions based on conversation history
+• If the user asks "what about...", "and then...", or similar, refer to previous context
+
 **RESPONSE GUIDELINES:**
 1. **Language Matching**: Automatically detect user's language and respond in the same language
 2. **Practical Focus**: Provide actionable, cost-effective solutions suitable for Indian farming conditions
@@ -108,6 +122,7 @@ CRITICAL: Always respond in the SAME LANGUAGE the user writes in. Language detec
 5. **Seasonal Relevance**: Factor in current season and regional weather patterns
 6. **Safety First**: Always prioritize farmer safety and environmental protection
 7. **Response Length**: Keep responses concise and well-structured (3-6 paragraphs max). Avoid overly lengthy explanations. Focus on the most important and actionable information first.
+8. **Context Continuity**: Reference previous parts of the conversation when relevant to provide better assistance
 
 **FORMATTING:**
 • Use clear headings and bullet points for better readability
@@ -127,16 +142,20 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         ),
       );
 
-      final content = [Content.text(userMessage)];
+      // Build conversation history for context
+      final conversationHistory = _buildConversationHistory();
+      final content = [Content.text(conversationHistory + userMessage)];
       final response = await model.generateContent(content);
 
+      final responseText = response.text ?? 'No response available';
+
       setState(() {
-        _messages.add({
-          'sender': 'ai',
-          'text': response.text ?? 'No response available',
-        });
+        _messages.add({'sender': 'ai', 'text': responseText});
         _isLoading = false;
       });
+
+      // Add bot response to conversation history
+      _addToConversationHistory('model', responseText);
 
       // Auto-scroll to bottom when AI responds
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -153,6 +172,53 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         _messages.add({'sender': 'ai', 'text': 'Error: $e'});
         _isLoading = false;
       });
+    }
+  }
+
+  String _buildConversationHistory() {
+    if (_conversationHistory.isEmpty) {
+      return "";
+    }
+
+    StringBuffer history = StringBuffer();
+    history.writeln("\n\nRecent conversation context:");
+
+    for (int i = 0; i < _conversationHistory.length; i++) {
+      final content = _conversationHistory[i];
+      if (content.role == 'user') {
+        // Extract text from Content object
+        String userText = '';
+        if (content.parts.isNotEmpty && content.parts.first is TextPart) {
+          userText = (content.parts.first as TextPart).text;
+        }
+        history.writeln("Farmer asked: $userText");
+      } else if (content.role == 'model') {
+        // Extract text from Content object
+        String botText = '';
+        if (content.parts.isNotEmpty && content.parts.first is TextPart) {
+          botText = (content.parts.first as TextPart).text;
+        }
+        String response = botText;
+        if (response.length > 200) {
+          response = response.substring(0, 200) + "...";
+        }
+        history.writeln("I responded: $response");
+      }
+    }
+
+    history.writeln(
+      "\nBased on this conversation context, provide a relevant response that builds upon our previous discussion.",
+    );
+    return history.toString();
+  }
+
+  void _addToConversationHistory(String role, String message) {
+    _conversationHistory.add(Content.text(message));
+
+    // Maintain history length limit (keep recent conversations)
+    while (_conversationHistory.length > _maxHistoryLength * 2) {
+      // *2 for user+bot pairs
+      _conversationHistory.removeAt(0);
     }
   }
 
