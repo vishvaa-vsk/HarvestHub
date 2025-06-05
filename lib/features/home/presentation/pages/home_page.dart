@@ -23,7 +23,7 @@ class HarvestHubApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16A34A)),
         useMaterial3: true,
       ),
       home: const MainScreen(),
@@ -61,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.green.shade700,
+        selectedItemColor: const Color(0xFF16A34A),
         unselectedItemColor: Colors.grey.shade400,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: true,
@@ -70,22 +70,31 @@ class _MainScreenState extends State<MainScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.home),
-            activeIcon: Icon(FeatherIcons.home, color: Colors.green),
+            activeIcon: Icon(FeatherIcons.home, color: const Color(0xFF16A34A)),
             label: loc.home,
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.messageCircle),
-            activeIcon: Icon(FeatherIcons.messageCircle, color: Colors.green),
+            activeIcon: Icon(
+              FeatherIcons.messageCircle,
+              color: const Color(0xFF16A34A),
+            ),
             label: loc.harvestBot,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pest_control),
-            activeIcon: Icon(Icons.pest_control, color: Colors.green),
+            activeIcon: Icon(
+              Icons.pest_control,
+              color: const Color(0xFF16A34A),
+            ),
             label: loc.pestDetection,
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.users),
-            activeIcon: Icon(FeatherIcons.users, color: Colors.green),
+            activeIcon: Icon(
+              FeatherIcons.users,
+              color: const Color(0xFF16A34A),
+            ),
             label: loc.community,
           ),
         ],
@@ -190,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.green.shade700,
+            color: const Color(0xFF16A34A),
           ),
         ),
         leading: IconButton(
@@ -218,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green.shade700, Colors.green.shade400],
+                  colors: [const Color(0xFF16A34A), const Color(0xFF22C55E)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -253,8 +262,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
                             colors: [
-                              Colors.green.shade700,
-                              Colors.green.shade400,
+                              const Color(0xFF16A34A),
+                              const Color(0xFF22C55E),
                             ],
                           ),
                         ),
@@ -265,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Icon(
                             Icons.person,
                             size: 40,
-                            color: Colors.green.shade700,
+                            color: const Color(0xFF16A34A),
                           ),
                         ),
                       ),
@@ -297,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.settings, color: Colors.green),
+              leading: const Icon(Icons.settings, color: Color(0xFF16A34A)),
               title: Text(loc.editProfileSettings),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
@@ -335,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     final theme = Theme.of(context);
-                    final green = Colors.green.shade700;
+                    final green = const Color(0xFF16A34A);
                     final greyTile = const Color(0xFFF3F3F3);
                     return Container(
                       decoration: const BoxDecoration(
@@ -503,7 +512,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green.shade600, Colors.green.shade400],
+                  colors: [Color(0xff20c25e), Color(0xff079a68)],
+                  stops: [0.25, 0.75],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -726,7 +736,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700,
+                    color: const Color(0xFF16A34A),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -798,12 +808,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: const Color(0xFF16A34A).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.lightbulb_outline,
-                          color: Colors.green.shade700,
+                          color: const Color(0xFF16A34A),
                           size: 24,
                         ),
                       ),
@@ -854,12 +864,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: const Color(0xFF16A34A).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.eco,
-                          color: Colors.green.shade700,
+                          color: const Color(0xFF16A34A),
                           size: 24,
                         ),
                       ),
