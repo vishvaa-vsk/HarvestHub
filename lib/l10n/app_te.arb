@@ -61,6 +61,8 @@
     }
   },
   "threeDayForecast": "3-రోజుల అంచనాలు",
+  "thirtyDayForecast": "30-రోజుల అంచనాలు",
+  "weatherForecastCalendar": "వాతావరణ అంచనాలు: {startDate} - {endDate}",
   "viewMore": "మరింత చూడండి",
   "failedToLoadWeather": "కాలావస్థా డేటా లోడ్ చేయడంలో విఫలమైంది",
   "farmingTip": "కృషి సూచన",

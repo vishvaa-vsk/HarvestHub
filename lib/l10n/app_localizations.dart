@@ -251,6 +251,18 @@ abstract class AppLocalizations {
   /// **'3-Day Forecast'**
   String get threeDayForecast;
 
+  /// No description provided for @thirtyDayForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'30-Day Forecast'**
+  String get thirtyDayForecast;
+
+  /// No description provided for @weatherForecastCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Forecast'**
+  String weatherForecastCalendar(Object startDate, Object endDate);
+
   /// No description provided for @viewMore.
   ///
   /// In en, this message translates to:
@@ -460,12 +472,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View All >'**
   String get viewAll;
-
-  /// No description provided for @weatherForecastCalendar.
-  ///
-  /// In en, this message translates to:
-  /// **'Weather Forecast'**
-  String get weatherForecastCalendar;
 
   /// No description provided for @january.
   ///

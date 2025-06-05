@@ -6,9 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:harvesthub/main.dart';
 import 'package:flutter/services.dart';
+import 'dart:math';
 
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
+import '../../../../core/utils/avatar_utils.dart';
 import '../../../auth/presentation/pages/phone_auth_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
@@ -809,8 +811,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       userPhone = userData['phoneNumber'] ?? '';
                     }
 
-                    // Generate random avatar
-                    final avatarUrl = 'https://avatar.iran.liara.run/public';
+                    // Generate random avatar using reliable service
+                    final avatarUrl = AvatarUtils.generateRandomAvatar();
 
                     return Column(
                       children: [

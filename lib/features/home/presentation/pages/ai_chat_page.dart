@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
-import 'dart:math';
+import '../../../../core/utils/avatar_utils.dart';
 
 class AIChatPage extends StatefulWidget {
   const AIChatPage({super.key});
@@ -50,9 +50,7 @@ Just ask me anything in your preferred language! 🌱''',
   }
 
   String _generateRandomAvatar() {
-    final random = Random();
-    final avatarId = random.nextInt(100) + 1; // Random ID from 1-100
-    return 'https://avatar.iran.liara.run/public/$avatarId';
+    return AvatarUtils.generateRandomAvatar();
   }
 
   Future<void> _sendMessage(String userMessage) async {

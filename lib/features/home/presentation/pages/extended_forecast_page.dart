@@ -12,21 +12,19 @@ class ExtendedForecastPage extends StatefulWidget {
 }
 
 class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
+  DateTime currentMonth = DateTime.now();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Fetch forecast data only once
       final weatherProvider = Provider.of<WeatherProvider>(
         context,
         listen: false,
       );
       if (weatherProvider.futureWeather == null ||
           weatherProvider.futureWeather!.isEmpty) {
-        weatherProvider.fetchExtendedForecast(
-          'auto',
-          30,
-        ); // Provide location and days
+        weatherProvider.fetchExtendedForecast('auto', 30);
       }
     });
   }
@@ -35,378 +33,427 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(loc.threeDayForecast)),
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        title: const Text(
+          '30-Day Forecast',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: Colors.black87,
+          ),
+        ),
+        centerTitle: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.white,
+      ),
       body: Consumer<WeatherProvider>(
         builder: (context, weatherProvider, child) {
           if (weatherProvider.isLoading &&
               (weatherProvider.futureWeather == null ||
                   weatherProvider.futureWeather!.isEmpty)) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+              ),
+            );
           }
 
           final forecastData = weatherProvider.futureWeather;
           if (forecastData == null || forecastData.isEmpty) {
-            return Center(child: Text(loc.noFarmingTip));
+            return Center(
+              child: Text(
+                loc.failedToLoadWeather,
+                style: const TextStyle(fontSize: 16),
+              ),
+            );
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: CalendarWidget(
-                  forecastData: forecastData,
-                  allowMonthNavigation: true, // Enable month navigation
-                ),
-              ),
-              const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Weather forecast header (like in old design)
+                Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.grass, color: Colors.green),
-                            const SizedBox(width: 8),
-                            Text(
-                              loc.recommendedCrop,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          weatherProvider.insights?['cropRecommendation'] ??
-                              loc.noCropRecommendation,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
+                  child: Text(
+                    _getDateRangeText(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+
+                // Calendar section (matching old UI exactly)
+                _buildOldStyleCalendar(context, forecastData, loc),
+
+                const SizedBox(height: 24),
+
+                // Recommended Crop Section (enhanced design)
+                _buildRecommendedCropSection(context, loc, weatherProvider),
+
+                const SizedBox(height: 20),
+              ],
+            ),
           );
         },
       ),
     );
   }
-}
 
-// Enabled month navigation in the CalendarWidget
-
-class CalendarWidget extends StatefulWidget {
-  final List<Map<String, dynamic>> forecastData;
-  final bool allowMonthNavigation;
-
-  const CalendarWidget({
-    super.key,
-    required this.forecastData,
-    this.allowMonthNavigation = false,
-  });
-
-  @override
-  _CalendarWidgetState createState() => _CalendarWidgetState();
-}
-
-class _CalendarWidgetState extends State<CalendarWidget> {
-  late DateTime _focusedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusedDate = DateTime.now();
+  String _getDateRangeText() {
+    final now = DateTime.now();
+    final startOfMonth = DateTime(now.year, now.month, 1);
+    final endOfMonth = DateTime(now.year, now.month + 1, 0);
+    return 'Weather Forecast: ${DateFormat('MMM d').format(startOfMonth)} - ${DateFormat('MMM d').format(endOfMonth)}';
   }
 
-  void _navigateToPreviousMonth() {
-    setState(() {
-      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
-    });
-    Provider.of<WeatherProvider>(
-      context,
-      listen: false,
-    ).fetchMonthlyForecast(monthOffset: -1);
-  }
-
-  void _navigateToNextMonth() {
-    setState(() {
-      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
-    });
-    Provider.of<WeatherProvider>(
-      context,
-      listen: false,
-    ).fetchMonthlyForecast(monthOffset: 1);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final today = DateTime.now();
-    final startDate = DateTime(_focusedDate.year, _focusedDate.month, 1);
-    final endDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
-
-    return SafeArea(
+  Widget _buildOldStyleCalendar(
+    BuildContext context,
+    List<Map<String, dynamic>> forecastData,
+    AppLocalizations loc,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${loc.weatherForecastCalendar}: ${DateFormat('MMM d').format(startDate)} - ${DateFormat('MMM d').format(endDate)}',
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-          ),
-          // Month navigation
-          if (widget.allowMonthNavigation)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed:
-                      _focusedDate.month > today.month ||
-                              _focusedDate.year > today.year
-                          ? _navigateToPreviousMonth
-                          : null, // Disable going back before current month
-                ),
-                Text(
-                  DateFormat('MMMM yyyy').format(_focusedDate),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: _navigateToNextMonth, // Enable going forward
-                ),
-              ],
-            ),
-          // Day of week headers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  child: Text(
-                    loc.sunday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.monday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.tuesday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.wednesday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.thursday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.friday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loc.saturday,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          // Custom calendar grid - using Expanded with a SingleChildScrollView to prevent overflow
-          Expanded(
-            child: SingleChildScrollView(
-              child: _buildCalendarGrid(
-                context,
-                _focusedDate,
-                widget.forecastData,
-                startDate,
-                endDate,
+          // Month navigation header (like old design)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
               ),
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.chevron_left, color: Colors.black54),
+                  onPressed: () {
+                    setState(() {
+                      currentMonth = DateTime(
+                        currentMonth.year,
+                        currentMonth.month - 1,
+                      );
+                    });
+                  },
+                ),
+                Text(
+                  DateFormat('MMMM yyyy').format(currentMonth),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chevron_right, color: Colors.black54),
+                  onPressed: () {
+                    setState(() {
+                      currentMonth = DateTime(
+                        currentMonth.year,
+                        currentMonth.month + 1,
+                      );
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
+
+          // Day headers (simple like old design)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                _buildDayHeader('Sun'),
+                _buildDayHeader('Mon'),
+                _buildDayHeader('Tue'),
+                _buildDayHeader('Wed'),
+                _buildDayHeader('Thu'),
+                _buildDayHeader('Fri'),
+                _buildDayHeader('Sat'),
+              ],
+            ),
+          ),
+
+          // Calendar grid (exactly like old design)
+          _buildCalendarGrid(forecastData),
+
           const SizedBox(height: 8),
         ],
       ),
     );
   }
 
-  Widget _buildCalendarGrid(
-    BuildContext context,
-    DateTime focusedDate,
-    List<Map<String, dynamic>> weatherData,
-    DateTime startDate,
-    DateTime endDate,
-  ) {
+  Widget _buildDayHeader(String day) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Text(
+          day,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black54,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendarGrid(List<Map<String, dynamic>> forecastData) {
     final daysInMonth =
-        DateTime(focusedDate.year, focusedDate.month + 1, 0).day;
-    final firstDayOfMonth = DateTime(focusedDate.year, focusedDate.month, 1);
-    final firstWeekdayOfMonth =
-        firstDayOfMonth.weekday % 7; // 0-based weekday (0 = Sunday)
+        DateTime(currentMonth.year, currentMonth.month + 1, 0).day;
+    final firstDayOfMonth = DateTime(currentMonth.year, currentMonth.month, 1);
+    final firstWeekday = firstDayOfMonth.weekday % 7; // 0 = Sunday
 
-    // Calculate number of weeks needed
-    final int weeksNeeded = ((daysInMonth + firstWeekdayOfMonth) / 7).ceil();
+    final weeks = <Widget>[];
+    final today = DateTime.now();
+    int lastDayNumber = 0;
 
-    // Adjust the calendar grid to include all days in the range
-    final days = List.generate(weeksNeeded * 7, (index) {
-      final dayOffset = index - firstWeekdayOfMonth;
-      final day = DateTime(focusedDate.year, focusedDate.month, 1 + dayOffset);
+    for (int week = 0; week < 6; week++) {
+      final days = <Widget>[];
 
-      // Check if this day is within the forecast range
-      final isInForecastRange =
-          day.isAfter(startDate.subtract(const Duration(days: 1))) &&
-          day.isBefore(endDate.add(const Duration(days: 1)));
+      for (int day = 0; day < 7; day++) {
+        final dayNumber = week * 7 + day - firstWeekday + 1;
+        lastDayNumber = dayNumber;
 
-      // Check if this day belongs to the current month
-      final isCurrentMonth = day.month == focusedDate.month;
-
-      if (isInForecastRange) {
-        // Find weather data for this day
-        final weather = weatherData.firstWhere(
-          (entry) => entry['date'] == DateFormat('yyyy-MM-dd').format(day),
-          orElse: () => {},
-        );
-
-        if (weather.isNotEmpty) {
-          return _buildDayCell(day, weather, isCurrentMonth);
+        if (dayNumber < 1 || dayNumber > daysInMonth) {
+          days.add(const SizedBox(height: 65)); // Fixed height like old design
+        } else {
+          final date = DateTime(
+            currentMonth.year,
+            currentMonth.month,
+            dayNumber,
+          );
+          final weatherData = _getWeatherForDate(forecastData, date);
+          days.add(_buildOldStyleDayCell(dayNumber, date, weatherData, today));
         }
       }
 
-      // Return a placeholder for days outside the forecast range or current month
-      return _buildEmptyCell();
-    });
+      weeks.add(Row(children: days));
+      if (weeks.length >= 5 && lastDayNumber >= daysInMonth) break;
+    }
 
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 7, // 7 days per week
-      mainAxisSpacing: 2,
-      crossAxisSpacing: 2,
-      childAspectRatio: 0.75, // Make cells taller than they are wide
-      children: days,
+    return Column(children: weeks);
+  }
+
+  Map<String, dynamic>? _getWeatherForDate(
+    List<Map<String, dynamic>> forecastData,
+    DateTime date,
+  ) {
+    final dateString = DateFormat('yyyy-MM-dd').format(date);
+    try {
+      return forecastData.firstWhere(
+        (weather) => weather['date'] == dateString,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildOldStyleDayCell(
+    int dayNumber,
+    DateTime date,
+    Map<String, dynamic>? weatherData,
+    DateTime today,
+  ) {
+    final hasWeather = weatherData != null && weatherData.isNotEmpty;
+    final isToday =
+        date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day;
+
+    // Check if date is in the past or future (not current month)
+    final now = DateTime.now();
+    final isPastOrFuture =
+        date.isBefore(DateTime(now.year, now.month, now.day)) ||
+        date.isAfter(DateTime(now.year, now.month + 1, 0));
+
+    Color backgroundColor = Colors.white;
+    Color borderColor = Colors.transparent;
+    Color textColor = Colors.black87;
+
+    // If date is in past/future, make it grey
+    if (isPastOrFuture) {
+      backgroundColor = const Color(0xFFF5F5F5);
+      textColor = Colors.grey.shade400;
+    } else {
+      // Color coding only for current month dates
+      if (hasWeather && weatherData['rainChance'] != null) {
+        final rainChance = weatherData['rainChance'] as int;
+        if (rainChance >= 80) {
+          backgroundColor = const Color(0xFFE3F2FD); // Light blue for 80%+
+        } else if (rainChance >= 60) {
+          backgroundColor = const Color(0xFFE8F5E9); // Light green for 60-79%
+        } else if (rainChance > 0) {
+          backgroundColor = const Color(
+            0xFFFFF3E0,
+          ); // Light orange for any rain
+        } else {
+          backgroundColor = Colors.white; // White for 0%
+        }
+      }
+    }
+
+    // Today's highlight (green border for current date)
+    if (isToday) {
+      borderColor = const Color(0xFF4CAF50);
+      textColor = const Color(0xFF4CAF50);
+    }
+
+    return Expanded(
+      child: Container(
+        height: 65, // Fixed height like old design
+        margin: const EdgeInsets.all(0.5),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(
+            color: isToday ? borderColor : Colors.grey.shade300,
+            width: isToday ? 2.0 : 0.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Day number
+              Text(
+                dayNumber.toString(),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+
+              // Temperature (only show for current month with weather data)
+              if (!isPastOrFuture &&
+                  hasWeather &&
+                  weatherData['temperature'] != null)
+                Text(
+                  '${(weatherData['temperature']['max'] ?? weatherData['temperature']['min'] ?? 0).toStringAsFixed(1)}°C',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                )
+              else
+                const SizedBox(height: 13), // Maintain spacing
+              // Rain percentage (only show for current month with weather data)
+              if (!isPastOrFuture &&
+                  hasWeather &&
+                  weatherData['rainChance'] != null)
+                Text(
+                  '${weatherData['rainChance']}%',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color:
+                        weatherData['rainChance'] > 0
+                            ? const Color(0xFF2196F3) // Blue for rain
+                            : Colors.black54, // Gray for no rain
+                  ),
+                )
+              else
+                const SizedBox(height: 12), // Maintain spacing
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildDayCell(
-    DateTime day,
-    Map<String, dynamic> weather,
-    bool isCurrentMonth,
+  Widget _buildRecommendedCropSection(
+    BuildContext context,
+    AppLocalizations loc,
+    WeatherProvider weatherProvider,
   ) {
-    final hasWeather = weather.isNotEmpty;
-    final isToday =
-        day.year == DateTime.now().year &&
-        day.month == DateTime.now().month &&
-        day.day == DateTime.now().day;
-
     return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: isToday ? Colors.blue : Colors.grey.withOpacity(0.3),
-          width: isToday ? 2 : 1,
-        ),
-        borderRadius: BorderRadius.circular(4),
-        color: isCurrentMonth ? null : Colors.grey.withOpacity(0.1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              day.day.toString(),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                color: isCurrentMonth ? Colors.black : Colors.grey,
-              ),
-            ),
-            if (hasWeather) ...[
-              const SizedBox(height: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(2),
+                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                child: Text(
-                  '${weather['temperature']['max']}°C',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isCurrentMonth ? Colors.black : Colors.grey,
-                  ),
+                child: Icon(
+                  Icons.eco,
+                  color: const Color(0xFF16A34A),
+                  size: 24,
                 ),
               ),
-              const SizedBox(height: 2),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: Text(
-                  '${weather['rainChance']}%',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: isCurrentMonth ? Colors.blue : Colors.grey,
-                  ),
+              const SizedBox(width: 12),
+              Text(
+                'Recommended Crop',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyCell() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        borderRadius: BorderRadius.circular(4),
-        color: Colors.grey.withOpacity(0.05),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            weatherProvider.insights?['cropRecommendation'] ??
+                'Okra thrives in warm and humid conditions. It\'s relatively drought-tolerant once established but benefits from consistent watering. The misty conditions shouldn\'t negatively impact its growth. Monitor for pests, which can be more prevalent in warm, humid weather.',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }

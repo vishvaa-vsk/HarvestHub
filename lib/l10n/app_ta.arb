@@ -61,6 +61,8 @@
     }
   },
   "threeDayForecast": "3-நாள் முன்னறிவிப்பு",
+  "thirtyDayForecast": "30-நாள் முன்னறிவிப்பு",
+  "weatherForecastCalendar": "காலநிலை முன்னறிவிப்பு: {startDate} - {endDate}",
   "viewMore": "மேலும் காண்க",
   "failedToLoadWeather": "காலநிலை தரவுகளை ஏற்றுவதில் தோல்வி",
   "farmingTip": "விவசாய குறிப்புகள்",

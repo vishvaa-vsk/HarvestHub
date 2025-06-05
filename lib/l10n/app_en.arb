@@ -61,6 +61,14 @@
     }
   },
   "threeDayForecast": "3-Day Forecast",
+  "thirtyDayForecast": "30-Day Forecast",
+  "weatherForecastCalendar": "Weather Forecast: {startDate} - {endDate}",
+  "@weatherForecastCalendar": {
+    "placeholders": {
+      "startDate": {},
+      "endDate": {}
+    }
+  },
   "viewMore": "View More",
   "failedToLoadWeather": "Failed to load weather data",
   "farmingTip": "Farming Tip",

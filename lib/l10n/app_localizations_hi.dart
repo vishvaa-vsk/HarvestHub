@@ -98,6 +98,14 @@ class AppLocalizationsHi extends AppLocalizations {
   String get threeDayForecast => '3-दिन का पूर्वानुमान';
 
   @override
+  String get thirtyDayForecast => '30-दिन का पूर्वानुमान';
+
+  @override
+  String weatherForecastCalendar(Object startDate, Object endDate) {
+    return 'मौसम पूर्वानुमान';
+  }
+
+  @override
   String get viewMore => 'और देखें';
 
   @override
@@ -201,9 +209,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get viewAll => 'अधिक >';
-
-  @override
-  String get weatherForecastCalendar => 'मौसम पूर्वानुमान';
 
   @override
   String get january => 'जनवरी';

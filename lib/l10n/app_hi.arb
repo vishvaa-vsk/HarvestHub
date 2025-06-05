@@ -61,6 +61,8 @@
     }
   },
   "threeDayForecast": "3-दिन का पूर्वानुमान",
+  "thirtyDayForecast": "30-दिन का पूर्वानुमान",
+  "weatherForecastCalendar": "मौसम पूर्वानुमान: {startDate} - {endDate}",
   "viewMore": "और देखें",
   "failedToLoadWeather": "मौसम डेटा लोड करने में विफल",
   "farmingTip": "कृषि टिप",

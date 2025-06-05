@@ -61,6 +61,8 @@
     }
   },
   "threeDayForecast": "3-ദിവസ പ്രവചനങ്ങൾ",
+  "thirtyDayForecast": "30-ദിവസ പ്രവചനങ്ങൾ",
+  "weatherForecastCalendar": "കാലാവസ്ഥാ പ്രവചനം: {startDate} - {endDate}",
   "viewMore": "കൂടുതൽ കാണുക",
   "failedToLoadWeather": "കാലാവസ്ഥാ ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പരാജയം",
   "farmingTip": "കൃഷി ടിപ്പ്",
