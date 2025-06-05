@@ -541,14 +541,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.cloud,
+                          _getWeatherIcon(current['condition']),
                           color: Colors.white.withOpacity(0.8),
                           size: 28,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 4),
                   Text(
                     '${current['temperature']}°C',
                     style: const TextStyle(
@@ -901,6 +901,35 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  // Helper function to get weather icon based on condition
+  IconData _getWeatherIcon(String condition) {
+    final conditionLower = condition.toLowerCase();
+
+    if (conditionLower.contains('sunny') || conditionLower.contains('clear')) {
+      return Icons.wb_sunny;
+    } else if (conditionLower.contains('rain') ||
+        conditionLower.contains('shower')) {
+      return Icons.water_drop;
+    } else if (conditionLower.contains('storm') ||
+        conditionLower.contains('thunder')) {
+      return Icons.thunderstorm;
+    } else if (conditionLower.contains('snow') ||
+        conditionLower.contains('blizzard')) {
+      return Icons.ac_unit;
+    } else if (conditionLower.contains('fog') ||
+        conditionLower.contains('mist')) {
+      return Icons.foggy;
+    } else if (conditionLower.contains('wind')) {
+      return Icons.air;
+    } else if (conditionLower.contains('cloud') ||
+        conditionLower.contains('overcast') ||
+        conditionLower.contains('partly')) {
+      return Icons.cloud;
+    } else {
+      return Icons.wb_cloudy; // Default icon
+    }
   }
 }
 
