@@ -518,6 +518,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF16A34A).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
               ),
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -644,7 +658,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'View All >',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.green,
+                      color: Color(0xFF16A34A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
