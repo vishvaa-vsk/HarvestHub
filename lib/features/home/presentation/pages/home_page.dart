@@ -525,45 +525,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Current Weather',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Current Weather',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${current['temperature']}°C',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                height: 1.0,
+                              ),
+                            ),
+                            Text(
+                              current['condition'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          _getWeatherIcon(current['condition']),
-                          color: Colors.white.withOpacity(0.8),
-                          size: 28,
-                        ),
+                      Icon(
+                        _getWeatherIcon(current['condition']),
+                        color: Colors.white.withOpacity(0.7),
+                        size: 80,
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${current['temperature']}°C',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    current['condition'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
                   ),
                   const SizedBox(height: 12),
                   Row(
