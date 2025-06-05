@@ -509,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -525,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle,
@@ -533,17 +533,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Icon(
                           Icons.cloud,
                           color: Colors.white.withOpacity(0.8),
-                          size: 32,
+                          size: 28,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   Text(
                     '${current['temperature']}°C',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 48,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -551,11 +551,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     current['condition'],
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -566,14 +566,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Feels Like: ${current['feelslike_c']}°C',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
                             Text(
                               'Humidity: ${current['humidity']}%',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -587,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                               textAlign: TextAlign.end,
                             ),
@@ -595,7 +595,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'UV Index: ${current['uv']}',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -660,11 +660,30 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 0) {
             dayName = 'Tomorrow';
           } else {
-            // Parse the date string and format it
+            // Parse the date string and format it to show month name
             try {
               final parts = day['date'].split(' ');
               if (parts.length >= 2) {
-                dayName = '${parts[0]} ${parts[1]}';
+                // Convert month number to name
+                final monthNumber = int.tryParse(parts[1]) ?? 1;
+                final monthNames = [
+                  '',
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec',
+                ];
+                final monthName =
+                    monthNumber <= 12 ? monthNames[monthNumber] : 'Jan';
+                dayName = '${monthName} ${parts[0]}';
               } else {
                 dayName = day['date'];
               }
@@ -724,9 +743,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      day['rainChance'] > 50
-                          ? '${day['rainChance']}% Rain'
-                          : '${day['rainChance']}% Rain',
+                      '${day['rainChance']}% Rain',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
