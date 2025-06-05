@@ -50,54 +50,77 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF16A34A),
-        unselectedItemColor: Colors.grey.shade400,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        elevation: 8,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.home),
-            activeIcon: Icon(FeatherIcons.home, color: const Color(0xFF16A34A)),
-            label: loc.home,
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.messageCircle),
-            activeIcon: Icon(
-              FeatherIcons.messageCircle,
-              color: const Color(0xFF16A34A),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            backgroundColor: Colors.transparent,
+            selectedItemColor: const Color(0xFF16A34A),
+            unselectedItemColor: Colors.grey.shade400,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            elevation: 0,
+            selectedLabelStyle: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
-            label: loc.harvestBot,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pest_control),
-            activeIcon: Icon(
-              Icons.pest_control,
-              color: const Color(0xFF16A34A),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
-            label: loc.pestDetection,
+            selectedFontSize: 11,
+            unselectedFontSize: 11,
+            iconSize: 22,
+            items: [
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.home),
+                ),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.smart_toy_rounded),
+                ),
+                label: 'HarvestBot',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.pest_control),
+                ),
+                label: 'Pest Detect',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.forum),
+                ),
+                label: 'Community',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.users),
-            activeIcon: Icon(
-              FeatherIcons.users,
-              color: const Color(0xFF16A34A),
-            ),
-            label: loc.community,
-          ),
-        ],
+        ),
       ),
     );
   }
