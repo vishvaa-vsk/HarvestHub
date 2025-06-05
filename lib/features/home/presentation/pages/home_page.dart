@@ -776,14 +776,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 4),
                     Text(
                       '${day['rainChance']}% Rain',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Min: ${day['temperature']['min']}°C',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
               ],
             ),
@@ -855,7 +858,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     insights['farmingTip'] ?? 'No farming tip available',
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Colors.black54,
+                      color: Colors.black87,
                       height: 1.5,
                     ),
                   ),
@@ -912,7 +915,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'No crop recommendation available',
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Colors.black54,
+                      color: Colors.black87,
                       height: 1.5,
                     ),
                   ),
