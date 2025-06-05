@@ -10,7 +10,7 @@ class PostCard extends StatelessWidget {
   final VoidCallback onTap;
   final FirebaseService _firebaseService = FirebaseService();
 
-  PostCard({required this.post, required this.onTap});
+  PostCard({super.key, required this.post, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

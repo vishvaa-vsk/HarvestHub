@@ -200,7 +200,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         }
         String response = botText;
         if (response.length > 200) {
-          response = response.substring(0, 200) + "...";
+          response = "${response.substring(0, 200)}...";
         }
         history.writeln("I responded: $response");
       }

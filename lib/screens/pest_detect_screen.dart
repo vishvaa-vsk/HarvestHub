@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PestDetectScreen extends StatefulWidget {
-  const PestDetectScreen({Key? key}) : super(key: key);
+  const PestDetectScreen({super.key});
 
   @override
   State<PestDetectScreen> createState() => _PestDetectScreenState();

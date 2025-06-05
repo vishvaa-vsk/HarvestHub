@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Country: ${userData['country'] ?? 'Not specified'}',
+                          'Country: ${userData['country'] ?? 'Not specified'}',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 8),

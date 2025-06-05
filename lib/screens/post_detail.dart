@@ -6,7 +6,7 @@ import 'comment_page.dart';
 
 class PostDetailPage extends StatelessWidget {
   final Post post;
-  const PostDetailPage({required this.post});
+  const PostDetailPage({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {

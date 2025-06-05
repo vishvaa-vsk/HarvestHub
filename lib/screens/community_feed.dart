@@ -9,6 +9,8 @@ import 'post_detail.dart';
 class CommunityFeedPage extends StatelessWidget {
   final FirebaseService _firebaseService = FirebaseService();
 
+  CommunityFeedPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,13 +170,13 @@ class CommunityFeedPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        child: const Icon(Icons.edit, size: 24),
         onPressed:
             () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => CreatePostPage()),
             ),
         tooltip: AppLocalizations.of(context)!.createPost,
+        child: const Icon(Icons.edit, size: 24),
       ),
     );
   }

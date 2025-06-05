@@ -8,7 +8,7 @@ class CommentTile extends StatelessWidget {
   final Map<String, dynamic> data;
   final FirebaseService _firebaseService = FirebaseService();
 
-  CommentTile({required this.commentId, required this.data});
+  CommentTile({super.key, required this.commentId, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class ModernCommentTile extends StatelessWidget {
   final Map<String, dynamic> data;
   final FirebaseService _firebaseService = FirebaseService();
 
-  ModernCommentTile({required this.commentId, required this.data});
+  ModernCommentTile({super.key, required this.commentId, required this.data});
 
   @override
   Widget build(BuildContext context) {

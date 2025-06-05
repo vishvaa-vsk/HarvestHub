@@ -7,7 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class CommentPage extends StatefulWidget {
   final String postId;
-  const CommentPage({required this.postId});
+  const CommentPage({super.key, required this.postId});
 
   @override
   State<CommentPage> createState() => _CommentPageState();
@@ -93,7 +93,7 @@ class _CommentPageState extends State<CommentPage> {
 // Modern Twitter-style comment page
 class ModernCommentPage extends StatefulWidget {
   final String postId;
-  const ModernCommentPage({required this.postId});
+  const ModernCommentPage({super.key, required this.postId});
 
   @override
   State<ModernCommentPage> createState() => _ModernCommentPageState();

@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
 
 class CreatePostPage extends StatefulWidget {
+  const CreatePostPage({super.key});
+
   @override
   State<CreatePostPage> createState() => _CreatePostPageState();
 }
@@ -209,8 +211,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   backgroundColor: Colors.grey.shade100,
                   elevation: 2,
                   onPressed: _pickImage,
-                  child: Icon(Icons.image, color: Colors.green.shade700),
                   tooltip: 'Add Image',
+                  child: Icon(Icons.image, color: Colors.green.shade700),
                 ),
               ),
             ],
