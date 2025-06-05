@@ -88,29 +88,40 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('preferred_language');
-    setState(() {
-      _languagePicked = langCode != null;
-      if (langCode != null) {
-        _locale = Locale(langCode);
-        // Set WeatherProvider language
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final provider = Provider.of<WeatherProvider>(context, listen: false);
-          provider.setLanguage(langCode);
-        });
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _languagePicked = langCode != null;
+        if (langCode != null) {
+          _locale = Locale(langCode);
+          // Set WeatherProvider language
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              final provider = Provider.of<WeatherProvider>(
+                context,
+                listen: false,
+              );
+              provider.setLanguage(langCode);
+            }
+          });
+        }
+      });
+    }
   }
 
   Future<void> setLocale(String langCode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('preferred_language', langCode);
-    setState(() {
-      _locale = Locale(langCode);
-      _languagePicked = true;
-    });
+    if (mounted) {
+      setState(() {
+        _locale = Locale(langCode);
+        _languagePicked = true;
+      });
+    }
     // Set WeatherProvider language
-    final provider = Provider.of<WeatherProvider>(context, listen: false);
-    provider.setLanguage(langCode);
+    if (mounted) {
+      final provider = Provider.of<WeatherProvider>(context, listen: false);
+      provider.setLanguage(langCode);
+    }
   }
 
   @override

@@ -51,10 +51,10 @@ class WeatherService {
         throw Exception('Failed to load current weather data');
       }
       final currentWeather = json.decode(currentWeatherResponse.body);
-      // Fetch 3-day forecast data
+      // Fetch 5-day forecast data (including today) to ensure we get 3 future days
       final forecastResponse = await http.get(
         Uri.parse(
-          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$latitude,$longitude&days=3&lang=$apiLang',
+          '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$latitude,$longitude&days=5&lang=$apiLang',
         ),
       );
       if (forecastResponse.statusCode != 200) {

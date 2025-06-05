@@ -47,14 +47,18 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   Future<void> _sendOTP() async {
     final loc = AppLocalizations.of(context)!;
     if (_phoneController.text.isEmpty || _nameController.text.isEmpty) {
-      setState(() => _errorMessage = loc.pleaseEnterNameAndPhone);
+      if (mounted) {
+        setState(() => _errorMessage = loc.pleaseEnterNameAndPhone);
+      }
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     String phoneNumber = '+91${_phoneController.text}'; // Add your country code
 
@@ -76,23 +80,29 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       await _authService.sendOTP(
         phoneNumber,
         (verificationId) {
-          setState(() {
-            _showOtpField = true;
-            _isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              _showOtpField = true;
+              _isLoading = false;
+            });
+          }
         },
         (error) {
-          setState(() {
-            _errorMessage = error;
-            _isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              _errorMessage = error;
+              _isLoading = false;
+            });
+          }
         },
       );
     } catch (e) {
-      setState(() {
-        _errorMessage = loc.failedToSendOTP;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = loc.failedToSendOTP;
+          _isLoading = false;
+        });
+      }
       // Handle error
     }
   }
@@ -101,22 +111,29 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   Future<void> _verifyOTP() async {
     final loc = AppLocalizations.of(context)!;
     if (_otpController.text.isEmpty) {
-      setState(() => _errorMessage = loc.enterOTP);
+      if (mounted) {
+        setState(() => _errorMessage = loc.enterOTP);
+      }
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final verificationId = _authService.verificationId;
       if (verificationId == null) {
-        setState(() {
-          _errorMessage = 'Verification ID is missing. Please resend the OTP.';
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _errorMessage =
+                'Verification ID is missing. Please resend the OTP.';
+            _isLoading = false;
+          });
+        }
         return;
       }
 
@@ -134,16 +151,20 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
           context,
         ); // Call the function to set preferred language
       } else {
+        if (mounted) {
+          setState(() {
+            _errorMessage = loc.failedToSignIn;
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() {
-          _errorMessage = loc.failedToSignIn;
+          _errorMessage = loc.invalidOTP;
           _isLoading = false;
         });
       }
-    } catch (e) {
-      setState(() {
-        _errorMessage = loc.invalidOTP;
-        _isLoading = false;
-      });
       // Handle error
     }
   }
@@ -162,7 +183,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   void initState() {
     super.initState();
     _phoneFocusNode.addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     // Set navigation bar color to match background
     SystemChrome.setSystemUIOverlayStyle(

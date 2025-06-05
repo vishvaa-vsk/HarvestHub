@@ -293,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xff20c25e), Color(0xff079a68)],
+                  colors: [Color(0xff20c25e), Color(0xff12ab64)],
                   stops: [0.25, 0.75],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -482,54 +482,61 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildForecast(BuildContext context, List<dynamic> forecast) {
     final loc = AppLocalizations.of(context)!;
+    final today = DateTime.now();
+
+    // Filter out today's data and show only future dates
+    final todayDateOnly = DateTime(today.year, today.month, today.day);
+    final futureForecasts = forecast.where((day) {
+      try {
+        final forecastDate = DateTime.parse(day['date']);
+        final forecastDateOnly = DateTime(forecastDate.year, forecastDate.month, forecastDate.day);
+        return forecastDateOnly.isAfter(todayDateOnly);
+      } catch (e) {
+        return false;
+      }
+    }).toList();
+
     return SizedBox(
       height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: forecast.length > 3 ? 3 : forecast.length,
+        itemCount: futureForecasts.length > 3 ? 3 : futureForecasts.length, // Limit to 3 future days max
         itemBuilder: (context, index) {
-          final day = forecast[index];
+          final day = futureForecasts[index];
           String dayName;
 
-          if (index == 0) {
-            dayName = loc.tomorrow;
-          } else {
-            // Parse the date string and format it to show month name
-            try {
-              // Handle YYYY-MM-DD format
-              if (day['date'].contains('-')) {
-                final parts = day['date'].split('-');
-                if (parts.length >= 3) {
-                  final monthNumber = int.tryParse(parts[1]) ?? 1;
-                  final dayNumber = int.tryParse(parts[2]) ?? 1;
-                  final monthNames = [
-                    '',
-                    loc.january,
-                    loc.february,
-                    loc.march,
-                    loc.april,
-                    loc.may,
-                    loc.june,
-                    loc.july,
-                    loc.august,
-                    loc.september,
-                    loc.october,
-                    loc.november,
-                    loc.december,
-                  ];
-                  final monthName =
-                      monthNumber <= 12 ? monthNames[monthNumber] : 'January';
-                  dayName =
-                      '$monthName ${dayNumber.toString().padLeft(2, '0')}';
-                } else {
-                  dayName = day['date'];
-                }
-              } else {
-                dayName = day['date'];
-              }
-            } catch (e) {
-              dayName = day['date'];
+          try {
+            final forecastDate = DateTime.parse(day['date']);
+            final forecastDateOnly = DateTime(forecastDate.year, forecastDate.month, forecastDate.day);
+            final tomorrow = DateTime(today.year, today.month, today.day + 1);
+            final tomorrowDateOnly = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+
+            if (forecastDateOnly.isAtSameMomentAs(tomorrowDateOnly)) {
+              dayName = loc.tomorrow;
+            } else {
+              // Get the month name and day
+              final monthNumber = forecastDate.month;
+              final dayNumber = forecastDate.day;
+              final monthNames = [
+                '',
+                loc.january,
+                loc.february,
+                loc.march,
+                loc.april,
+                loc.may,
+                loc.june,
+                loc.july,
+                loc.august,
+                loc.september,
+                loc.october,
+                loc.november,
+                loc.december,
+              ];
+              final monthName = monthNumber <= 12 ? monthNames[monthNumber] : 'January';
+              dayName = '$monthName ${dayNumber.toString().padLeft(2, '0')}';
             }
+          } catch (e) {
+            dayName = day['date'];
           }
 
           return Container(
