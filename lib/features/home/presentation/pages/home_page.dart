@@ -602,6 +602,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontSize: 13,
                               ),
                             ),
+                            Text(
+                              'Cloud Cover: ${current['cloud']}%',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -609,6 +616,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
+                            Text(
+                              'Pressure: ${current['pressure_mb']} mb',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
+                              textAlign: TextAlign.end,
+                            ),
                             Text(
                               'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
                               style: const TextStyle(
@@ -623,6 +638,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white,
                                 fontSize: 13,
                               ),
+                              textAlign: TextAlign.end,
                             ),
                           ],
                         ),
