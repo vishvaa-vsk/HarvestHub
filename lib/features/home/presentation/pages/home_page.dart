@@ -674,28 +674,34 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             // Parse the date string and format it to show month name
             try {
-              final parts = day['date'].split(' ');
-              if (parts.length >= 2) {
-                // Convert month number to name
-                final monthNumber = int.tryParse(parts[1]) ?? 1;
-                final monthNames = [
-                  '',
-                  'Jan',
-                  'Feb',
-                  'Mar',
-                  'Apr',
-                  'May',
-                  'Jun',
-                  'Jul',
-                  'Aug',
-                  'Sep',
-                  'Oct',
-                  'Nov',
-                  'Dec',
-                ];
-                final monthName =
-                    monthNumber <= 12 ? monthNames[monthNumber] : 'Jan';
-                dayName = '${monthName} ${parts[0]}';
+              // Handle YYYY-MM-DD format
+              if (day['date'].contains('-')) {
+                final parts = day['date'].split('-');
+                if (parts.length >= 3) {
+                  final monthNumber = int.tryParse(parts[1]) ?? 1;
+                  final dayNumber = int.tryParse(parts[2]) ?? 1;
+                  final monthNames = [
+                    '',
+                    'January',
+                    'February',
+                    'March',
+                    'April',
+                    'May',
+                    'June',
+                    'July',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December',
+                  ];
+                  final monthName =
+                      monthNumber <= 12 ? monthNames[monthNumber] : 'January';
+                  dayName =
+                      '$monthName ${dayNumber.toString().padLeft(2, '0')}';
+                } else {
+                  dayName = day['date'];
+                }
               } else {
                 dayName = day['date'];
               }
@@ -814,7 +820,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.lightbulb_outline,
+                          Icons.lightbulb,
                           color: const Color(0xFF16A34A),
                           size: 24,
                         ),
