@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/utils/avatar_utils.dart';
 
 class AIChatPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _AIChatPageState extends State<AIChatPage> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
-  late String _userAvatarUrl;
+  String _userAvatarUrl = '';
 
   // Context-aware memory variables
   final List<Content> _conversationHistory = [];
@@ -25,8 +26,7 @@ class _AIChatPageState extends State<AIChatPage> {
   @override
   void initState() {
     super.initState();
-    // Generate a random user avatar
-    _userAvatarUrl = _generateRandomAvatar();
+    _initializeUserAvatar();
 
     // Add welcome message when the chat page is initialized
     _messages.add({
@@ -49,15 +49,35 @@ Just ask me anything in your preferred language! 🌱''',
     });
   }
 
-  String _generateRandomAvatar() {
-    return AvatarUtils.generateRandomAvatar();
+  Future<void> _initializeUserAvatar() async {
+    try {
+      // Get the current user's phone number as the ID for consistent avatar
+      final userId = FirebaseAuth.instance.currentUser?.phoneNumber ?? 'user';
+      final avatarUrl = await AvatarUtils.getAvatarWithFallback(userId: userId);
+
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _userAvatarUrl = avatarUrl;
+        });
+      }
+    } catch (e) {
+      // Fallback to default avatar if there's an error
+      if (mounted) {
+        setState(() {
+          _userAvatarUrl = 'https://avatar.iran.liara.run/public/1';
+        });
+      }
+    }
   }
 
   Future<void> _sendMessage(String userMessage) async {
-    setState(() {
-      _messages.add({'sender': 'user', 'text': userMessage});
-      _isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _messages.add({'sender': 'user', 'text': userMessage});
+        _isLoading = true;
+      });
+    }
 
     // Add user message to conversation history
     _addToConversationHistory('user', userMessage);
@@ -147,10 +167,12 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
       final responseText = response.text ?? 'No response available';
 
-      setState(() {
-        _messages.add({'sender': 'ai', 'text': responseText});
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _messages.add({'sender': 'ai', 'text': responseText});
+          _isLoading = false;
+        });
+      }
 
       // Add bot response to conversation history
       _addToConversationHistory('model', responseText);
@@ -166,10 +188,12 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         }
       });
     } catch (e) {
-      setState(() {
-        _messages.add({'sender': 'ai', 'text': 'Error: $e'});
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _messages.add({'sender': 'ai', 'text': 'Error: $e'});
+          _isLoading = false;
+        });
+      }
     }
   }
 

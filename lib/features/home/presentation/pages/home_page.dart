@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:harvesthub/main.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
 
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
@@ -681,7 +680,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Text(
                     insights['farmingTip'] ?? loc.noFarmingTip,
                     style: const TextStyle(
@@ -737,7 +736,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Text(
                     insights['cropRecommendation'] ?? loc.noCropRecommendation,
                     style: const TextStyle(
@@ -811,43 +810,77 @@ class _HomeScreenState extends State<HomeScreen> {
                       userPhone = userData['phoneNumber'] ?? '';
                     }
 
-                    // Generate random avatar using reliable service
-                    final avatarUrl = AvatarUtils.generateRandomAvatar();
+                    // Use user's phone number as the seed for consistent avatar
+                    final userId =
+                        FirebaseAuth.instance.currentUser?.phoneNumber ??
+                        'guest';
 
                     return Column(
                       children: [
                         // Avatar with green border matching reference
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF16A34A),
-                              width: 3,
-                            ),
+                        FutureBuilder<String>(
+                          future: AvatarUtils.getAvatarWithFallback(
+                            userId: userId,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Image.network(
-                              avatarUrl,
+                          builder: (context, avatarSnapshot) {
+                            final avatarUrl =
+                                avatarSnapshot.data ??
+                                'https://avatar.iran.liara.run/public/1';
+
+                            return Container(
                               width: 80,
                               height: 80,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: const Color(0xFF16A34A),
+                                  width: 3,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(40),
+                                child: Image.network(
+                                  avatarUrl,
                                   width: 80,
                                   height: 80,
-                                  color: const Color(0xFFF0F0F0),
-                                  child: const Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: Color(0xFF9E9E9E),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (
+                                    context,
+                                    child,
+                                    loadingProgress,
+                                  ) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      width: 80,
+                                      height: 80,
+                                      color: const Color(0xFFF0F0F0),
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Color(0xFF16A34A),
+                                              ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 80,
+                                      height: 80,
+                                      color: const Color(0xFFF0F0F0),
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 40,
+                                        color: Color(0xFF9E9E9E),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         // Online indicator (green dot)
                         Transform.translate(

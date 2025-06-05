@@ -20,6 +20,7 @@ import 'features/auth/presentation/pages/phone_auth_page.dart';
 import 'features/auth/presentation/pages/language_selection_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'core/providers/weather_provider.dart';
+import 'core/utils/avatar_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -40,12 +41,31 @@ void main() async {
   );
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
+
+  // Preload common avatars for better performance
+  _preloadAvatars();
+
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => WeatherProvider())],
       child: HarvestHubApp(key: harvestHubAppKey),
     ),
   );
+}
+
+/// Preload common avatars to improve performance
+void _preloadAvatars() {
+  // Preload HarvestBot avatar
+  AvatarUtils.preloadAvatar(userId: 'harvestbot');
+
+  // Preload guest user avatar
+  AvatarUtils.preloadAvatar(userId: 'guest');
+
+  // If user is already authenticated, preload their avatar
+  final currentUser = FirebaseAuth.instance.currentUser;
+  if (currentUser?.phoneNumber != null) {
+    AvatarUtils.preloadAvatar(userId: currentUser!.phoneNumber!);
+  }
 }
 
 class HarvestHubApp extends StatefulWidget {
