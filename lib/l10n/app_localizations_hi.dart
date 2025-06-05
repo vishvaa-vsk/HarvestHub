@@ -194,13 +194,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get tomorrow => 'कल';
 
   @override
-  String get minTemperature => 'Min:';
+  String get minTemperature => 'न्यून:';
 
   @override
   String get rain => 'बारिश';
 
   @override
-  String get viewAll => 'सभी देखें >';
+  String get viewAll => 'अधिक >';
 
   @override
   String get weatherForecastCalendar => 'मौसम पूर्वानुमान';

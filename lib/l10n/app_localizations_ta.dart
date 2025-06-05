@@ -194,13 +194,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get tomorrow => 'நாளை';
 
   @override
-  String get minTemperature => 'Min:';
+  String get minTemperature => 'குறை:';
 
   @override
   String get rain => 'மழை';
 
   @override
-  String get viewAll => 'மேலும் காண்க >';
+  String get viewAll => 'மேலும் >';
 
   @override
   String get weatherForecastCalendar => 'காலநிலை முன்னறிவிப்பு';

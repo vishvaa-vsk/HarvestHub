@@ -9,7 +9,7 @@ class AppLocalizationsMl extends AppLocalizations {
   AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
-  String get appTitle => 'HarvestHub';
+  String get appTitle => 'ഹാർവെസ്റ്റ് ഹബ്';
 
   @override
   String get welcomeMessage => 'HarvestHub-ലേക്ക് സ്വാഗതം!';
@@ -194,13 +194,13 @@ class AppLocalizationsMl extends AppLocalizations {
   String get tomorrow => 'നാളെ';
 
   @override
-  String get minTemperature => 'Min:';
+  String get minTemperature => 'ഏറ്റവും കുറഞ്ഞത്:';
 
   @override
   String get rain => 'മഴ';
 
   @override
-  String get viewAll => 'എല്ലാം കാണുക >';
+  String get viewAll => 'കൂടുതൽ >';
 
   @override
   String get weatherForecastCalendar => 'കാലാവസ്ഥാ പ്രവചനം';

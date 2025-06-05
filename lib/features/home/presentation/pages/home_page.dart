@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'HarvestHub',
+          loc.appTitle,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -384,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             children: [
                               Text(
-                                'HarvestHub',
+                                loc.appTitle,
                                 style: theme.textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -570,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Current Weather',
+                              loc.currentWeather,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -680,14 +680,19 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  loc.upcomingForecast,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Expanded(
+                  child: Text(
+                    loc.upcomingForecast,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -700,10 +705,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(
                     loc.viewAll,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Color(0xFF16A34A),
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ],
@@ -771,7 +778,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return Container(
             width: 120,
             margin: const EdgeInsets.only(right: 12),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -785,52 +792,70 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  dayName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                Flexible(
+                  child: Text(
+                    dayName,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '${day['temperature']['max']}°C',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: const TextStyle(
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF16A34A),
+                    color: Color(0xFF16A34A),
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      day['rainChance'] > 50
-                          ? Icons.water_drop
-                          : Icons.wb_sunny,
-                      size: 16,
-                      color:
-                          day['rainChance'] > 50 ? Colors.blue : Colors.orange,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${day['rainChance']}% ${loc.rain}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black54,
+                Flexible(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        day['rainChance'] > 50
+                            ? Icons.water_drop
+                            : Icons.wb_sunny,
+                        size: 14,
+                        color:
+                            day['rainChance'] > 50
+                                ? Colors.blue
+                                : Colors.orange,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 2),
+                      Flexible(
+                        child: Text(
+                          '${day['rainChance']}% ${loc.rain}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${loc.minTemperature} ${day['temperature']['min']}°C',
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                const SizedBox(height: 2),
+                Flexible(
+                  child: Text(
+                    '${loc.minTemperature} ${day['temperature']['min']}°C',
+                    style: const TextStyle(fontSize: 11, color: Colors.black54),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),

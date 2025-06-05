@@ -162,6 +162,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             child: Text(
               '${loc.weatherForecastCalendar}: ${DateFormat('MMM d').format(startDate)} - ${DateFormat('MMM d').format(endDate)}',
               style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
             ),
           ),
           // Month navigation
@@ -193,33 +196,61 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.sunday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.sunday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.monday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.monday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.tuesday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.tuesday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.wednesday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.wednesday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.thursday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.thursday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.friday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.friday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(
-                  width: 30,
-                  child: Text(loc.saturday, textAlign: TextAlign.center),
+                Expanded(
+                  child: Text(
+                    loc.saturday,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

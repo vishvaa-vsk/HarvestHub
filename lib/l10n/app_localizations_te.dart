@@ -194,13 +194,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get tomorrow => 'రేపు';
 
   @override
-  String get minTemperature => 'Min:';
+  String get minTemperature => 'కనిష్ట:';
 
   @override
   String get rain => 'వర్షం';
 
   @override
-  String get viewAll => 'అన్నింటినీ చూడండి >';
+  String get viewAll => 'మరింత >';
 
   @override
   String get weatherForecastCalendar => 'వాతావరణ అంచనాలు';
