@@ -123,5 +123,9 @@
   "thursday": "गुरु",
   "friday": "शुक्र",
   "saturday": "शनि",
-  "failedToLoadInsights": "अंतर्दृष्टि लोड करने में विफल"
+  "failedToLoadInsights": "अंतर्दृष्टि लोड करने में विफल",
+  "darkMode": "डार्क मोड",
+  "notifications": "सूचनाएं",
+  "helpSupport": "सहायता और समर्थन",
+  "about": "के बारे में"
 }

@@ -123,5 +123,9 @@
   "thursday": "గురు",
   "friday": "శుక్ర",
   "saturday": "శని",
-  "failedToLoadInsights": "అంతర్దృష్టులను లోడ్ చేయడంలో విఫలమైంది"
+  "failedToLoadInsights": "అంతర్దృష్టులను లోడ్ చేయడంలో విఫలమైంది",
+  "darkMode": "డార్క్ మోడ్",
+  "notifications": "నోటిఫికేషన్లు",
+  "helpSupport": "సహాయం మరియు మద్దతు",
+  "about": "గురించి"
 }

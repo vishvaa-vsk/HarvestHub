@@ -123,5 +123,9 @@
   "thursday": "Thu",
   "friday": "Fri",
   "saturday": "Sat",
-  "failedToLoadInsights": "Failed to load insights"
+  "failedToLoadInsights": "Failed to load insights",
+  "darkMode": "Dark Mode",
+  "notifications": "Notifications",
+  "helpSupport": "Help & Support",
+  "about": "About"
 }

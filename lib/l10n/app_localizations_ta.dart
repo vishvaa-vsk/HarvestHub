@@ -261,4 +261,16 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get saturday => 'ச';
+
+  @override
+  String get darkMode => 'இருண்ட பயன்முறை';
+
+  @override
+  String get notifications => 'அறிவிப்புகள்';
+
+  @override
+  String get helpSupport => 'உதவி மற்றும் ஆதரவு';
+
+  @override
+  String get about => 'பற்றி';
 }

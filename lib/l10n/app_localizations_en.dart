@@ -261,4 +261,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saturday => 'Sat';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get about => 'About';
 }

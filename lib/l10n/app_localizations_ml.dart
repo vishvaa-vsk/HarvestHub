@@ -15,7 +15,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get welcomeMessage => 'HarvestHub-ലേക്ക് സ്വാഗതം!';
 
   @override
-  String get selectLanguage => 'ഭാഷ തിരഞ്ഞെടുക്കുക';
+  String get selectLanguage => 'ഇഷ്ടപ്പെട്ട ഭാഷ തിരഞ്ഞെടുക്കുക';
 
   @override
   String get english => 'ഇംഗ്ലീഷ്';
@@ -137,7 +137,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get enterOTP => 'OTP നൽകുക';
 
   @override
-  String get pleaseEnterNameAndPhone => 'ദയവായി നിങ്ങളുടെ പേര് மற்றும் ഫോൺ നമ്പർ നൽകുക';
+  String get pleaseEnterNameAndPhone => 'ദയവായി നിങ്ങളുടെ പേര് और ഫോൺ നമ്പർ നൽകുക';
 
   @override
   String get invalidOTP => 'അസാധുവായ OTP';
@@ -152,7 +152,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get enableLocationServices => 'സ്ഥാനം സേവനങ്ങൾ സജീവമാക്കുക';
 
   @override
-  String get openSettings => 'അமைപ്പുകൾ തുറക്കുക';
+  String get openSettings => 'അമിപ്പുകൾ തുറക്കുക';
 
   @override
   String get cancel => 'റദ്ദാക്കുക';
@@ -261,4 +261,16 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get saturday => 'ശ';
+
+  @override
+  String get darkMode => 'ഇരുണ്ട മോഡ്';
+
+  @override
+  String get notifications => 'അറിയിപ്പുകൾ';
+
+  @override
+  String get helpSupport => 'സഹായവും പിന്തുണയും';
+
+  @override
+  String get about => 'കുറിച്ച്';
 }

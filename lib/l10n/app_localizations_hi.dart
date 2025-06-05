@@ -261,4 +261,16 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get saturday => 'शनि';
+
+  @override
+  String get darkMode => 'डार्क मोड';
+
+  @override
+  String get notifications => 'सूचनाएं';
+
+  @override
+  String get helpSupport => 'सहायता और समर्थन';
+
+  @override
+  String get about => 'के बारे में';
 }

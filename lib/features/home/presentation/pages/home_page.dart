@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseAuth
-import 'package:cloud_firestore/cloud_firestore.dart'; // Added import for Firestore
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
-import 'package:harvesthub/main.dart'; // Import the file where the GlobalKey is defined
+import 'package:harvesthub/main.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/providers/weather_provider.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
-import '../../../auth/presentation/pages/phone_auth_page.dart'; // Added import for PhoneAuthPage
+import '../../../auth/presentation/pages/phone_auth_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
 import '../../../../screens/community_feed.dart';
@@ -245,251 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [const Color(0xFF16A34A), const Color(0xFF22C55E)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: FutureBuilder<DocumentSnapshot>(
-                future:
-                    FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
-                        .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.hasError ||
-                      !snapshot.hasData ||
-                      !snapshot.data!.exists) {
-                    return const Text(
-                      'Error loading user data',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    );
-                  }
-
-                  final userData =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFF16A34A),
-                              const Color(0xFF22C55E),
-                            ],
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(2),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 40,
-                            color: const Color(0xFF16A34A),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            userData['name'] ?? 'User',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            userData['phoneNumber'] ?? '',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFF16A34A)),
-              title: Text(loc.editProfileSettings),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditProfilePage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.language, color: Colors.blue),
-              title: Text(loc.changeLanguage),
-              onTap: () async {
-                Navigator.pop(context); // Close the drawer
-                final languages = [
-                  {'code': 'en', 'label': loc.english, 'icon': Icons.language},
-                  {'code': 'hi', 'label': loc.hindi, 'icon': Icons.translate},
-                  {'code': 'ta', 'label': loc.tamil, 'icon': Icons.g_translate},
-                  {
-                    'code': 'te',
-                    'label': loc.telugu,
-                    'icon': Icons.g_translate,
-                  },
-                  {
-                    'code': 'ml',
-                    'label': loc.malayalam,
-                    'icon': Icons.g_translate,
-                  },
-                ];
-                final selected = await showModalBottomSheet<String>(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    final theme = Theme.of(context);
-                    final green = const Color(0xFF16A34A);
-                    final greyTile = const Color(0xFFF3F3F3);
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(28),
-                        ),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                loc.appTitle,
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(left: 3, top: 2),
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: green,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 18),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              loc.selectLanguage,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            mainAxisSpacing: 20,
-                            crossAxisSpacing: 20,
-                            childAspectRatio: 2.2,
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: [
-                              for (final lang in languages)
-                                _LanguageTileModal(
-                                  label: lang['label'] as String,
-                                  icon: lang['icon'] as IconData,
-                                  onTap:
-                                      () => Navigator.pop(
-                                        context,
-                                        lang['code'] as String,
-                                      ),
-                                  accent: green,
-                                  grey: greyTile,
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    );
-                  },
-                );
-                if (selected != null) {
-                  final rootState = harvestHubAppKey.currentState;
-                  if (rootState != null) {
-                    await rootState.setLocale(selected);
-                    // Reset system navigation bar color after locale change
-                    SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                        systemNavigationBarColor: Color(0xFFF6F8F7),
-                        systemNavigationBarIconBrightness: Brightness.dark,
-                        statusBarColor: Colors.transparent,
-                        statusBarIconBrightness: Brightness.dark,
-                      ),
-                    );
-                    // Fetch new weather and insights in the new language
-                    final provider = Provider.of<WeatherProvider>(
-                      context,
-                      listen: false,
-                    );
-                    await provider.fetchWeatherAndInsights();
-                  }
-                }
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: Text(loc.logout),
-              onTap: () async {
-                try {
-                  await FirebaseAuth.instance.signOut(); // Sign out the user
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              const PhoneAuthPage(), // Redirect to PhoneAuthPage
-                    ),
-                    (route) => false, // Remove all previous routes
-                  );
-                } catch (e) {
-                  debugPrint('Error during logout: $e');
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: _buildModernDrawer(context, loc),
       body:
           _isLocationEnabled
               ? SingleChildScrollView(
@@ -1023,6 +779,388 @@ class _HomeScreenState extends State<HomeScreen> {
       return Icons.cloud;
     } else {
       return Icons.wb_cloudy; // Default icon
+    }
+  }
+
+  Widget _buildModernDrawer(BuildContext context, AppLocalizations loc) {
+    return Drawer(
+      child: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Profile Section
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+                child: FutureBuilder<DocumentSnapshot>(
+                  future:
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser?.phoneNumber)
+                          .get(),
+                  builder: (context, snapshot) {
+                    String userName = 'Guest User';
+                    String userPhone = '';
+
+                    if (snapshot.hasData && snapshot.data!.exists) {
+                      final userData =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      userName = userData['name'] ?? 'User';
+                      userPhone = userData['phoneNumber'] ?? '';
+                    }
+
+                    // Generate random avatar
+                    final avatarUrl = 'https://avatar.iran.liara.run/public';
+
+                    return Column(
+                      children: [
+                        // Avatar with green border matching reference
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF16A34A),
+                              width: 3,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Image.network(
+                              avatarUrl,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 80,
+                                  height: 80,
+                                  color: const Color(0xFFF0F0F0),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: Color(0xFF9E9E9E),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        // Online indicator (green dot)
+                        Transform.translate(
+                          offset: const Offset(25, -25),
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF16A34A),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // User Name
+                        Text(
+                          userName,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF1F1F1F),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        if (userPhone.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            userPhone,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF6B7280),
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ),
+
+              // Divider
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                color: const Color(0xFFF0F0F0),
+              ),
+
+              // Dark Mode Section
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      loc.darkMode,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF1F1F1F),
+                      ),
+                    ),
+                    Switch(
+                      value: false,
+                      onChanged: (value) {
+                        // TODO: Implement dark mode logic
+                      },
+                      activeColor: const Color(0xFF16A34A),
+                      inactiveThumbColor: const Color(0xFFE5E5E5),
+                      inactiveTrackColor: const Color(0xFFF5F5F5),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Separator after Dark Mode
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                color: const Color(0xFFF0F0F0),
+              ),
+
+              // Menu Items
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      _buildSimpleDrawerItem(
+                        icon: Icons.settings_outlined,
+                        title: loc.editProfileSettings,
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EditProfilePage(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildSimpleDrawerItem(
+                        icon: Icons.language_outlined,
+                        title: loc.changeLanguage,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await _showLanguageSelector(context, loc);
+                        },
+                      ),
+
+                      _buildSimpleDrawerItem(
+                        icon: Icons.help_outline,
+                        title: loc.helpSupport,
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: Navigate to help & support page
+                        },
+                      ),
+                      _buildSimpleDrawerItem(
+                        icon: Icons.info_outline,
+                        title: loc.about,
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: Navigate to about page
+                        },
+                      ),
+                      const Spacer(),
+
+                      // Separator line before logout
+                      Container(
+                        height: 1,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        color: const Color(0xFFF0F0F0),
+                      ),
+
+                      _buildSimpleDrawerItem(
+                        icon: Icons.logout,
+                        title: loc.logout,
+                        textColor: const Color(0xFFEF4444),
+                        iconColor: const Color(0xFFEF4444),
+                        onTap: () async {
+                          try {
+                            await FirebaseAuth.instance.signOut();
+                            Navigator.pop(context);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PhoneAuthPage(),
+                              ),
+                              (route) => false,
+                            );
+                          } catch (e) {
+                            debugPrint('Error during logout: $e');
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleDrawerItem({
+    required IconData icon,
+    required String title,
+    VoidCallback? onTap,
+    Widget? trailing,
+    Color? textColor,
+    Color? iconColor,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: iconColor ?? textColor ?? const Color(0xFF6B7280),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: textColor ?? const Color(0xFF1F1F1F),
+                  ),
+                ),
+              ),
+              if (trailing != null) trailing,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLanguageSelector(
+    BuildContext context,
+    AppLocalizations loc,
+  ) async {
+    final languages = [
+      {'code': 'en', 'label': loc.english, 'icon': Icons.language},
+      {'code': 'hi', 'label': loc.hindi, 'icon': Icons.translate},
+      {'code': 'ta', 'label': loc.tamil, 'icon': Icons.g_translate},
+      {'code': 'te', 'label': loc.telugu, 'icon': Icons.g_translate},
+      {'code': 'ml', 'label': loc.malayalam, 'icon': Icons.g_translate},
+    ];
+
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        final green = const Color(0xFF16A34A);
+        final greyTile = const Color(0xFFF3F3F3);
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    loc.appTitle,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 3, top: 2),
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: green,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  loc.selectLanguage,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              const SizedBox(height: 24),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
+                childAspectRatio: 2.2,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  for (final lang in languages)
+                    _LanguageTileModal(
+                      label: lang['label'] as String,
+                      icon: lang['icon'] as IconData,
+                      onTap:
+                          () => Navigator.pop(context, lang['code'] as String),
+                      accent: green,
+                      grey: greyTile,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      final rootState = harvestHubAppKey.currentState;
+      if (rootState != null) {
+        await rootState.setLocale(selected);
+        SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(
+            systemNavigationBarColor: Color(0xFFF6F8F7),
+            systemNavigationBarIconBrightness: Brightness.dark,
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+        );
+        final provider = Provider.of<WeatherProvider>(context, listen: false);
+        await provider.fetchWeatherAndInsights();
+      }
     }
   }
 }

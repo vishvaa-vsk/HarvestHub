@@ -261,4 +261,16 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get saturday => 'శని';
+
+  @override
+  String get darkMode => 'డార్క్ మోడ్';
+
+  @override
+  String get notifications => 'నోటిఫికేషన్లు';
+
+  @override
+  String get helpSupport => 'సహాయం మరియు మద్దతు';
+
+  @override
+  String get about => 'గురించి';
 }
