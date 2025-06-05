@@ -149,6 +149,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final today = DateTime.now();
     final startDate = DateTime(_focusedDate.year, _focusedDate.month, 1);
     final endDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
@@ -159,7 +160,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Weather Forecast: ${DateFormat('MMM d').format(startDate)} - ${DateFormat('MMM d').format(endDate)}',
+              '${loc.weatherForecastCalendar}: ${DateFormat('MMM d').format(startDate)} - ${DateFormat('MMM d').format(endDate)}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -191,34 +192,34 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
+              children: [
                 SizedBox(
                   width: 30,
-                  child: Text('Sun', textAlign: TextAlign.center),
+                  child: Text(loc.sunday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Mon', textAlign: TextAlign.center),
+                  child: Text(loc.monday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Tue', textAlign: TextAlign.center),
+                  child: Text(loc.tuesday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Wed', textAlign: TextAlign.center),
+                  child: Text(loc.wednesday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Thu', textAlign: TextAlign.center),
+                  child: Text(loc.thursday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Fri', textAlign: TextAlign.center),
+                  child: Text(loc.friday, textAlign: TextAlign.center),
                 ),
                 SizedBox(
                   width: 30,
-                  child: Text('Sat', textAlign: TextAlign.center),
+                  child: Text(loc.saturday, textAlign: TextAlign.center),
                 ),
               ],
             ),

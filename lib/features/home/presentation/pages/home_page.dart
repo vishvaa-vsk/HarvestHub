@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Added import for FirebaseAuth
@@ -50,6 +49,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: SafeArea(
@@ -95,28 +96,28 @@ class _MainScreenState extends State<MainScreen> {
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Icon(Icons.home),
                 ),
-                label: 'Home',
+                label: localizations.home,
               ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Icon(Icons.smart_toy_rounded),
                 ),
-                label: 'HarvestBot',
+                label: localizations.harvestBot,
               ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Icon(Icons.pest_control),
                 ),
-                label: 'Pest Detect',
+                label: localizations.pestDetection,
               ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Icon(Icons.forum),
                 ),
-                label: 'Community',
+                label: localizations.community,
               ),
             ],
           ),
@@ -612,21 +613,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Feels Like: ${current['feelslike_c']}°C',
+                              loc.feelsLike(current['feelslike_c']),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
                               ),
                             ),
                             Text(
-                              'Humidity: ${current['humidity']}%',
+                              loc.humidity(current['humidity']),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
                               ),
                             ),
                             Text(
-                              'Cloud Cover: ${current['cloud']}%',
+                              loc.cloudCover(current['cloud']),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -640,7 +641,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              'Pressure: ${current['pressure_mb']} mb',
+                              loc.pressure(current['pressure_mb']),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -648,7 +649,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               textAlign: TextAlign.end,
                             ),
                             Text(
-                              'Wind: ${current['windSpeed']} km/h (${current['wind_dir']})',
+                              loc.wind(
+                                current['windSpeed'],
+                                current['wind_dir'],
+                              ),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -656,7 +660,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               textAlign: TextAlign.end,
                             ),
                             Text(
-                              'UV Index: ${current['uv']}',
+                              loc.uvIndex(current['uv']),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -676,9 +680,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Upcoming Forecast',
-                  style: TextStyle(
+                Text(
+                  loc.upcomingForecast,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -693,9 +697,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   },
-                  child: const Text(
-                    'View All >',
-                    style: TextStyle(
+                  child: Text(
+                    loc.viewAll,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFF16A34A),
                       fontWeight: FontWeight.w600,
@@ -713,6 +717,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildForecast(BuildContext context, List<dynamic> forecast) {
+    final loc = AppLocalizations.of(context)!;
     return SizedBox(
       height: 140,
       child: ListView.builder(
@@ -723,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
           String dayName;
 
           if (index == 0) {
-            dayName = 'Tomorrow';
+            dayName = loc.tomorrow;
           } else {
             // Parse the date string and format it to show month name
             try {
@@ -735,18 +740,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   final dayNumber = int.tryParse(parts[2]) ?? 1;
                   final monthNames = [
                     '',
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December',
+                    loc.january,
+                    loc.february,
+                    loc.march,
+                    loc.april,
+                    loc.may,
+                    loc.june,
+                    loc.july,
+                    loc.august,
+                    loc.september,
+                    loc.october,
+                    loc.november,
+                    loc.december,
                   ];
                   final monthName =
                       monthNumber <= 12 ? monthNames[monthNumber] : 'January';
@@ -814,7 +819,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${day['rainChance']}% Rain',
+                      '${day['rainChance']}% ${loc.rain}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black54,
@@ -824,7 +829,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Min: ${day['temperature']['min']}°C',
+                  '${loc.minTemperature} ${day['temperature']['min']}°C',
                   style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
               ],
@@ -836,6 +841,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildInsightsSection(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Consumer<WeatherProvider>(
       builder: (context, weatherProvider, child) {
         if (weatherProvider.isLoading) {
@@ -844,7 +850,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         final insights = weatherProvider.insights;
         if (insights == null) {
-          return const Text('Failed to load insights');
+          return Text(loc.failedToLoadInsights);
         }
 
         return Column(
@@ -883,7 +889,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Farming Tip',
+                        loc.farmingTip,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -894,7 +900,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    insights['farmingTip'] ?? 'No farming tip available',
+                    insights['farmingTip'] ?? loc.noFarmingTip,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
@@ -939,7 +945,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Recommended Crop',
+                        loc.recommendedCrop,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -950,8 +956,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    insights['cropRecommendation'] ??
-                        'No crop recommendation available',
+                    insights['cropRecommendation'] ?? loc.noCropRecommendation,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,

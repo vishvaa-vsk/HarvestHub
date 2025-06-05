@@ -183,4 +183,82 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get whatsOnYourMind => 'आपके मन में क्या है?';
+
+  @override
+  String get currentWeather => 'वर्तमान मौसम';
+
+  @override
+  String get upcomingForecast => 'आने वाला पूर्वानुमान';
+
+  @override
+  String get tomorrow => 'कल';
+
+  @override
+  String get minTemperature => 'Min:';
+
+  @override
+  String get rain => 'बारिश';
+
+  @override
+  String get viewAll => 'सभी देखें >';
+
+  @override
+  String get weatherForecastCalendar => 'मौसम पूर्वानुमान';
+
+  @override
+  String get january => 'जनवरी';
+
+  @override
+  String get february => 'फरवरी';
+
+  @override
+  String get march => 'मार्च';
+
+  @override
+  String get april => 'अप्रैल';
+
+  @override
+  String get may => 'मई';
+
+  @override
+  String get june => 'जून';
+
+  @override
+  String get july => 'जुलाई';
+
+  @override
+  String get august => 'अगस्त';
+
+  @override
+  String get september => 'सितंबर';
+
+  @override
+  String get october => 'अक्टूबर';
+
+  @override
+  String get november => 'नवंबर';
+
+  @override
+  String get december => 'दिसंबर';
+
+  @override
+  String get sunday => 'रवि';
+
+  @override
+  String get monday => 'सोम';
+
+  @override
+  String get tuesday => 'मंगल';
+
+  @override
+  String get wednesday => 'बुध';
+
+  @override
+  String get thursday => 'गुरु';
+
+  @override
+  String get friday => 'शुक्र';
+
+  @override
+  String get saturday => 'शनि';
 }

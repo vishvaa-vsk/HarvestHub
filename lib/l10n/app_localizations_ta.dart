@@ -119,7 +119,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get locationServicesRequired => 'இப்பயன்பாட்டைப் பயன்படுத்த இடம் சேவைகள் தேவை.';
 
   @override
-  String get failedToLoadInsights => 'உள்ளடக்கம் ஏற்றுவதில் தோல்வி';
+  String get failedToLoadInsights => 'நுண்ணறிவுகளை ஏற்றுவதில் தோல்வி';
 
   @override
   String get sendOTP => 'OTP அனுப்பவும்';
@@ -183,4 +183,82 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get whatsOnYourMind => 'உங்கள் மனதில் என்ன உள்ளது?';
+
+  @override
+  String get currentWeather => 'தற்போதைய காலநிலை';
+
+  @override
+  String get upcomingForecast => 'வரவிருக்கும் முன்னறிவிப்பு';
+
+  @override
+  String get tomorrow => 'நாளை';
+
+  @override
+  String get minTemperature => 'Min:';
+
+  @override
+  String get rain => 'மழை';
+
+  @override
+  String get viewAll => 'மேலும் காண்க >';
+
+  @override
+  String get weatherForecastCalendar => 'காலநிலை முன்னறிவிப்பு';
+
+  @override
+  String get january => 'ஜனவரி';
+
+  @override
+  String get february => 'பிப்ரவரி';
+
+  @override
+  String get march => 'மார்ச்';
+
+  @override
+  String get april => 'ஏப்ரல்';
+
+  @override
+  String get may => 'மே';
+
+  @override
+  String get june => 'ஜூன்';
+
+  @override
+  String get july => 'ஜூலை';
+
+  @override
+  String get august => 'ஆகஸ்ட்';
+
+  @override
+  String get september => 'செப்டம்பர்';
+
+  @override
+  String get october => 'அக்டோபர்';
+
+  @override
+  String get november => 'நவம்பர்';
+
+  @override
+  String get december => 'டிசம்பர்';
+
+  @override
+  String get sunday => 'ஞா';
+
+  @override
+  String get monday => 'தி';
+
+  @override
+  String get tuesday => 'செ';
+
+  @override
+  String get wednesday => 'பு';
+
+  @override
+  String get thursday => 'வி';
+
+  @override
+  String get friday => 'வெ';
+
+  @override
+  String get saturday => 'ச';
 }

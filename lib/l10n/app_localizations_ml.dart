@@ -119,7 +119,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get locationServicesRequired => 'ഈ ആപ്പ് ഉപയോഗിക്കാൻ സ്ഥാനം സേവനങ്ങൾ ആവശ്യമാണ്.';
 
   @override
-  String get failedToLoadInsights => 'അന്തർദൃഷ്ടി ലോഡ് ചെയ്യുന്നതിൽ പരാജയം';
+  String get failedToLoadInsights => 'ഉൾക്കാഴ്ചകൾ ലോഡ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു';
 
   @override
   String get sendOTP => 'OTP അയയ്ക്കുക';
@@ -183,4 +183,82 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get whatsOnYourMind => 'നിങ്ങളുടെ മനസ്സിൽ എന്താണ്?';
+
+  @override
+  String get currentWeather => 'നിലവിലെ കാലാവസ്ഥ';
+
+  @override
+  String get upcomingForecast => 'വരാനിരിക്കുന്ന പ്രവചനം';
+
+  @override
+  String get tomorrow => 'നാളെ';
+
+  @override
+  String get minTemperature => 'Min:';
+
+  @override
+  String get rain => 'മഴ';
+
+  @override
+  String get viewAll => 'എല്ലാം കാണുക >';
+
+  @override
+  String get weatherForecastCalendar => 'കാലാവസ്ഥാ പ്രവചനം';
+
+  @override
+  String get january => 'ജനുവരി';
+
+  @override
+  String get february => 'ഫെബ്രുവരി';
+
+  @override
+  String get march => 'മാർച്ച്';
+
+  @override
+  String get april => 'ഏപ്രിൽ';
+
+  @override
+  String get may => 'മെയ്';
+
+  @override
+  String get june => 'ജൂൺ';
+
+  @override
+  String get july => 'ജൂലൈ';
+
+  @override
+  String get august => 'ഓഗസ്റ്റ്';
+
+  @override
+  String get september => 'സെപ്റ്റംബർ';
+
+  @override
+  String get october => 'ഒക്ടോബർ';
+
+  @override
+  String get november => 'നവംബർ';
+
+  @override
+  String get december => 'ഡിസംബർ';
+
+  @override
+  String get sunday => 'ഞാ';
+
+  @override
+  String get monday => 'തി';
+
+  @override
+  String get tuesday => 'ചൊ';
+
+  @override
+  String get wednesday => 'ബു';
+
+  @override
+  String get thursday => 'വ്യാ';
+
+  @override
+  String get friday => 'വെ';
+
+  @override
+  String get saturday => 'ശ';
 }
