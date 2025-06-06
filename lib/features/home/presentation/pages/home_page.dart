@@ -82,7 +82,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildModernBottomNavigationBar(AppLocalizations localizations) {
     return Container(
-      height: 80,
+      height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -161,30 +161,22 @@ class _MainScreenState extends State<MainScreen> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF16A34A) : Colors.transparent,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              icon,
-              color: isSelected ? Colors.white : Colors.grey.shade500,
-              size: 26,
-            ),
+          Icon(
+            icon,
+            color: isSelected ? const Color(0xFF16A34A) : Colors.grey.shade500,
+            size: 24,
           ),
           const SizedBox(height: 4),
-          AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 250),
+          Text(
+            label,
             style: TextStyle(
               fontSize: 11,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               color:
                   isSelected ? const Color(0xFF16A34A) : Colors.grey.shade500,
             ),
-            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
