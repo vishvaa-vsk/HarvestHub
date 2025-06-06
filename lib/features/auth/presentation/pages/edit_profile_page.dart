@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/core/services/auth_service.dart';
@@ -155,33 +156,161 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<String?> _showOtpDialog() async {
     final loc = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     String? otp;
+
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         final otpController = TextEditingController();
-        return AlertDialog(
-          title: Text(loc.enterOTP),
-          content: TextField(
-            controller: otpController,
-            decoration: InputDecoration(labelText: loc.enterOTP),
-            keyboardType: TextInputType.number,
+
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(loc.cancel),
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: screenWidth > 400 ? 400 : screenWidth * 0.9,
+              maxHeight: screenHeight * 0.7,
             ),
-            TextButton(
-              onPressed: () {
-                otp = otpController.text;
-                Navigator.of(context).pop();
-              },
-              child: Text(loc.verifyOTP),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(screenWidth < 350 ? 20 : 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF16A34A).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.sms_outlined,
+                      color: const Color(0xFF16A34A),
+                      size: screenWidth < 350 ? 28 : 32,
+                    ),
+                  ),
+                  SizedBox(height: screenWidth < 350 ? 16 : 20),
+                  Text(
+                    loc.enterOTP,
+                    style: TextStyle(
+                      fontSize: screenWidth < 350 ? 18 : 20,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1F2937),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please enter the verification code sent to your phone',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: screenWidth < 350 ? 13 : 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  SizedBox(height: screenWidth < 350 ? 20 : 24),
+                  TextFormField(
+                    controller: otpController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    maxLength: 6,
+                    style: TextStyle(
+                      fontSize: screenWidth < 350 ? 16 : 18,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Enter 6-digit code',
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: screenWidth < 350 ? 14 : 16,
+                        letterSpacing: 1,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF16A34A),
+                          width: 2,
+                        ),
+                      ),
+                      counterText: '',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: screenWidth < 350 ? 12 : 16,
+                        vertical: screenWidth < 350 ? 12 : 16,
+                      ),
+                      isDense: screenWidth < 350,
+                    ),
+                  ),
+                  SizedBox(height: screenWidth < 350 ? 20 : 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF6B7280),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: screenWidth < 350 ? 10 : 12,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            loc.cancel,
+                            style: TextStyle(
+                              fontSize: screenWidth < 350 ? 14 : 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF16A34A),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: screenWidth < 350 ? 10 : 12,
+                            ),
+                          ),
+                          onPressed: () {
+                            otp = otpController.text;
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            loc.verifyOTP,
+                            style: TextStyle(
+                              fontSize: screenWidth < 350 ? 14 : 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         );
       },
     );
@@ -199,129 +328,537 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set system UI overlay style for consistency
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          title: Text(loc.editProfileSettings),
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color(0xFF374151),
+            size: 20,
           ),
-          elevation: 0,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          loc.editProfileSettings,
+          style: const TextStyle(
+            color: Color(0xFF111827),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+          ),
+        ),
+        centerTitle: true,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Profile Picture Section
-            Center(
-              child: Stack(
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.05,
+          vertical: 16,
+        ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: screenWidth > 600 ? 500 : double.infinity,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Minimal Profile Picture Section
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    _showImagePickerOptions();
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF16A34A).withOpacity(0.15),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundColor: const Color(0xFFF0FDF4),
+                          child: Icon(
+                            Icons.person,
+                            size: 40,
+                            color: const Color(0xFF16A34A).withOpacity(0.7),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 2,
+                        right: 2,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF16A34A),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF16A34A).withOpacity(0.4),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              _showImagePickerOptions();
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Premium Personal Information Card
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 8,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Elegant Header
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF16A34A).withOpacity(0.1),
+                                  const Color(0xFF22C55E).withOpacity(0.05),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              color: Color(0xFF16A34A),
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Personal Information',
+                                  style: TextStyle(
+                                    fontSize: screenWidth < 350 ? 18 : 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF111827),
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Update your profile details',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF6B7280),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Premium Form Fields
+                      _buildPremiumTextField(
+                        controller: _nameController,
+                        label: 'Full Name',
+                        hint: 'Enter your full name',
+                        icon: Icons.person_outline,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 24),
+
+                      _buildPremiumTextField(
+                        controller: _emailController,
+                        label: 'Email Address',
+                        hint: 'Enter your email address',
+                        icon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 24),
+
+                      _buildPremiumTextField(
+                        controller: _phoneController,
+                        label: 'Phone Number',
+                        hint: 'Enter your phone number',
+                        icon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.done,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Action Buttons
+              Column(
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey.shade200,
-                    child: const Icon(
-                      Icons.person,
-                      size: 50,
-                      color: Colors.grey,
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF16A34A),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        shadowColor: const Color(0xFF16A34A).withOpacity(0.3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: screenHeight < 700 ? 14 : 16,
+                        ),
+                      ),
+                      onPressed: _saveUserData,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.save_outlined, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Save Changes',
+                            style: TextStyle(
+                              fontSize: screenWidth < 350 ? 14 : 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.green,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.white,
+
+                  const SizedBox(height: 12),
+
+                  // Cancel Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF6B7280),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Colors.grey.shade300),
                         ),
-                        onPressed: () {
-                          // Add logic to edit profile picture
-                        },
+                        padding: EdgeInsets.symmetric(
+                          vertical: screenHeight < 700 ? 14 : 16,
+                        ),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: screenWidth < 350 ? 14 : 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
+
+              SizedBox(height: screenHeight * 0.05),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Premium text field builder with enhanced design
+  Widget _buildPremiumTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    TextInputType? keyboardType,
+    TextInputAction? textInputAction,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Premium label with better typography
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: screenWidth < 350 ? 14 : 15,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF374151),
+              letterSpacing: -0.2,
             ),
-            const SizedBox(height: 24),
-            // Name Input Field
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
+          ),
+        ),
+
+        // Premium text field with enhanced styling
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFFAFAFA),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE1E5E9), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            style: TextStyle(
+              fontSize: screenWidth < 350 ? 15 : 16,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF111827),
+              letterSpacing: -0.2,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                color: const Color(0xFF9CA3AF),
+                fontSize: screenWidth < 350 ? 14 : 15,
+                fontWeight: FontWeight.w400,
+                letterSpacing: -0.1,
+              ),
+              prefixIcon: Container(
+                margin: const EdgeInsets.only(left: 16, right: 12),
+                child: Icon(icon, color: const Color(0xFF16A34A), size: 22),
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 50,
+                minHeight: 24,
+              ),
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: Color(0xFF16A34A),
+                  width: 2,
                 ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 2,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 2,
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: screenWidth < 350 ? 16 : 18,
               ),
             ),
-            const SizedBox(height: 16),
-            // Email Input Field
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-              ),
-              keyboardType: TextInputType.emailAddress,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Show image picker options
+  void _showImagePickerOptions() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      isScrollControlled: true,
+      builder:
+          (context) => Container(
+            padding: EdgeInsets.fromLTRB(
+              screenWidth * 0.05,
+              20,
+              screenWidth * 0.05,
+              MediaQuery.of(context).viewInsets.bottom + 20,
             ),
-            const SizedBox(height: 16),
-            // Made the phone number input field editable
-            TextField(
-              controller: _phoneController,
-              readOnly: false, // Changed from true to false to make it editable
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                prefixIcon: const Icon(Icons.phone),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-              ),
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 24),
-            // Save Changes Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
-                onPressed: _saveUserData,
-                child: const Text(
-                  'Save Changes',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                const SizedBox(height: 20),
+                Text(
+                  'Change Profile Picture',
+                  style: TextStyle(
+                    fontSize: screenWidth < 350 ? 16 : 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+                const SizedBox(height: 20),
+                // Horizontal layout for all options to reduce modal height
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: _buildImageOption(
+                        icon: Icons.camera_alt,
+                        label: 'Camera',
+                        onTap: () {
+                          Navigator.pop(context);
+                          // Implement camera functionality
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildImageOption(
+                        icon: Icons.photo_library,
+                        label: 'Gallery',
+                        onTap: () {
+                          Navigator.pop(context);
+                          // Implement gallery functionality
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildImageOption(
+                        icon: Icons.delete,
+                        label: 'Remove',
+                        onTap: () {
+                          Navigator.pop(context);
+                          // Implement remove functionality
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+    );
+  }
+
+  Widget _buildImageOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 8, 
+          horizontal: screenWidth < 350 ? 8 : 12,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF16A34A).withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF16A34A),
+                size: screenWidth < 350 ? 20 : 24,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: screenWidth < 350 ? 10 : 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
