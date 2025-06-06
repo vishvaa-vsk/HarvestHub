@@ -35,9 +35,9 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text(
-          '30-Day Forecast',
-          style: TextStyle(
+        title: Text(
+          loc.thirtyDayForecast,
+          style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 18,
             color: Colors.black87,
@@ -87,7 +87,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                     vertical: 12,
                   ),
                   child: Text(
-                    _getDateRangeText(),
+                    _getDateRangeText(loc),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -115,11 +115,33 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
     );
   }
 
-  String _getDateRangeText() {
+  String _getDateRangeText(AppLocalizations loc) {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
     final endOfMonth = DateTime(now.year, now.month + 1, 0);
-    return 'Weather Forecast: ${DateFormat('MMM d').format(startOfMonth)} - ${DateFormat('MMM d').format(endOfMonth)}';
+    return loc.weatherForecastCalendar(
+      DateFormat('MMM d').format(startOfMonth), 
+      DateFormat('MMM d').format(endOfMonth)
+    );
+  }
+
+  String _getLocalizedMonthYear(DateTime date, AppLocalizations loc) {
+    final monthNames = [
+      loc.january,
+      loc.february,
+      loc.march,
+      loc.april,
+      loc.may,
+      loc.june,
+      loc.july,
+      loc.august,
+      loc.september,
+      loc.october,
+      loc.november,
+      loc.december,
+    ];
+    final monthName = monthNames[date.month - 1];
+    return '$monthName ${date.year}';
   }
 
   Widget _buildOldStyleCalendar(
@@ -167,7 +189,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   },
                 ),
                 Text(
-                  DateFormat('MMMM yyyy').format(currentMonth),
+                  _getLocalizedMonthYear(currentMonth, loc),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -194,13 +216,13 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
-                _buildDayHeader('Sun'),
-                _buildDayHeader('Mon'),
-                _buildDayHeader('Tue'),
-                _buildDayHeader('Wed'),
-                _buildDayHeader('Thu'),
-                _buildDayHeader('Fri'),
-                _buildDayHeader('Sat'),
+                _buildDayHeader(loc.sunday),
+                _buildDayHeader(loc.monday),
+                _buildDayHeader(loc.tuesday),
+                _buildDayHeader(loc.wednesday),
+                _buildDayHeader(loc.thursday),
+                _buildDayHeader(loc.friday),
+                _buildDayHeader(loc.saturday),
               ],
             ),
           ),
@@ -434,7 +456,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Recommended Crop',
+                loc.recommendedCrop,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -446,7 +468,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
           const SizedBox(height: 9),
           Text(
             weatherProvider.insights?['cropRecommendation'] ??
-                'Okra thrives in warm and humid conditions. It\'s relatively drought-tolerant once established but benefits from consistent watering. The misty conditions shouldn\'t negatively impact its growth. Monitor for pests, which can be more prevalent in warm, humid weather.',
+                loc.noCropRecommendation,
             style: const TextStyle(
               fontSize: 16,
               color: Colors.black87,
