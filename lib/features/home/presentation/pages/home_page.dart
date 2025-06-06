@@ -14,6 +14,7 @@ import '../../../auth/presentation/pages/phone_auth_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
 import 'help_support_page.dart';
+import 'about_page.dart';
 import '../../../../screens/community_feed.dart';
 import 'package:harvesthub/screens/pest_detect_screen.dart';
 
@@ -1166,7 +1167,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: loc.about,
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: Navigate to about page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AboutPage(),
+                            ),
+                          );
                         },
                       ),
                       const Spacer(),
