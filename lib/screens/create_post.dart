@@ -134,7 +134,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     backgroundColor:
                         (!_canPost || _loading)
                             ? Colors.grey.shade300
-                            : Colors.green.shade700,
+                            : const Color(0xFF16A34A),
                     foregroundColor:
                         (!_canPost || _loading)
                             ? Colors.grey.shade600
@@ -212,7 +212,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   elevation: 2,
                   onPressed: _pickImage,
                   tooltip: 'Add Image',
-                  child: Icon(Icons.image, color: Colors.green.shade700),
+                  child: Icon(Icons.image, color: const Color(0xFF16A34A)),
                 ),
               ),
             ],

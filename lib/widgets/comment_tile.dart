@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Legacy comment tile for backward compatibility
 class CommentTile extends StatelessWidget {
   final String commentId;
   final Map<String, dynamic> data;
@@ -16,7 +17,7 @@ class CommentTile extends StatelessWidget {
       future: _firebaseService.getUserByPhone(data['authorId']),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return ListTile(
+          return const ListTile(
             leading: CircleAvatar(child: Icon(Icons.person)),
             title: Text('Loading...'),
           );
@@ -29,13 +30,13 @@ class CommentTile extends StatelessWidget {
                 user['profilePic'] != null
                     ? CachedNetworkImageProvider(user['profilePic'])
                     : null,
-            child: user['profilePic'] == null ? Icon(Icons.person) : null,
+            child: user['profilePic'] == null ? const Icon(Icons.person) : null,
           ),
           title: Text(user['name'] ?? 'User'),
           subtitle: Text(data['content']),
           trailing: Text(
             _timeAgo((data['timestamp'] as Timestamp).toDate()),
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         );
       },
@@ -50,7 +51,7 @@ class CommentTile extends StatelessWidget {
   }
 }
 
-// Modern Twitter-style comment tile
+// Modern Twitter-style comment tile (now the main one)
 class ModernCommentTile extends StatelessWidget {
   final String commentId;
   final Map<String, dynamic> data;
@@ -65,11 +66,14 @@ class ModernCommentTile extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                CircleAvatar(radius: 16, child: Icon(Icons.person, size: 16)),
-                SizedBox(width: 12),
+                const CircleAvatar(
+                  radius: 16,
+                  child: Icon(Icons.person, size: 16),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +83,7 @@ class ModernCommentTile extends StatelessWidget {
                         width: 100,
                         color: Colors.grey[300],
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Container(
                         height: 12,
                         width: 200,
@@ -95,7 +99,12 @@ class ModernCommentTile extends StatelessWidget {
 
         final user = snapshot.data ?? {};
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFFE7E7E8), width: 0.5),
+            ),
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -108,10 +117,10 @@ class ModernCommentTile extends StatelessWidget {
                         : null,
                 child:
                     user['profilePic'] == null
-                        ? Icon(Icons.person, size: 16)
+                        ? const Icon(Icons.person, size: 16)
                         : null,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
 
               // Comment Content
               Expanded(
@@ -123,12 +132,12 @@ class ModernCommentTile extends StatelessWidget {
                       children: [
                         Text(
                           user['name'] ?? 'User',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
                           style: TextStyle(
@@ -136,7 +145,7 @@ class ModernCommentTile extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           '·',
                           style: TextStyle(
@@ -144,7 +153,7 @@ class ModernCommentTile extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           _timeAgo((data['timestamp'] as Timestamp).toDate()),
                           style: TextStyle(
@@ -154,39 +163,57 @@ class ModernCommentTile extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
 
                     // Comment text
                     Text(
                       data['content'],
-                      style: TextStyle(fontSize: 14, height: 1.4),
+                      style: const TextStyle(fontSize: 14, height: 1.4),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Comment actions (like, reply)
                     Row(
                       children: [
                         _buildCommentAction(
+                          context: context,
                           icon: Icons.favorite_border,
                           count: 0, // TODO: Add like functionality for comments
                           onTap: () {
                             // TODO: Implement comment likes
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Comment likes coming soon!'),
+                              ),
+                            );
                           },
                         ),
-                        SizedBox(width: 24),
+                        const SizedBox(width: 24),
                         _buildCommentAction(
+                          context: context,
                           icon: Icons.mode_comment_outlined,
                           count: 0, // TODO: Add reply functionality
                           onTap: () {
                             // TODO: Implement comment replies
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Comment replies coming soon!'),
+                              ),
+                            );
                           },
                         ),
-                        SizedBox(width: 24),
+                        const SizedBox(width: 24),
                         _buildCommentAction(
+                          context: context,
                           icon: Icons.share_outlined,
                           count: 0,
                           onTap: () {
                             // TODO: Implement comment sharing
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Comment sharing coming soon!'),
+                              ),
+                            );
                           },
                         ),
                       ],
@@ -202,6 +229,7 @@ class ModernCommentTile extends StatelessWidget {
   }
 
   Widget _buildCommentAction({
+    required BuildContext context,
     required IconData icon,
     required int count,
     required VoidCallback onTap,
@@ -210,13 +238,13 @@ class ModernCommentTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 16, color: Colors.grey[600]),
             if (count > 0) ...[
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 count.toString(),
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
