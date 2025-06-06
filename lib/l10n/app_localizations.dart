@@ -610,6 +610,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'About'**
   String get about;
+
+  /// No description provided for @helpAndSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupportTitle;
+
+  /// No description provided for @appFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Features'**
+  String get appFeaturesTitle;
+
+  /// No description provided for @gettingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting Started'**
+  String get gettingStartedTitle;
+
+  /// No description provided for @featuresAndUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features & Usage'**
+  String get featuresAndUsageTitle;
+
+  /// No description provided for @contactSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupportTitle;
+
+  /// No description provided for @weatherUpdatesFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Updates'**
+  String get weatherUpdatesFeature;
+
+  /// No description provided for @weatherUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get real-time weather information including temperature, humidity, wind speed, and 3-day forecasts to plan your farming activities.'**
+  String get weatherUpdatesDesc;
+
+  /// No description provided for @aiChatFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'HarvestBot AI Assistant'**
+  String get aiChatFeature;
+
+  /// No description provided for @aiChatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with our AI-powered farming expert for personalized advice, crop recommendations, and answers to your agricultural questions.'**
+  String get aiChatDesc;
+
+  /// No description provided for @pestDetectionFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest Detection'**
+  String get pestDetectionFeature;
+
+  /// No description provided for @pestDetectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload photos of your crops to identify potential pest issues and get recommendations for treatment and prevention.'**
+  String get pestDetectionDesc;
+
+  /// No description provided for @communityFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Farming Community'**
+  String get communityFeature;
+
+  /// No description provided for @communityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with fellow farmers, share experiences, ask questions, and learn from the farming community.'**
+  String get communityDesc;
+
+  /// No description provided for @multiLanguageFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Language Support'**
+  String get multiLanguageFeature;
+
+  /// No description provided for @multiLanguageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the app in your preferred language with support for English, Hindi, Tamil, Telugu, and Malayalam.'**
+  String get multiLanguageDesc;
+
+  /// No description provided for @profileManagementFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Management'**
+  String get profileManagementFeature;
+
+  /// No description provided for @profileManagementDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your personal information, crop preferences, and location settings for personalized recommendations.'**
+  String get profileManagementDesc;
+
+  /// No description provided for @gettingStartedStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Set up your profile with your location and crop preferences'**
+  String get gettingStartedStep1;
+
+  /// No description provided for @gettingStartedStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Allow location access for accurate weather updates'**
+  String get gettingStartedStep2;
+
+  /// No description provided for @gettingStartedStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Explore weather forecasts and farming insights on the home screen'**
+  String get gettingStartedStep3;
+
+  /// No description provided for @gettingStartedStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Chat with HarvestBot for personalized farming advice'**
+  String get gettingStartedStep4;
+
+  /// No description provided for @gettingStartedStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Join the community to connect with other farmers'**
+  String get gettingStartedStep5;
+
+  /// No description provided for @weatherUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Weather Features'**
+  String get weatherUsageTitle;
+
+  /// No description provided for @weatherUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View current weather conditions, 3-day forecasts, and 30-day extended forecasts. Tap \'View All\' to see detailed calendar view.'**
+  String get weatherUsageDesc;
+
+  /// No description provided for @aiChatUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using HarvestBot'**
+  String get aiChatUsageTitle;
+
+  /// No description provided for @aiChatUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions about crops, diseases, fertilizers, or any farming topic. The AI provides context-aware responses based on your conversation.'**
+  String get aiChatUsageDesc;
+
+  /// No description provided for @pestDetectionUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Pest Detection'**
+  String get pestDetectionUsageTitle;
+
+  /// No description provided for @pestDetectionUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Take clear photos of affected plants. The system will analyze and provide identification and treatment recommendations.'**
+  String get pestDetectionUsageDesc;
+
+  /// No description provided for @communityUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Community Features'**
+  String get communityUsageTitle;
+
+  /// No description provided for @communityUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share posts, photos, and experiences. Comment on others\' posts and build connections with fellow farmers.'**
+  String get communityUsageDesc;
+
+  /// No description provided for @troubleshootingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Troubleshooting'**
+  String get troubleshootingTitle;
+
+  /// No description provided for @locationIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Issues'**
+  String get locationIssues;
+
+  /// No description provided for @locationIssuesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure location services are enabled in your device settings for accurate weather data.'**
+  String get locationIssuesDesc;
+
+  /// No description provided for @weatherNotLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Not Loading'**
+  String get weatherNotLoading;
+
+  /// No description provided for @weatherNotLoadingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection and location permissions. Pull down to refresh the home screen.'**
+  String get weatherNotLoadingDesc;
+
+  /// No description provided for @aiNotResponding.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Not Responding'**
+  String get aiNotResponding;
+
+  /// No description provided for @aiNotRespondingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure you have a stable internet connection. Try rephrasing your question if the AI doesn\'t understand.'**
+  String get aiNotRespondingDesc;
+
+  /// No description provided for @contactSupportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For additional help or to report issues, you can:'**
+  String get contactSupportDesc;
+
+  /// No description provided for @emailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email us at: support@harvesthub.com'**
+  String get emailSupport;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report issues through the app feedback'**
+  String get reportIssue;
+
+  /// No description provided for @visitWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit our website: www.harvesthub.com'**
+  String get visitWebsite;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version: 1.5.0'**
+  String get appVersion;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated: June 2025'**
+  String get lastUpdated;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

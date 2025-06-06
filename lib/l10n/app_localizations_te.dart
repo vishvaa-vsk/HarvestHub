@@ -278,4 +278,133 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get about => 'గురించి';
+
+  @override
+  String get helpAndSupportTitle => 'సహాయం మరియు మద్దతు';
+
+  @override
+  String get appFeaturesTitle => 'యాప్ లక్షణాలు';
+
+  @override
+  String get gettingStartedTitle => 'ప్రారంభించడం';
+
+  @override
+  String get featuresAndUsageTitle => 'లక్షణాలు మరియు వినియోగం';
+
+  @override
+  String get contactSupportTitle => 'మద్దతు సంప్రదించండి';
+
+  @override
+  String get weatherUpdatesFeature => 'కాలావస్థా నవీకరణలు';
+
+  @override
+  String get weatherUpdatesDesc => 'మీ కృషి కార్యకలాపాలను ప్రణాళిక చేయడానికి ఉష్ణోగ్రత, ఆర్ద్రత, గాలి వేగం మరియు 3-రోజుల అంచనాలను కలిగి ఉన్న రియల్-టైమ్ వాతావరణ సమాచారాన్ని పొందండి.';
+
+  @override
+  String get aiChatFeature => 'హార్వెస్ట్ బాట్ AI సహాయకుడు';
+
+  @override
+  String get aiChatDesc => 'వ్యక్తిగత సలహా, పంట సిఫారసులు మరియు మీ వ్యవసాయ ప్రశ్నలకు సమాధానాలు కోసం మా AI-శక్తి కలిగిన వ్యవసాయ నిపుణుడితో చాట్ చేయండి.';
+
+  @override
+  String get pestDetectionFeature => 'పొత్తికాయ గుర్తింపు';
+
+  @override
+  String get pestDetectionDesc => 'మీ పంటల ఫోటోలను అప్‌లోడ్ చేసి, సంభావ్య పొత్తికాయ సమస్యలను గుర్తించండి మరియు చికిత్స మరియు నివారణకు సిఫారసులు పొందండి.';
+
+  @override
+  String get communityFeature => 'వ్యవసాయ సమూహం';
+
+  @override
+  String get communityDesc => 'ఇతర రైతులతో కనెక్ట్ అవ్వండి, అనుభవాలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు వ్యవసాయ సమూహం నుండి నేర్చుకోండి.';
+
+  @override
+  String get multiLanguageFeature => 'బహుభాషా మద్దతు';
+
+  @override
+  String get multiLanguageDesc => 'ఆంగ్లం, హిందీ, తమిళం, తెలుగు మరియు మలయాళం వంటి మీ ఇష్టమైన భాషలో యాప్‌ను ఉపయోగించండి.';
+
+  @override
+  String get profileManagementFeature => 'ప్రొఫైల్ నిర్వహణ';
+
+  @override
+  String get profileManagementDesc => 'వ్యక్తిగత సమాచారం, పంట ప్రాధాన్యతలు మరియు వ్యక్తిగతీకరించిన సిఫారసుల కోసం స్థానం సెట్టింగ్‌లను నిర్వహించండి.';
+
+  @override
+  String get gettingStartedStep1 => '1. మీ స్థానం మరియు పంట ప్రాధాన్యతలతో మీ ప్రొఫైల్‌ను సెటప్ చేయండి';
+
+  @override
+  String get gettingStartedStep2 => '2. ఖచ్చితమైన వాతావరణ నవీకరణల కోసం స్థానం యాక్సెస్‌ను అనుమతించండి';
+
+  @override
+  String get gettingStartedStep3 => '3. హోమ్ స్క్రీన్‌లో వాతావరణ అంచనాలు మరియు వ్యవసాయ అంతర్దృష్టులను అన్వేషించండి';
+
+  @override
+  String get gettingStartedStep4 => '4. వ్యక్తిగతీకరించిన వ్యవసాయ సలహా కోసం హార్వెస్ట్‌బాట్‌తో చాట్ చేయండి';
+
+  @override
+  String get gettingStartedStep5 => '5. ఇతర రైతులతో కనెక్ట్ అవ్వడానికి సమూహంలో చేరండి';
+
+  @override
+  String get weatherUsageTitle => 'వాతావరణ లక్షణాలను ఉపయోగించడం';
+
+  @override
+  String get weatherUsageDesc => 'ప్రస్తుత వాతావరణ పరిస్థితులు, 3-రోజుల అంచనాలు మరియు 30-రోజుల విస్తృత అంచనాలను చూడండి. వివరమైన క్యాలెండర్ వీక్షణ కోసం \'మరింత చూడండి\'పై నొక్కండి.';
+
+  @override
+  String get aiChatUsageTitle => 'హార్వెస్ట్‌బాట్ ఉపయోగించడం';
+
+  @override
+  String get aiChatUsageDesc => 'పంటలు, వ్యాధులు, ఎరువులు లేదా ఏదైనా వ్యవసాయ అంశం గురించి ప్రశ్నలు అడగండి. మీ సంభాషన ఆధారంగా AI సందర్భానుసారమైన సమాధానాలను ఇస్తుంది.';
+
+  @override
+  String get pestDetectionUsageTitle => 'పొత్తికాయ గుర్తింపు ఉపయోగించడం';
+
+  @override
+  String get pestDetectionUsageDesc => 'బాధిత మొక్కల స్పష్టమైన ఫోటోలు తీయండి. వ్యవస్థ విశ్లేషించి గుర్తింపు మరియు చికిత్స సిఫారసులు ఇస్తుంది.';
+
+  @override
+  String get communityUsageTitle => 'సమూహ లక్షణాలను ఉపయోగించడం';
+
+  @override
+  String get communityUsageDesc => 'పోస్టులు, ఫోటోలు, అనుభవాలను పంచుకోండి. ఇతరుల పోస్టులపై వ్యాఖ్యానించండి మరియు రైతులతో సంబంధాలు నిర్మించండి.';
+
+  @override
+  String get troubleshootingTitle => 'సమస్య పరిష్కారం';
+
+  @override
+  String get locationIssues => 'స్థానం సమస్యలు';
+
+  @override
+  String get locationIssuesDesc => 'ఖచ్చితమైన వాతావరణ డేటా కోసం మీ డివైస్ సెట్టింగ్స్‌లో స్థానం సేవలు ప్రారంభించండి.';
+
+  @override
+  String get weatherNotLoading => 'వాతావరణం లోడ్ కావడం లేదు';
+
+  @override
+  String get weatherNotLoadingDesc => 'మీ ఇంటర్నెట్ కనెక్షన్ మరియు స్థానం అనుమతులను తనిఖీ చేయండి. హోమ్ స్క్రీన్‌ను రిఫ్రెష్ చేయడానికి క్రిందికి లాగండి.';
+
+  @override
+  String get aiNotResponding => 'AI స్పందించడంలేదు';
+
+  @override
+  String get aiNotRespondingDesc => 'స్థిరమైన ఇంటర్నెట్ కనెక్షన్ ఉందో లేదో చూసుకోండి. AI అర్థం కాకపోతే మీ ప్రశ్నను మళ్లీ అడగండి.';
+
+  @override
+  String get contactSupportDesc => 'అదనపు సహాయం లేదా సమస్యలు నివేదించడానికి, మీరు చేయవచ్చు:';
+
+  @override
+  String get emailSupport => 'మాకు ఈమెయిల్ చేయండి: support@harvesthub.com';
+
+  @override
+  String get reportIssue => 'యాప్ ఫీడ్‌బ్యాక్ ద్వారా సమస్యలను నివేదించండి';
+
+  @override
+  String get visitWebsite => 'మా వెబ్‌సైట్ సందర్శించండి: www.harvesthub.com';
+
+  @override
+  String get appVersion => 'యాప్ వెర్షన్: 1.5.0';
+
+  @override
+  String get lastUpdated => 'చివరిగా నవీకరించబడింది: జూన్ 2025';
 }

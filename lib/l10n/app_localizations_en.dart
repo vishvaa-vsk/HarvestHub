@@ -278,4 +278,133 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get about => 'About';
+
+  @override
+  String get helpAndSupportTitle => 'Help & Support';
+
+  @override
+  String get appFeaturesTitle => 'App Features';
+
+  @override
+  String get gettingStartedTitle => 'Getting Started';
+
+  @override
+  String get featuresAndUsageTitle => 'Features & Usage';
+
+  @override
+  String get contactSupportTitle => 'Contact Support';
+
+  @override
+  String get weatherUpdatesFeature => 'Weather Updates';
+
+  @override
+  String get weatherUpdatesDesc => 'Get real-time weather information including temperature, humidity, wind speed, and 3-day forecasts to plan your farming activities.';
+
+  @override
+  String get aiChatFeature => 'HarvestBot AI Assistant';
+
+  @override
+  String get aiChatDesc => 'Chat with our AI-powered farming expert for personalized advice, crop recommendations, and answers to your agricultural questions.';
+
+  @override
+  String get pestDetectionFeature => 'Pest Detection';
+
+  @override
+  String get pestDetectionDesc => 'Upload photos of your crops to identify potential pest issues and get recommendations for treatment and prevention.';
+
+  @override
+  String get communityFeature => 'Farming Community';
+
+  @override
+  String get communityDesc => 'Connect with fellow farmers, share experiences, ask questions, and learn from the farming community.';
+
+  @override
+  String get multiLanguageFeature => 'Multi-Language Support';
+
+  @override
+  String get multiLanguageDesc => 'Use the app in your preferred language with support for English, Hindi, Tamil, Telugu, and Malayalam.';
+
+  @override
+  String get profileManagementFeature => 'Profile Management';
+
+  @override
+  String get profileManagementDesc => 'Manage your personal information, crop preferences, and location settings for personalized recommendations.';
+
+  @override
+  String get gettingStartedStep1 => '1. Set up your profile with your location and crop preferences';
+
+  @override
+  String get gettingStartedStep2 => '2. Allow location access for accurate weather updates';
+
+  @override
+  String get gettingStartedStep3 => '3. Explore weather forecasts and farming insights on the home screen';
+
+  @override
+  String get gettingStartedStep4 => '4. Chat with HarvestBot for personalized farming advice';
+
+  @override
+  String get gettingStartedStep5 => '5. Join the community to connect with other farmers';
+
+  @override
+  String get weatherUsageTitle => 'Using Weather Features';
+
+  @override
+  String get weatherUsageDesc => 'View current weather conditions, 3-day forecasts, and 30-day extended forecasts. Tap \'View All\' to see detailed calendar view.';
+
+  @override
+  String get aiChatUsageTitle => 'Using HarvestBot';
+
+  @override
+  String get aiChatUsageDesc => 'Ask questions about crops, diseases, fertilizers, or any farming topic. The AI provides context-aware responses based on your conversation.';
+
+  @override
+  String get pestDetectionUsageTitle => 'Using Pest Detection';
+
+  @override
+  String get pestDetectionUsageDesc => 'Take clear photos of affected plants. The system will analyze and provide identification and treatment recommendations.';
+
+  @override
+  String get communityUsageTitle => 'Using Community Features';
+
+  @override
+  String get communityUsageDesc => 'Share posts, photos, and experiences. Comment on others\' posts and build connections with fellow farmers.';
+
+  @override
+  String get troubleshootingTitle => 'Troubleshooting';
+
+  @override
+  String get locationIssues => 'Location Issues';
+
+  @override
+  String get locationIssuesDesc => 'Ensure location services are enabled in your device settings for accurate weather data.';
+
+  @override
+  String get weatherNotLoading => 'Weather Not Loading';
+
+  @override
+  String get weatherNotLoadingDesc => 'Check your internet connection and location permissions. Pull down to refresh the home screen.';
+
+  @override
+  String get aiNotResponding => 'AI Not Responding';
+
+  @override
+  String get aiNotRespondingDesc => 'Ensure you have a stable internet connection. Try rephrasing your question if the AI doesn\'t understand.';
+
+  @override
+  String get contactSupportDesc => 'For additional help or to report issues, you can:';
+
+  @override
+  String get emailSupport => 'Email us at: support@harvesthub.com';
+
+  @override
+  String get reportIssue => 'Report issues through the app feedback';
+
+  @override
+  String get visitWebsite => 'Visit our website: www.harvesthub.com';
+
+  @override
+  String get appVersion => 'App Version: 1.5.0';
+
+  @override
+  String get lastUpdated => 'Last Updated: June 2025';
 }

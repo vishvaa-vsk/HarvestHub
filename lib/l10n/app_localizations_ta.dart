@@ -278,4 +278,133 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get about => 'பற்றி';
+
+  @override
+  String get helpAndSupportTitle => 'உதவி மற்றும் ஆதரவு';
+
+  @override
+  String get appFeaturesTitle => 'ஆப் அம்சங்கள்';
+
+  @override
+  String get gettingStartedTitle => 'தொடங்குவது';
+
+  @override
+  String get featuresAndUsageTitle => 'அம்சங்கள் மற்றும் பயன்பாடு';
+
+  @override
+  String get contactSupportTitle => 'தொடர்பு ஆதரவு';
+
+  @override
+  String get weatherUpdatesFeature => 'வானிலை புதுப்பிப்புகள்';
+
+  @override
+  String get weatherUpdatesDesc => 'உங்கள் விவசாய நடவடிக்கைகளைத் திட்டமிட வெப்பநிலை, ஈரப்பதம், காற்றின் வேகம் மற்றும் 3-நாள் முன்னறிவிப்புகள் உள்ளிட்ட நிகழ்நேர வானிலை தகவல்களைப் பெறுங்கள்.';
+
+  @override
+  String get aiChatFeature => 'ஹார்வெஸ்ட்பாட் AI உதவியாளர்';
+
+  @override
+  String get aiChatDesc => 'தனிப்பட்ட ஆலோசனை, பயிர் பரிந்துரைகள் மற்றும் உங்கள் விவசாய கேள்விகளுக்கான பதில்களுக்கு எங்கள் AI-இயங்கும் விவசாய நிபுணரிடம் அரட்டையடிக்கவும்.';
+
+  @override
+  String get pestDetectionFeature => 'பூச்சி கண்டறிதல்';
+
+  @override
+  String get pestDetectionDesc => 'சாத்தியமான பூச்சி பிரச்சினைகளைக் கண்டறிந்து சிகிச்சை மற்றும் தடுப்புக்கான பரிந்துரைகளைப் பெற உங்கள் பயிர்களின் புகைப்படங்களைப் பதிவேற்றவும்.';
+
+  @override
+  String get communityFeature => 'விவசாய சமூகம்';
+
+  @override
+  String get communityDesc => 'சக விவசாயிகளுடன் இணைக்கவும், அனுபவங்களைப் பகிரவும், கேள்விகள் கேட்கவும் மற்றும் விவசாய சமூகத்திலிருந்து கற்றுக்கொள்ளவும்.';
+
+  @override
+  String get multiLanguageFeature => 'பல மொழி ஆதரவு';
+
+  @override
+  String get multiLanguageDesc => 'ஆங்கிலம், இந்தி, தமிழ், தெலுங்கு மற்றும் மலையாளம் ஆதரவுடன் உங்கள் விருப்பமான மொழியில் ஆப்ஸைப் பயன்படுத்தவும்.';
+
+  @override
+  String get profileManagementFeature => 'சுயவிவர மேலாண்மை';
+
+  @override
+  String get profileManagementDesc => 'தனிப்பயனாக்கப்பட்ட பரிந்துரைகளுக்காக உங்கள் தனிப்பட்ட தகவல், பயிர் விருப்பத்தேர்வுகள் மற்றும் இருப்பிட அமைப்புகளை நிர்வகிக்கவும்.';
+
+  @override
+  String get gettingStartedStep1 => '1. உங்கள் இருப்பிடம் மற்றும் பயிர் விருப்பத்தேர்வுகளுடன் உங்கள் சுயவிவரத்தை அமைக்கவும்';
+
+  @override
+  String get gettingStartedStep2 => '2. துல்லியமான வானிலை புதுப்பிப்புகளுக்கு இருப்பிட அணுகலை அனுமதிக்கவும்';
+
+  @override
+  String get gettingStartedStep3 => '3. முகப்பு திரையில் வானிலை முன்னறிவிப்புகள் மற்றும் விவசாய நுண்ணறிவுகளை ஆராயுங்கள்';
+
+  @override
+  String get gettingStartedStep4 => '4. தனிப்பயனாக்கப்பட்ட விவசாய ஆலோசனைக்காக ஹார்வெஸ்ட்பாட்டுடன் அரட்டையடிக்கவும்';
+
+  @override
+  String get gettingStartedStep5 => '5. மற்ற விவசாயிகளுடன் இணைவதற்கு சமூகத்தில் சேரவும்';
+
+  @override
+  String get weatherUsageTitle => 'வானிலை அம்சங்களைப் பயன்படுத்துதல்';
+
+  @override
+  String get weatherUsageDesc => 'தற்போதைய வானிலை நிலைமைகள், 3-நாள் முன்னறிவிப்புகள் மற்றும் 30-நாள் நீட்டிக்கப்பட்ட முன்னறிவிப்புகளைக் காண்க. விரிவான காலண்டர் பார்வையைக் காண \'அனைத்தையும் காண்க\' என்பதைத் தட்டவும்.';
+
+  @override
+  String get aiChatUsageTitle => 'ஹார்வெஸ்ட்பாட்டைப் பயன்படுத்துதல்';
+
+  @override
+  String get aiChatUsageDesc => 'பயிர்கள், நோய்கள், உரங்கள் அல்லது ஏதேனும் விவசாய தலைப்பு பற்றி கேள்விகள் கேளுங்கள். AI உங்கள் உரையாடலின் அடிப்படையில் சூழல்-விழிப்புணர்வு பதில்களை வழங்குகிறது.';
+
+  @override
+  String get pestDetectionUsageTitle => 'பூச்சி கண்டறிதலைப் பயன்படுத்துதல்';
+
+  @override
+  String get pestDetectionUsageDesc => 'பாதிக்கப்பட்ட தாவரங்களின் தெளிவான புகைப்படங்களை எடுக்கவும். கணினி பகுப்பாய்வு செய்து அடையாளம் மற்றும் சிகிச்சை பரிந்துரைகளை வழங்கும்.';
+
+  @override
+  String get communityUsageTitle => 'சமூக அம்சங்களைப் பயன்படுத்துதல்';
+
+  @override
+  String get communityUsageDesc => 'இடுகைகள், புகைப்படங்கள் மற்றும் அனுபவங்களைப் பகிரவும். மற்றவர்களின் இடுகைகளில் கருத்து தெரிவித்து சக விவசாயிகளுடன் தொடர்புகளை உருவாக்குங்கள்.';
+
+  @override
+  String get troubleshootingTitle => 'சரிசெய்தல்';
+
+  @override
+  String get locationIssues => 'இருப்பிட பிரச்சினைகள்';
+
+  @override
+  String get locationIssuesDesc => 'துல்லியமான வானிலை தரவுக்காக உங்கள் சாதன அமைப்புகளில் இருப்பிட சேவைகள் இயக்கப்பட்டுள்ளன என்பதை உறுதிப்படுத்தவும்.';
+
+  @override
+  String get weatherNotLoading => 'வானிலை ஏற்றப்படவில்லை';
+
+  @override
+  String get weatherNotLoadingDesc => 'உங்கள் இணைய இணைப்பு மற்றும் இருப்பிட அனுமதிகளைச் சரிபார்க்கவும். முகப்பு திரையை புதுப்பிக்க கீழே இழுக்கவும்.';
+
+  @override
+  String get aiNotResponding => 'AI பதிலளிக்கவில்லை';
+
+  @override
+  String get aiNotRespondingDesc => 'உங்களிடம் நிலையான இணைய இணைப்பு உள்ளது என்பதை உறுதிப்படுத்தவும். AI புரிந்துகொள்ளவில்லை என்றால் உங்கள் கேள்வியை மீண்டும் வடிவமைக்க முயற்சிக்கவும்.';
+
+  @override
+  String get contactSupportDesc => 'கூடுதல் உதவிக்காக அல்லது சிக்கல்களைப் புகாரளிக்க, நீங்கள் செய்யலாம்:';
+
+  @override
+  String get emailSupport => 'எங்களுக்கு மின்னஞ்சல் அனுப்புங்கள்: support@harvesthub.com';
+
+  @override
+  String get reportIssue => 'ஆப் கருத்து மூலம் சிக்கல்களைப் புகாரளிக்கவும்';
+
+  @override
+  String get visitWebsite => 'எங்கள் வலைத்தளத்தைப் பார்வையிடவும்: www.harvesthub.com';
+
+  @override
+  String get appVersion => 'ஆப் பதிப்பு: 1.5.0';
+
+  @override
+  String get lastUpdated => 'கடைசியாக புதுப்பிக்கப்பட்டது: ஜூன் 2025';
 }
