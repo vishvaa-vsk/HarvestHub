@@ -76,84 +76,117 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, -2),
-              ),
-            ],
+      bottomNavigationBar: _buildModernBottomNavigationBar(localizations),
+    );
+  }
+
+  Widget _buildModernBottomNavigationBar(AppLocalizations localizations) {
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 25,
+            offset: const Offset(0, -8),
+            spreadRadius: 0,
           ),
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-              // Ensure consistent system UI overlay when switching tabs
-              SystemChrome.setSystemUIOverlayStyle(
-                const SystemUiOverlayStyle(
-                  systemNavigationBarColor: Colors.white,
-                  systemNavigationBarIconBrightness: Brightness.dark,
-                  statusBarColor: Colors.transparent,
-                  statusBarIconBrightness: Brightness.dark,
-                ),
-              );
-            },
-            backgroundColor: Colors.transparent,
-            selectedItemColor: const Color(0xFF16A34A),
-            unselectedItemColor: Colors.grey.shade400,
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            elevation: 0,
-            selectedLabelStyle: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelStyle: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-            selectedFontSize: 11,
-            unselectedFontSize: 11,
-            iconSize: 22,
-            items: [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Icon(Icons.home),
-                ),
+        ],
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                icon: Icons.home_filled,
                 label: localizations.home,
+                index: 0,
+                isSelected: _currentIndex == 0,
               ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Icon(Icons.smart_toy_rounded),
-                ),
+              _buildNavItem(
+                icon: Icons.smart_toy_rounded,
                 label: localizations.harvestBot,
+                index: 1,
+                isSelected: _currentIndex == 1,
               ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Icon(Icons.pest_control),
-                ),
+              _buildNavItem(
+                icon: Icons.pest_control_rounded,
                 label: localizations.pestDetection,
+                index: 2,
+                isSelected: _currentIndex == 2,
               ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Icon(Icons.forum),
-                ),
+              _buildNavItem(
+                icon: Icons.people_alt_rounded,
                 label: localizations.community,
+                index: 3,
+                isSelected: _currentIndex == 3,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        // Set system UI overlay style for consistent navigation bar on tab switch
+        SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+        );
+
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFF16A34A) : Colors.transparent,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.grey.shade500,
+              size: 26,
+            ),
+          ),
+          const SizedBox(height: 4),
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 250),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              color:
+                  isSelected ? const Color(0xFF16A34A) : Colors.grey.shade500,
+            ),
+            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+        ],
       ),
     );
   }
