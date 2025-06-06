@@ -208,26 +208,36 @@ class _HomeScreenState extends State<HomeScreen> {
     _checkLocationServices();
   }
 
+  @override
+  void dispose() {
+    // Cancel any ongoing operations or listeners here if needed
+    super.dispose();
+  }
+
   Future<void> _checkLocationServices() async {
     final permission = await Geolocator.requestPermission();
 
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
-      setState(() {
-        _isLocationEnabled = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLocationEnabled = false;
+        });
+      }
       return;
     }
 
     final isEnabled = await Geolocator.isLocationServiceEnabled();
 
-    setState(() {
-      _isLocationEnabled = isEnabled;
-    });
+    if (mounted) {
+      setState(() {
+        _isLocationEnabled = isEnabled;
+      });
+    }
 
     if (isEnabled) {
       _fetchWeatherAndInsights();
-    } else {
+    } else if (mounted) {
       final context = this.context;
       final loc = AppLocalizations.of(context)!;
       showDialog(
@@ -259,10 +269,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchWeatherAndInsights() async {
-    Provider.of<WeatherProvider>(
-      context,
-      listen: false,
-    ).fetchWeatherAndInsights();
+    if (mounted) {
+      Provider.of<WeatherProvider>(
+        context,
+        listen: false,
+      ).fetchWeatherAndInsights();
+    }
   }
 
   @override
