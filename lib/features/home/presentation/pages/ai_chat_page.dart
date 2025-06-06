@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
@@ -559,6 +560,16 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
   @override
   Widget build(BuildContext context) {
+    // Set system UI overlay style for consistent navigation bar
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: PreferredSize(

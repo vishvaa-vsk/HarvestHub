@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PestDetectScreen extends StatefulWidget {
@@ -44,6 +45,16 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Set system UI overlay style for consistent navigation bar
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     final Color globalGreen = const Color(
       0xFF5BEA2B,
     ); // Replace with your global green

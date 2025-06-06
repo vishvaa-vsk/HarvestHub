@@ -52,6 +52,28 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
+    // Ensure consistent system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
+    // Also set the system UI after the frame is built to ensure it sticks
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      );
+    });
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: SafeArea(
@@ -72,6 +94,15 @@ class _MainScreenState extends State<MainScreen> {
               setState(() {
                 _currentIndex = index;
               });
+              // Ensure consistent system UI overlay when switching tabs
+              SystemChrome.setSystemUIOverlayStyle(
+                const SystemUiOverlayStyle(
+                  systemNavigationBarColor: Colors.white,
+                  systemNavigationBarIconBrightness: Brightness.dark,
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                ),
+              );
             },
             backgroundColor: Colors.transparent,
             selectedItemColor: const Color(0xFF16A34A),
@@ -238,11 +269,14 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: FutureBuilder<String>(
               future: AvatarUtils.getAvatarWithFallback(
-                userId: FirebaseAuth.instance.currentUser?.phoneNumber ?? 'guest',
+                userId:
+                    FirebaseAuth.instance.currentUser?.phoneNumber ?? 'guest',
               ),
               builder: (context, avatarSnapshot) {
-                final avatarUrl = avatarSnapshot.data ?? 'https://avatar.iran.liara.run/public/1';
-                
+                final avatarUrl =
+                    avatarSnapshot.data ??
+                    'https://avatar.iran.liara.run/public/1';
+
                 return GestureDetector(
                   onTap: () {
                     _scaffoldKey.currentState?.openDrawer();
@@ -273,7 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: const Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF16A34A),
+                                ),
                               ),
                             ),
                           );
@@ -542,30 +578,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Filter out today's data and show only future dates
     final todayDateOnly = DateTime(today.year, today.month, today.day);
-    final futureForecasts = forecast.where((day) {
-      try {
-        final forecastDate = DateTime.parse(day['date']);
-        final forecastDateOnly = DateTime(forecastDate.year, forecastDate.month, forecastDate.day);
-        return forecastDateOnly.isAfter(todayDateOnly);
-      } catch (e) {
-        return false;
-      }
-    }).toList();
+    final futureForecasts =
+        forecast.where((day) {
+          try {
+            final forecastDate = DateTime.parse(day['date']);
+            final forecastDateOnly = DateTime(
+              forecastDate.year,
+              forecastDate.month,
+              forecastDate.day,
+            );
+            return forecastDateOnly.isAfter(todayDateOnly);
+          } catch (e) {
+            return false;
+          }
+        }).toList();
 
     return SizedBox(
       height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: futureForecasts.length > 3 ? 3 : futureForecasts.length, // Limit to 3 future days max
+        itemCount:
+            futureForecasts.length > 3
+                ? 3
+                : futureForecasts.length, // Limit to 3 future days max
         itemBuilder: (context, index) {
           final day = futureForecasts[index];
           String dayName;
 
           try {
             final forecastDate = DateTime.parse(day['date']);
-            final forecastDateOnly = DateTime(forecastDate.year, forecastDate.month, forecastDate.day);
+            final forecastDateOnly = DateTime(
+              forecastDate.year,
+              forecastDate.month,
+              forecastDate.day,
+            );
             final tomorrow = DateTime(today.year, today.month, today.day + 1);
-            final tomorrowDateOnly = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+            final tomorrowDateOnly = DateTime(
+              tomorrow.year,
+              tomorrow.month,
+              tomorrow.day,
+            );
 
             if (forecastDateOnly.isAtSameMomentAs(tomorrowDateOnly)) {
               dayName = loc.tomorrow;
@@ -588,7 +640,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 loc.november,
                 loc.december,
               ];
-              final monthName = monthNumber <= 12 ? monthNames[monthNumber] : 'January';
+              final monthName =
+                  monthNumber <= 12 ? monthNames[monthNumber] : 'January';
               dayName = '$monthName ${dayNumber.toString().padLeft(2, '0')}';
             }
           } catch (e) {
@@ -1273,6 +1326,15 @@ class AIChatScreen extends StatefulWidget {
 class _AIChatScreenState extends State<AIChatScreen> {
   @override
   Widget build(BuildContext context) {
+    // Ensure consistent system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return const AIChatPage();
   }
 }
@@ -1282,6 +1344,15 @@ class PestDetectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure consistent system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return const PestDetectScreen();
   }
 }
@@ -1291,7 +1362,16 @@ class CommunityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Community Screen'));
+    // Ensure consistent system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+    return CommunityFeedPage();
   }
 }
 

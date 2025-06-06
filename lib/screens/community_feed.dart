@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import '../models/post.dart';
 import '../services/firebase_service.dart';
@@ -13,6 +14,15 @@ class CommunityFeedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set system UI overlay style for consistent navigation bar
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
