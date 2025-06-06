@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import '../l10n/app_localizations.dart';
 
 class PestDetectScreen extends StatefulWidget {
   const PestDetectScreen({super.key});
@@ -37,14 +38,14 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
       _result = null;
       _recommendations = null;
     });
-    
+
     // TODO: Integrate .tflite model here
     await Future.delayed(const Duration(seconds: 2));
-    
+
     setState(() {
       _scanning = false;
-      _result = 'No pests detected in this image';
-      _recommendations = 'Your crops appear healthy! Continue with regular monitoring and maintain good agricultural practices.';
+      _result = AppLocalizations.of(context)!.noPestsDetected;
+      _recommendations = AppLocalizations.of(context)!.cropsHealthyMessage;
     });
   }
 
@@ -63,9 +64,9 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Pest Detection',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.pestDetection,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -75,12 +76,13 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
-        leading: Navigator.of(context).canPop()
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black87),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            : null,
+        leading:
+            Navigator.of(context).canPop()
+                ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+                : null,
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Colors.black54),
@@ -129,9 +131,9 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Upload Plant Image',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.uploadPlantImage,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -139,7 +141,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Take a clear photo of your plant leaves or upload from gallery to detect pests and diseases.',
+                    AppLocalizations.of(context)!.uploadPlantImageDesc,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -153,7 +155,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                       Expanded(
                         child: _buildImageSourceButton(
                           icon: Icons.camera_alt,
-                          label: 'Camera',
+                          label: AppLocalizations.of(context)!.camera,
                           onPressed: () => _pickImage(ImageSource.camera),
                         ),
                       ),
@@ -161,7 +163,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                       Expanded(
                         child: _buildImageSourceButton(
                           icon: Icons.photo_library,
-                          label: 'Gallery',
+                          label: AppLocalizations.of(context)!.gallery,
                           onPressed: () => _pickImage(ImageSource.gallery),
                         ),
                       ),
@@ -178,12 +180,14 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _image != null && !_scanning 
-                      ? const Color(0xFF16A34A) 
-                      : Colors.grey[300],
-                  foregroundColor: _image != null && !_scanning 
-                      ? Colors.white 
-                      : Colors.grey[500],
+                  backgroundColor:
+                      _image != null && !_scanning
+                          ? const Color(0xFF16A34A)
+                          : Colors.grey[300],
+                  foregroundColor:
+                      _image != null && !_scanning
+                          ? Colors.white
+                          : Colors.grey[500],
                   elevation: _image != null && !_scanning ? 2 : 0,
                   shadowColor: const Color(0xFF16A34A).withOpacity(0.3),
                   shape: RoundedRectangleBorder(
@@ -192,44 +196,45 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: _image != null && !_scanning ? _scanImage : null,
-                child: _scanning
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.grey[500]!,
+                child:
+                    _scanning
+                        ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.grey[500]!,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'Analyzing...',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                            const SizedBox(width: 12),
+                            Text(
+                              AppLocalizations.of(context)!.analyzing,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.search, size: 20),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Analyze Image',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                          ],
+                        )
+                        : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.search, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppLocalizations.of(context)!.analyzeImage,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
               ),
             ),
 
@@ -237,7 +242,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
 
             // Results Section
             Text(
-              'Detection Results',
+              AppLocalizations.of(context)!.detectionResults,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -263,165 +268,186 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
               child: Column(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                    child: _image != null
-                        ? Image.file(
-                            _image!,
-                            height: 220,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 220,
-                            width: double.infinity,
-                            color: Colors.grey[50],
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.image_outlined,
-                                  size: 48,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  'No image selected',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Upload an image to get started',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                  ),
-                  
-                  // Results Content
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: _result != null
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    child:
+                        _image != null
+                            ? Image.file(
+                              _image!,
+                              height: 220,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            )
+                            : Container(
+                              height: 220,
+                              width: double.infinity,
+                              color: Colors.grey[50],
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF16A34A).withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.check_circle,
-                                      size: 20,
-                                      color: Color(0xFF16A34A),
+                                  Icon(
+                                    Icons.image_outlined,
+                                    size: 48,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.noImageSelected,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    'Analysis Complete',
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.uploadImageToGetStarted,
                                     style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                _result!,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                  height: 1.4,
+                            ),
+                  ),
+
+                  // Results Content
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child:
+                        _result != null
+                            ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: const Color(
+                                          0xFF16A34A,
+                                        ).withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.check_circle,
+                                        size: 20,
+                                        color: Color(0xFF16A34A),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.analysisComplete,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              if (_recommendations != null) ...[
-                                const SizedBox(height: 20),
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF16A34A).withOpacity(0.05),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: const Color(0xFF16A34A).withOpacity(0.2),
-                                      width: 1,
+                                const SizedBox(height: 16),
+                                Text(
+                                  _result!,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                if (_recommendations != null) ...[
+                                  const SizedBox(height: 20),
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF16A34A,
+                                      ).withOpacity(0.05),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: const Color(
+                                          0xFF16A34A,
+                                        ).withOpacity(0.2),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.lightbulb_outline,
+                                              size: 20,
+                                              color: const Color(0xFF16A34A),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.recommendations,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF16A34A),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          _recommendations!,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[700],
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.lightbulb_outline,
-                                            size: 20,
-                                            color: const Color(0xFF16A34A),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          const Text(
-                                            'Recommendations',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF16A34A),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        _recommendations!,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[700],
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                    ],
+                                ],
+                              ],
+                            )
+                            : Column(
+                              children: [
+                                Icon(
+                                  Icons.pending_outlined,
+                                  size: 32,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  AppLocalizations.of(context)!.readyToAnalyze,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.uploadImageAndAnalyze,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                    height: 1.4,
                                   ),
                                 ),
                               ],
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              Icon(
-                                Icons.pending_outlined,
-                                size: 32,
-                                color: Colors.grey[400],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Ready to analyze',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Upload an image and tap "Analyze" to detect pests and get recommendations',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[500],
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
                   ),
                 ],
               ),
@@ -448,9 +474,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
           color: const Color(0xFF16A34A).withOpacity(0.3),
           width: 1.5,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
       onPressed: onPressed,
@@ -461,10 +485,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -494,9 +515,9 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
-                'How to use',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.howToUse,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -508,19 +529,19 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHelpTip(
-                'Take clear, well-lit photos of plant leaves',
+                AppLocalizations.of(context)!.takeClearPhotos,
                 Icons.camera_alt,
               ),
               _buildHelpTip(
-                'Focus on affected areas with visible symptoms',
+                AppLocalizations.of(context)!.focusOnAffectedAreas,
                 Icons.center_focus_strong,
               ),
               _buildHelpTip(
-                'Avoid blurry or dark images',
+                AppLocalizations.of(context)!.avoidBlurryImages,
                 Icons.image_not_supported,
               ),
               _buildHelpTip(
-                'Include multiple leaves if possible',
+                AppLocalizations.of(context)!.includeMultipleLeaves,
                 Icons.eco,
               ),
             ],
@@ -531,9 +552,9 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF16A34A),
               ),
-              child: const Text(
-                'Got it',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              child: Text(
+                AppLocalizations.of(context)!.gotIt,
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -547,19 +568,12 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: const Color(0xFF16A34A),
-          ),
+          Icon(icon, size: 18, color: const Color(0xFF16A34A)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
             ),
           ),
         ],

@@ -407,4 +407,67 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get lastUpdated => 'கடைசியாக புதுப்பிக்கப்பட்டது: ஜூன் 2025';
+
+  @override
+  String get uploadPlantImage => 'தாவர படத்தை பதிவேற்றவும்';
+
+  @override
+  String get uploadPlantImageDesc => 'பூச்சிகள் மற்றும் நோய்களைக் கண்டறிய தாவர இலைகளின் தெளிவான புகைப்படம் எடுக்கவும் அல்லது கேலரியிலிருந்து பதிவேற்றவும்.';
+
+  @override
+  String get camera => 'கேமரா';
+
+  @override
+  String get gallery => 'கேலரி';
+
+  @override
+  String get analyzing => 'பகுப்பாய்வு செய்கிறது...';
+
+  @override
+  String get analyzeImage => 'படத்தை பகுப்பாய்வு செய்';
+
+  @override
+  String get detectionResults => 'கண்டறிதல் முடிவுகள்';
+
+  @override
+  String get noImageSelected => 'படம் தேர்ந்தெடுக்கப்படவில்லை';
+
+  @override
+  String get uploadImageToGetStarted => 'தொடங்க ஒரு படத்தை பதிவேற்றவும்';
+
+  @override
+  String get analysisComplete => 'பகுப்பாய்வு முடிந்தது';
+
+  @override
+  String get noPestsDetected => 'இந்த படத்தில் பூச்சிகள் எதுவும் கண்டறியப்படவில்லை';
+
+  @override
+  String get cropsHealthyMessage => 'உங்கள் பயிர்கள் ஆரோக்கியமாக தெரிகிறது! வழக்கமான கண்காணிப்பை தொடருங்கள் மற்றும் நல்ல விவசாய நடைமுறைகளை பராமரிக்கவும்.';
+
+  @override
+  String get recommendations => 'பரிந்துரைகள்';
+
+  @override
+  String get readyToAnalyze => 'பகுப்பாய்வு செய்ய தயார்';
+
+  @override
+  String get uploadImageAndAnalyze => 'ஒரு படத்தை பதிவேற்றி பூச்சிகளைக் கண்டறிந்து பரிந்துரைகளைப் பெற \"பகுப்பாய்வு\" என்பதைத் தட்டவும்';
+
+  @override
+  String get howToUse => 'எப்படி பயன்படுத்துவது';
+
+  @override
+  String get takeClearPhotos => 'தாவர இலைகளின் தெளிவான, நன்கு வெளிச்சமான புகைப்படங்களை எடுக்கவும்';
+
+  @override
+  String get focusOnAffectedAreas => 'தெளிவான அறிகுறிகளுடன் பாதிக்கப்பட்ட பகுதிகளில் கவனம் செலுத்துங்கள்';
+
+  @override
+  String get avoidBlurryImages => 'மங்கலான அல்லது இருண்ட படங்களைத் தவிர்க்கவும்';
+
+  @override
+  String get includeMultipleLeaves => 'முடிந்தால் பல இலைகளை சேர்க்கவும்';
+
+  @override
+  String get gotIt => 'புரிந்தது';
 }

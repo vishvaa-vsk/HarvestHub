@@ -868,6 +868,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last Updated: June 2025'**
   String get lastUpdated;
+
+  /// No description provided for @uploadPlantImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Plant Image'**
+  String get uploadPlantImage;
+
+  /// No description provided for @uploadPlantImageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a clear photo of your plant leaves or upload from gallery to detect pests and diseases.'**
+  String get uploadPlantImageDesc;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @analyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing...'**
+  String get analyzing;
+
+  /// No description provided for @analyzeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze Image'**
+  String get analyzeImage;
+
+  /// No description provided for @detectionResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Detection Results'**
+  String get detectionResults;
+
+  /// No description provided for @noImageSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No image selected'**
+  String get noImageSelected;
+
+  /// No description provided for @uploadImageToGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image to get started'**
+  String get uploadImageToGetStarted;
+
+  /// No description provided for @analysisComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis Complete'**
+  String get analysisComplete;
+
+  /// No description provided for @noPestsDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No pests detected in this image'**
+  String get noPestsDetected;
+
+  /// No description provided for @cropsHealthyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your crops appear healthy! Continue with regular monitoring and maintain good agricultural practices.'**
+  String get cropsHealthyMessage;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @readyToAnalyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to analyze'**
+  String get readyToAnalyze;
+
+  /// No description provided for @uploadImageAndAnalyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image and tap \"Analyze\" to detect pests and get recommendations'**
+  String get uploadImageAndAnalyze;
+
+  /// No description provided for @howToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get howToUse;
+
+  /// No description provided for @takeClearPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Take clear, well-lit photos of plant leaves'**
+  String get takeClearPhotos;
+
+  /// No description provided for @focusOnAffectedAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus on affected areas with visible symptoms'**
+  String get focusOnAffectedAreas;
+
+  /// No description provided for @avoidBlurryImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid blurry or dark images'**
+  String get avoidBlurryImages;
+
+  /// No description provided for @includeMultipleLeaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Include multiple leaves if possible'**
+  String get includeMultipleLeaves;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -407,4 +407,67 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get lastUpdated => 'अंतिम अपडेट: जून 2025';
+
+  @override
+  String get uploadPlantImage => 'पौधे की छवि अपलोड करें';
+
+  @override
+  String get uploadPlantImageDesc => 'कीट और बीमारियों का पता लगाने के लिए अपने पौधे की पत्तियों की स्पष्ट तस्वीर लें या गैलरी से अपलोड करें।';
+
+  @override
+  String get camera => 'कैमरा';
+
+  @override
+  String get gallery => 'गैलरी';
+
+  @override
+  String get analyzing => 'विश्लेषण कर रहे हैं...';
+
+  @override
+  String get analyzeImage => 'छवि का विश्लेषण करें';
+
+  @override
+  String get detectionResults => 'पहचान परिणाम';
+
+  @override
+  String get noImageSelected => 'कोई छवि चयनित नहीं';
+
+  @override
+  String get uploadImageToGetStarted => 'शुरू करने के लिए एक छवि अपलोड करें';
+
+  @override
+  String get analysisComplete => 'विश्लेषण पूर्ण';
+
+  @override
+  String get noPestsDetected => 'इस छवि में कोई कीट नहीं मिला';
+
+  @override
+  String get cropsHealthyMessage => 'आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।';
+
+  @override
+  String get recommendations => 'सिफारिशें';
+
+  @override
+  String get readyToAnalyze => 'विश्लेषण के लिए तैयार';
+
+  @override
+  String get uploadImageAndAnalyze => 'एक छवि अपलोड करें और कीट पहचान और सिफारिशें प्राप्त करने के लिए \"विश्लेषण\" पर टैप करें';
+
+  @override
+  String get howToUse => 'उपयोग कैसे करें';
+
+  @override
+  String get takeClearPhotos => 'पौधे की पत्तियों की स्पष्ट, अच्छी रोशनी वाली तस्वीरें लें';
+
+  @override
+  String get focusOnAffectedAreas => 'दिखाई देने वाले लक्षणों के साथ प्रभावित क्षेत्रों पर ध्यान दें';
+
+  @override
+  String get avoidBlurryImages => 'धुंधली या अंधेरी छवियों से बचें';
+
+  @override
+  String get includeMultipleLeaves => 'यदि संभव हो तो कई पत्तियों को शामिल करें';
+
+  @override
+  String get gotIt => 'समझ गया';
 }

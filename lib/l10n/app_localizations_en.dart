@@ -407,4 +407,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lastUpdated => 'Last Updated: June 2025';
+
+  @override
+  String get uploadPlantImage => 'Upload Plant Image';
+
+  @override
+  String get uploadPlantImageDesc => 'Take a clear photo of your plant leaves or upload from gallery to detect pests and diseases.';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get analyzing => 'Analyzing...';
+
+  @override
+  String get analyzeImage => 'Analyze Image';
+
+  @override
+  String get detectionResults => 'Detection Results';
+
+  @override
+  String get noImageSelected => 'No image selected';
+
+  @override
+  String get uploadImageToGetStarted => 'Upload an image to get started';
+
+  @override
+  String get analysisComplete => 'Analysis Complete';
+
+  @override
+  String get noPestsDetected => 'No pests detected in this image';
+
+  @override
+  String get cropsHealthyMessage => 'Your crops appear healthy! Continue with regular monitoring and maintain good agricultural practices.';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get readyToAnalyze => 'Ready to analyze';
+
+  @override
+  String get uploadImageAndAnalyze => 'Upload an image and tap \"Analyze\" to detect pests and get recommendations';
+
+  @override
+  String get howToUse => 'How to use';
+
+  @override
+  String get takeClearPhotos => 'Take clear, well-lit photos of plant leaves';
+
+  @override
+  String get focusOnAffectedAreas => 'Focus on affected areas with visible symptoms';
+
+  @override
+  String get avoidBlurryImages => 'Avoid blurry or dark images';
+
+  @override
+  String get includeMultipleLeaves => 'Include multiple leaves if possible';
+
+  @override
+  String get gotIt => 'Got it';
 }

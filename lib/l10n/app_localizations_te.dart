@@ -407,4 +407,67 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get lastUpdated => 'చివరిగా నవీకరించబడింది: జూన్ 2025';
+
+  @override
+  String get uploadPlantImage => 'మొక్క చిత్రాన్ని అప్‌లోడ్ చేయండి';
+
+  @override
+  String get uploadPlantImageDesc => 'పురుగులు మరియు వ్యాధులను గుర్తించడానికి మొక్క ఆకుల స్పష్టమైన ఫోటో తీయండి లేదా గ్యాలరీ నుండి అప్‌లోడ్ చేయండి.';
+
+  @override
+  String get camera => 'కెమెరా';
+
+  @override
+  String get gallery => 'గ్యాలరీ';
+
+  @override
+  String get analyzing => 'విశ్లేషిస్తోంది...';
+
+  @override
+  String get analyzeImage => 'చిత్రాన్ని విశ్లేషించండి';
+
+  @override
+  String get detectionResults => 'గుర్తింపు ఫలితాలు';
+
+  @override
+  String get noImageSelected => 'చిత్రం ఎంచుకోబడలేదు';
+
+  @override
+  String get uploadImageToGetStarted => 'ప్రారంభించడానికి చిత్రాన్ని అప్‌లోడ్ చేయండి';
+
+  @override
+  String get analysisComplete => 'విశ్లేషణ పూర్తయింది';
+
+  @override
+  String get noPestsDetected => 'ఈ చిత్రంలో పురుగులు గుర్తించబడలేదు';
+
+  @override
+  String get cropsHealthyMessage => 'మీ పంటలు ఆరోగ్యంగా కనిపిస్తున్నాయి! సాధారణ పర్యవేక్షణను కొనసాగించండి మరియు మంచి వ్యవసాయ పద్ధతులను నిర్వహించండి.';
+
+  @override
+  String get recommendations => 'సిఫార్సులు';
+
+  @override
+  String get readyToAnalyze => 'విశ్లేషించడానికి సిద్ధం';
+
+  @override
+  String get uploadImageAndAnalyze => 'చిత్రాన్ని అప్‌లోడ్ చేసి పురుగులను గుర్తించి సిఫార్సులు పొందడానికి \"విశ్లేషించండి\"ని నొక్కండి';
+
+  @override
+  String get howToUse => 'ఎలా ఉపయోగించాలి';
+
+  @override
+  String get takeClearPhotos => 'మొక్క ఆకుల స్పష్టమైన, బాగా వెలుగుతున్న ఫోటోలు తీయండి';
+
+  @override
+  String get focusOnAffectedAreas => 'కనిపించే లక్షణాలతో ప్రభావిత ప్రాంతాలపై దృష్టి పెట్టండి';
+
+  @override
+  String get avoidBlurryImages => 'అస్పష్టమైన లేదా చీకటి చిత్రాలను నివారించండి';
+
+  @override
+  String get includeMultipleLeaves => 'వీలైతే అనేక ఆకులను చేర్చండి';
+
+  @override
+  String get gotIt => 'అర్థమైంది';
 }

@@ -407,4 +407,67 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get lastUpdated => 'അവസാനം അപ്ഡേറ്റ് ചെയ്തത്: ജൂണ്‍ 2025';
+
+  @override
+  String get uploadPlantImage => 'ചെടിയുടെ ചിത്രം അപ്‌ലോഡ് ചെയ്യുക';
+
+  @override
+  String get uploadPlantImageDesc => 'കീടങ്ങളെയും രോഗങ്ങളെയും കണ്ടെത്താൻ ചെടിയുടെ ഇലകളുടെ വ്യക്തമായ ഫോട്ടോ എടുക്കുകയോ ഗാലറിയിൽ നിന്ന് അപ്‌ലോഡ് ചെയ്യുകയോ ചെയ്യുക.';
+
+  @override
+  String get camera => 'ക്യാമറ';
+
+  @override
+  String get gallery => 'ഗാലറി';
+
+  @override
+  String get analyzing => 'വിശകലനം ചെയ്യുന്നു...';
+
+  @override
+  String get analyzeImage => 'ചിത്രം വിശകലനം ചെയ്യുക';
+
+  @override
+  String get detectionResults => 'കണ്ടെത്തൽ ഫലങ്ങൾ';
+
+  @override
+  String get noImageSelected => 'ചിത്രം തിരഞ്ഞെടുത്തിട്ടില്ല';
+
+  @override
+  String get uploadImageToGetStarted => 'ആരംഭിക്കാൻ ഒരു ചിത്രം അപ്‌ലോഡ് ചെയ്യുക';
+
+  @override
+  String get analysisComplete => 'വിശകലനം പൂർത്തിയായി';
+
+  @override
+  String get noPestsDetected => 'ഈ ചിത്രത്തിൽ കീടങ്ങളൊന്നും കണ്ടെത്തിയില്ല';
+
+  @override
+  String get cropsHealthyMessage => 'നിങ്ങളുടെ വിളകൾ ആരോഗ്യകരമായി കാണപ്പെടുന്നു! പതിവ് നിരീക്ഷണം തുടരുകയും നല്ല കാർഷിക രീതികൾ നിലനിർത്തുകയും ചെയ്യുക.';
+
+  @override
+  String get recommendations => 'ശുപാർശകൾ';
+
+  @override
+  String get readyToAnalyze => 'വിശകലനത്തിന് തയ്യാർ';
+
+  @override
+  String get uploadImageAndAnalyze => 'ഒരു ചിത്രം അപ്‌ലോഡ് ചെയ്ത് കീടങ്ങളെ കണ്ടെത്താനും ശുപാർശകൾ ലഭിക്കാനും \"വിശകലനം ചെയ്യുക\" ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get howToUse => 'എങ്ങനെ ഉപയോഗിക്കാം';
+
+  @override
+  String get takeClearPhotos => 'ചെടിയുടെ ഇലകളുടെ വ്യക്തമായ, നന്നായി പ്രകാശമുള്ള ഫോട്ടോകൾ എടുക്കുക';
+
+  @override
+  String get focusOnAffectedAreas => 'ദൃശ്യമായ ലക്ഷണങ്ങളുള്ള ബാധിത പ്രദേശങ്ങളിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുക';
+
+  @override
+  String get avoidBlurryImages => 'മങ്ങിയതോ ഇരുണ്ടതോ ആയ ചിത്രങ്ങൾ ഒഴിവാക്കുക';
+
+  @override
+  String get includeMultipleLeaves => 'സാധ്യമെങ്കിൽ ഒന്നിലധികം ഇലകൾ ഉൾപ്പെടുത്തുക';
+
+  @override
+  String get gotIt => 'മനസ്സിലായി';
 }
