@@ -118,10 +118,14 @@ class AboutPage extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.agriculture,
-              size: 40,
-              color: Color(0xFF16A34A),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                'assets/icon/app_icon.png',
+                width: 40,
+                height: 40,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -139,7 +143,7 @@ class AboutPage extends StatelessWidget {
 
           // App Tagline
           const Text(
-            'Smart Agriculture Solutions',
+            'Your AI Farming Companion',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -425,7 +429,15 @@ class AboutPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Icons.agriculture, size: 40, color: Color(0xFF16A34A)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/icon/app_icon.png',
+              width: 40,
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ),
           const SizedBox(height: 12),
           const Text(
             '© 2025 HarvestHub',
