@@ -63,36 +63,84 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
+              // App Bar with centered title
               SliverAppBar(
-                expandedHeight: 0,
+                expandedHeight: 60,
                 floating: false,
                 pinned: true,
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 elevation: 0,
+                centerTitle: true,
+                automaticallyImplyLeading: false,
                 title: Text(
                   AppLocalizations.of(context)!.community,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     fontSize: 20,
                     color: Colors.black,
                   ),
                 ),
-                centerTitle: false,
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(1),
                   child: Container(height: 0.5, color: Colors.grey[200]),
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      _showSearchBottomSheet(context);
-                    },
-                    icon: const Icon(Icons.search_rounded, size: 24),
-                    color: Colors.black,
+              ),
+              // Welcome section
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Avatar icon
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.people_outline,
+                          color: Colors.green[600],
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Welcome text
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome to the HarvestHub...',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green[800],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Share your thoughts, ask questions, and connect with fellow farmers.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.green[600],
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                ],
+                ),
+              ),
+              // Divider
+              SliverToBoxAdapter(
+                child: Container(height: 8, color: Colors.grey[100]),
               ),
               if (snapshot.connectionState == ConnectionState.waiting)
                 const SliverFillRemaining(
@@ -116,7 +164,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           Icon(
                             Icons.cloud_off_outlined,
                             size: 64,
-                            color: Colors.grey[400],
+                            color: Colors.green[300],
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -124,14 +172,14 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
+                              color: Colors.green[800],
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Please check your connection and try again',
                             style: TextStyle(
-                              color: Colors.grey[500],
+                              color: Colors.green[600],
                               fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
@@ -167,18 +215,28 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           Icon(
                             Icons.forum_outlined,
                             size: 64,
-                            color: Colors.grey[400],
+                            color: Colors.green[300],
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'Welcome to the Community!',
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.green[800],
                             ),
                           ),
                           const SizedBox(height: 8),
+                          Text(
+                            'Share your farming experiences, tips, and connect with fellow farmers',
+                            style: TextStyle(
+                              color: Colors.green[600],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
                           Text(
                             AppLocalizations.of(context)!.noPostsYet,
                             style: TextStyle(
@@ -255,81 +313,6 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showSearchBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder:
-          (context) => DraggableScrollableSheet(
-            initialChildSize: 0.8,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            expand: false,
-            builder:
-                (context, scrollController) => Column(
-                  children: [
-                    // Handle bar
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Search',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Search content
-                    const Expanded(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search, size: 64, color: Colors.grey),
-                              SizedBox(height: 16),
-                              Text(
-                                'Search feature coming soon!',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-          ),
     );
   }
 }
