@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/core/services/auth_service.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import 'package:sms_autofill/sms_autofill.dart';
+import 'dart:async';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -12,17 +14,44 @@ class EditProfilePage extends StatefulWidget {
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _authService = AuthService();
+  Timer? _otpTimer;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _initializeAutoFill();
+  }
+
+  @override
+  void codeUpdated() {
+    // Handle auto-filled OTP code - this will be used in the OTP dialog
+    if (code != null && code!.length == 6) {
+      // Update OTP in dialog if it's open
+      setState(() {
+        // Auto-fill functionality is handled within the dialog
+      });
+    }
+  }
+
+  Future<void> _initializeAutoFill() async {
+    try {
+      await SmsAutoFill().getAppSignature.then((signature) {
+        if (mounted) {
+          setState(() {
+            // App signature ready for SMS autofill
+          });
+        }
+      });
+    } catch (e) {
+      print('Error initializing SMS autofill: $e');
+    }
   }
 
   // Updated _loadUserData to dynamically fetch user data based on the logged-in user's phone number
@@ -160,157 +189,290 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final screenHeight = MediaQuery.of(context).size.height;
     String? otp;
 
+    // Initialize SMS autofill for this OTP dialog
+    await SmsAutoFill().listenForCode();
+
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         final otpController = TextEditingController();
+        bool autoFillEnabledInDialog = false;
+        bool canResendInDialog = false;
+        int otpTimeLeftInDialog = 60;
+        Timer? otpTimerInDialog;
 
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: screenWidth > 400 ? 400 : screenWidth * 0.9,
-              maxHeight: screenHeight * 0.7,
-            ),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(screenWidth < 350 ? 20 : 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF16A34A).withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.sms_outlined,
-                      color: const Color(0xFF16A34A),
-                      size: screenWidth < 350 ? 28 : 32,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth < 350 ? 16 : 20),
-                  Text(
-                    loc.enterOTP,
-                    style: TextStyle(
-                      fontSize: screenWidth < 350 ? 18 : 20,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1F2937),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Please enter the verification code sent to your phone',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: screenWidth < 350 ? 13 : 14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth < 350 ? 20 : 24),
-                  TextFormField(
-                    controller: otpController,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    maxLength: 6,
-                    style: TextStyle(
-                      fontSize: screenWidth < 350 ? 16 : 18,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Enter 6-digit code',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: screenWidth < 350 ? 14 : 16,
-                        letterSpacing: 1,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey.shade50,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFF16A34A),
-                          width: 2,
-                        ),
-                      ),
-                      counterText: '',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: screenWidth < 350 ? 12 : 16,
-                        vertical: screenWidth < 350 ? 12 : 16,
-                      ),
-                      isDense: screenWidth < 350,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth < 350 ? 20 : 24),
-                  Row(
+        void startResendTimerInDialog() {
+          otpTimerInDialog?.cancel();
+          otpTimerInDialog = Timer.periodic(Duration(seconds: 1), (timer) {
+            if (otpTimeLeftInDialog > 0) {
+              otpTimeLeftInDialog--;
+            } else {
+              canResendInDialog = true;
+              timer.cancel();
+            }
+          });
+        }
+
+        // Start the timer
+        startResendTimerInDialog();
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: screenWidth > 400 ? 400 : screenWidth * 0.9,
+                  maxHeight: screenHeight * 0.7,
+                ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(screenWidth < 350 ? 20 : 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF6B7280),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.grey.shade300),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: screenWidth < 350 ? 10 : 12,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            loc.cancel,
-                            style: TextStyle(
-                              fontSize: screenWidth < 350 ? 14 : 16,
-                            ),
-                          ),
+                      Container(
+                        padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF16A34A).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.sms_outlined,
+                          color: const Color(0xFF16A34A),
+                          size: screenWidth < 350 ? 28 : 32,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF16A34A),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: screenWidth < 350 ? 10 : 12,
-                            ),
-                          ),
-                          onPressed: () {
-                            otp = otpController.text;
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            loc.verifyOTP,
-                            style: TextStyle(
-                              fontSize: screenWidth < 350 ? 14 : 16,
-                            ),
+                      SizedBox(height: screenWidth < 350 ? 16 : 20),
+                      Text(
+                        loc.enterOTP,
+                        style: TextStyle(
+                          fontSize: screenWidth < 350 ? 18 : 20,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1F2937),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Please enter the verification code sent to your phone',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: screenWidth < 350 ? 13 : 14,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      // Autofill hint container
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              autoFillEnabledInDialog
+                                  ? Colors.green.shade50
+                                  : Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color:
+                                autoFillEnabledInDialog
+                                    ? Colors.green.shade200
+                                    : Colors.blue.shade200,
                           ),
                         ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              autoFillEnabledInDialog
+                                  ? Icons.check_circle
+                                  : Icons.auto_awesome,
+                              size: 16,
+                              color:
+                                  autoFillEnabledInDialog
+                                      ? Colors.green.shade600
+                                      : Colors.blue.shade600,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                autoFillEnabledInDialog
+                                    ? 'OTP auto-filled successfully!'
+                                    : 'OTP will be filled automatically when SMS is received',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      autoFillEnabledInDialog
+                                          ? Colors.green.shade700
+                                          : Colors.blue.shade700,
+                                  fontWeight:
+                                      autoFillEnabledInDialog
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenWidth < 350 ? 20 : 24),
+                      PinFieldAutoFill(
+                        controller: otpController,
+                        codeLength: 6,
+                        autoFocus: true,
+                        decoration: BoxLooseDecoration(
+                          textStyle: TextStyle(
+                            fontSize: screenWidth < 350 ? 16 : 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                          strokeColorBuilder: FixedColorBuilder(
+                            Colors.grey.shade400,
+                          ),
+                          bgColorBuilder: FixedColorBuilder(
+                            Colors.grey.shade50,
+                          ),
+                          strokeWidth: 2,
+                          radius: Radius.circular(8),
+                          gapSpace: 8,
+                        ),
+                        currentCode: otpController.text,
+                        onCodeSubmitted: (code) {
+                          otpController.text = code;
+                          setDialogState(() {
+                            autoFillEnabledInDialog = true;
+                          });
+                          if (code.length == 6) {
+                            otp = code;
+                            otpTimerInDialog?.cancel();
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        onCodeChanged: (code) {
+                          if (code != null && code.length == 6) {
+                            setDialogState(() {
+                              autoFillEnabledInDialog = true;
+                            });
+                          }
+                          otpController.text = code ?? '';
+                        },
+                      ),
+                      SizedBox(height: screenWidth < 350 ? 20 : 24),
+                      // Resend OTP section
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Didn't receive OTP? ",
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          if (canResendInDialog)
+                            GestureDetector(
+                              onTap: () async {
+                                // Resend OTP logic
+                                setDialogState(() {
+                                  canResendInDialog = false;
+                                  otpTimeLeftInDialog = 60;
+                                });
+                                startResendTimerInDialog();
+
+                                // Restart SMS listening
+                                await SmsAutoFill().listenForCode();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('OTP resent successfully'),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Resend',
+                                style: TextStyle(
+                                  color: Colors.green.shade700,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            )
+                          else
+                            Text(
+                              'Resend in ${otpTimeLeftInDialog}s',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 14,
+                              ),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: screenWidth < 350 ? 20 : 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: const Color(0xFF6B7280),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth < 350 ? 10 : 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                otpTimerInDialog?.cancel();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                loc.cancel,
+                                style: TextStyle(
+                                  fontSize: screenWidth < 350 ? 14 : 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF16A34A),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth < 350 ? 10 : 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                otp = otpController.text;
+                                otpTimerInDialog?.cancel();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                loc.verifyOTP,
+                                style: TextStyle(
+                                  fontSize: screenWidth < 350 ? 14 : 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -319,9 +481,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
+    _otpTimer?.cancel();
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    SmsAutoFill().unregisterListener();
     super.dispose();
   }
 
@@ -833,7 +997,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: 8, 
+          vertical: 8,
           horizontal: screenWidth < 350 ? 8 : 12,
         ),
         child: Column(

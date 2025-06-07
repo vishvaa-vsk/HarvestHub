@@ -25,7 +25,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'screens/community_feed.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 
 final GlobalKey<_HarvestHubAppState> harvestHubAppKey =
     GlobalKey<_HarvestHubAppState>();
@@ -43,10 +42,6 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
 
-  // Initialize App Check
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.playIntegrity,
-  );
 
   // Preload common avatars for better performance
   _preloadAvatars();

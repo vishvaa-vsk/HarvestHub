@@ -24,9 +24,6 @@ println("File exists: ${keystorePropertiesFile.exists()}")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     println("Properties loaded:")
-    keystoreProperties.forEach { key, value -> 
-        println("  $key = $value")
-    }
 } else {
     println("ERROR: key.properties file not found!")
 }

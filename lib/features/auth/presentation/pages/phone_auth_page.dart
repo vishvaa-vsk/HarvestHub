@@ -4,8 +4,10 @@ import 'package:lottie/lottie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import '../../../../core/services/auth_service.dart';
 import 'language_selection_page.dart';
+import 'dart:async';
 
 /// A widget for handling phone number authentication.
 ///
@@ -19,7 +21,7 @@ class PhoneAuthPage extends StatefulWidget {
   State<PhoneAuthPage> createState() => _PhoneAuthPageState();
 }
 
-class _PhoneAuthPageState extends State<PhoneAuthPage> {
+class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
   final _nameController = TextEditingController(); // Added name controller
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
@@ -30,6 +32,43 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   String? _errorMessage;
   final FocusNode _phoneFocusNode = FocusNode();
   final FocusNode _otpFocusNode = FocusNode(); // Dedicated FocusNode for OTP
+  String? _appSignature;
+  bool _autoFillEnabled = false;
+  Timer? _otpTimer;
+  int _otpTimeLeft = 60;
+  bool _canResend = false;
+
+  @override
+  void codeUpdated() {
+    // Handle auto-filled OTP code
+    if (code != null && code!.length == 6) {
+      _otpController.text = code!;
+      _autoFillEnabled = true;
+      setState(() {});
+
+      // Show a brief success indicator for autofill
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('OTP auto-filled successfully'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Auto-verify if OTP is complete
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (_otpController.text.length == 6) {
+          _verifyOTP();
+        }
+      });
+    }
+  }
 
   Future<void> _storeUserData(String phoneNumber) async {
     try {
@@ -63,6 +102,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     String phoneNumber = '+91${_phoneController.text}'; // Add your country code
 
     try {
+      // Start listening for SMS autofill
+      await SmsAutoFill().listenForCode();
+
       // Check if user data already exists in Firestore
       final userDoc =
           await _firestore.collection('users').doc(phoneNumber).get();
@@ -84,7 +126,34 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
             setState(() {
               _showOtpField = true;
               _isLoading = false;
+              _canResend = false;
+              _otpTimeLeft = 60;
             });
+
+            // Start countdown timer for resend
+            _startResendTimer();
+
+            // Request focus on OTP field when it becomes visible
+            Future.delayed(const Duration(milliseconds: 300), () {
+              _otpFocusNode.requestFocus();
+            });
+
+            // Show helpful message about autofill
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.white),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text('OTP will be auto-filled when received'),
+                    ),
+                  ],
+                ),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 3),
+              ),
+            );
           }
         },
         (error) {
@@ -104,6 +173,76 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         });
       }
       // Handle error
+    }
+  }
+
+  void _startResendTimer() {
+    _otpTimer?.cancel();
+    _otpTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_otpTimeLeft > 0) {
+        setState(() {
+          _otpTimeLeft--;
+        });
+      } else {
+        setState(() {
+          _canResend = true;
+        });
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _resendOTP() async {
+    if (!_canResend) return;
+
+    final loc = AppLocalizations.of(context)!;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    String phoneNumber = '+91${_phoneController.text}';
+
+    try {
+      // Re-initialize autofill for new OTP
+      await SmsAutoFill().listenForCode();
+
+      await _authService.sendOTP(
+        phoneNumber,
+        (verificationId) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _canResend = false;
+              _otpTimeLeft = 60;
+            });
+            _startResendTimer();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('OTP resent successfully'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+        (error) {
+          if (mounted) {
+            setState(() {
+              _errorMessage = error;
+              _isLoading = false;
+            });
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = loc.failedToSendOTP;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -182,6 +321,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   @override
   void initState() {
     super.initState();
+    _initializeAutoFill();
     _phoneFocusNode.addListener(() {
       if (mounted) {
         setState(() {});
@@ -198,6 +338,33 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         statusBarIconBrightness: Brightness.dark,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _otpTimer?.cancel();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _otpController.dispose();
+    _phoneFocusNode.dispose();
+    _otpFocusNode.dispose();
+    cancel(); // Cancel SMS autofill listening
+    super.dispose();
+  }
+
+  Future<void> _initializeAutoFill() async {
+    try {
+      // Get app signature for SMS autofill
+      _appSignature = await SmsAutoFill().getAppSignature;
+
+      // Listen for auto fill state changes
+      listenForCode();
+
+      print('SMS AutoFill initialized with signature: $_appSignature');
+    } catch (e) {
+      print('Error initializing SMS AutoFill: $e');
+      // Handle error silently but log for debugging
+    }
   }
 
   @override
@@ -346,7 +513,53 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                               color: Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
+                          // Autofill hint
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade50,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: Colors.green.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _autoFillEnabled
+                                      ? Icons.check_circle
+                                      : Icons.auto_awesome,
+                                  size: 16,
+                                  color:
+                                      _autoFillEnabled
+                                          ? Colors.green.shade600
+                                          : Colors.blue.shade600,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _autoFillEnabled
+                                        ? 'OTP auto-filled successfully!'
+                                        : 'OTP will be filled automatically when SMS is received',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          _autoFillEnabled
+                                              ? Colors.green.shade700
+                                              : Colors.blue.shade700,
+                                      fontWeight:
+                                          _autoFillEnabled
+                                              ? FontWeight.w600
+                                              : FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
                           Stack(
                             alignment: Alignment.centerLeft,
                             children: [
@@ -429,29 +642,33 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                   ignoring: false,
                                   child: Opacity(
                                     opacity: 0.0,
-                                    child: TextField(
+                                    child: PinFieldAutoFill(
                                       focusNode: _otpFocusNode,
                                       controller: _otpController,
-                                      maxLength: 6,
-                                      keyboardType: TextInputType.number,
-                                      autofocus: true,
-                                      style: const TextStyle(
-                                        color: Colors.transparent,
+                                      codeLength: 6,
+                                      autoFocus: true,
+                                      decoration: BoxLooseDecoration(
+                                        strokeColorBuilder: FixedColorBuilder(
+                                          Colors.transparent,
+                                        ),
+                                        bgColorBuilder: FixedColorBuilder(
+                                          Colors.transparent,
+                                        ),
                                       ),
-                                      cursorColor: Colors.green,
-                                      decoration: const InputDecoration(
-                                        counterText: '',
-                                        border: InputBorder.none,
-                                        fillColor: Colors.transparent,
-                                        filled: true,
-                                        contentPadding: EdgeInsets.zero,
-                                      ),
-                                      onChanged: (value) {
+                                      currentCode: _otpController.text,
+                                      onCodeSubmitted: (code) {
+                                        _otpController.text = code;
                                         setState(() {});
+                                        if (code.length == 6) {
+                                          _verifyOTP();
+                                        }
                                       },
-                                      enableInteractiveSelection: false,
-                                      showCursor: false,
-                                      obscureText: false,
+                                      onCodeChanged: (code) {
+                                        if (code != null) {
+                                          _otpController.text = code;
+                                          setState(() {});
+                                        }
+                                      },
                                     ),
                                   ),
                                 ),
@@ -470,6 +687,41 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                             ),
                             const SizedBox(height: 8),
                           ],
+
+                          // Resend OTP section
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Didn't receive OTP? ",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              if (_canResend)
+                                GestureDetector(
+                                  onTap: _resendOTP,
+                                  child: Text(
+                                    'Resend',
+                                    style: TextStyle(
+                                      color: Colors.green.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Text(
+                                  'Resend in ${_otpTimeLeft}s',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -514,15 +766,5 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    _otpController.dispose();
-    _nameController.dispose();
-    _phoneFocusNode.dispose();
-    _otpFocusNode.dispose(); // Dispose the dedicated FocusNode for OTP
-    super.dispose();
   }
 }
