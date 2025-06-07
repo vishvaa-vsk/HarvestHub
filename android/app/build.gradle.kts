@@ -15,11 +15,24 @@ import java.util.Properties
 import java.io.FileInputStream
 
 val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("android/key.properties")
+val keystorePropertiesFile = rootProject.file("key.properties")
+
+println("=== KEYSTORE DEBUG ===")
+println("Looking for key.properties at: ${keystorePropertiesFile.absolutePath}")
+println("File exists: ${keystorePropertiesFile.exists()}")
 
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    println("Properties loaded:")
+    keystoreProperties.forEach { key, value -> 
+        println("  $key = $value")
+    }
+} else {
+    println("ERROR: key.properties file not found!")
 }
+
+println("storeFile value: '${keystoreProperties["storeFile"]}'")
+println("=====================")
 
 android {
     namespace = "com.hacktheharvest.harvesthub"
@@ -50,7 +63,7 @@ android {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"]?.toString() ?: ""
             keyPassword = keystoreProperties["keyPassword"]?.toString() ?: ""
-            storeFile = file("upload-keystore.jks") // Corrected path
+            storeFile = file(keystoreProperties["storeFile"]?.toString() ?: "") // Corrected path
             storePassword = keystoreProperties["storePassword"]?.toString() ?: ""
         }
     }
