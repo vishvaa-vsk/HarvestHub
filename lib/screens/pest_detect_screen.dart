@@ -515,11 +515,13 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                AppLocalizations.of(context)!.howToUse,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.howToUse,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
