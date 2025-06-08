@@ -45,7 +45,6 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const AIChatPage(),
     const PestDetectionScreen(),
     CommunityFeedPage(), // Use the new Community Feed
   ];
@@ -116,19 +115,19 @@ class _MainScreenState extends State<MainScreen> {
                 icon: Icons.smart_toy_rounded,
                 label: localizations.harvestBot,
                 index: 1,
-                isSelected: _currentIndex == 1,
+                isSelected: false, // Never selected since it navigates away
               ),
               _buildNavItem(
                 icon: Icons.pest_control_rounded,
                 label: localizations.pestDetection,
                 index: 2,
-                isSelected: _currentIndex == 2,
+                isSelected: _currentIndex == 1, // Adjusted index
               ),
               _buildNavItem(
                 icon: Icons.people_alt_rounded,
                 label: localizations.community,
                 index: 3,
-                isSelected: _currentIndex == 3,
+                isSelected: _currentIndex == 2, // Adjusted index
               ),
             ],
           ),
@@ -155,9 +154,25 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
-        setState(() {
-          _currentIndex = index;
-        });
+        // Handle HarvestBot navigation separately
+        if (index == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AIChatPage(),
+            ),
+          );
+        } else {
+          // Adjust index for other screens since we removed AIChatPage from _screens
+          int adjustedIndex = index;
+          if (index > 1) {
+            adjustedIndex = index - 1;
+          }
+          
+          setState(() {
+            _currentIndex = adjustedIndex;
+          });
+        }
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1362,29 +1377,6 @@ class _HomeScreenState extends State<HomeScreen> {
         await provider.fetchWeatherAndInsights();
       }
     }
-  }
-}
-
-class AIChatScreen extends StatefulWidget {
-  const AIChatScreen({super.key});
-
-  @override
-  State<AIChatScreen> createState() => _AIChatScreenState();
-}
-
-class _AIChatScreenState extends State<AIChatScreen> {
-  @override
-  Widget build(BuildContext context) {
-    // Ensure consistent system UI overlay style
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-    return const AIChatPage();
   }
 }
 

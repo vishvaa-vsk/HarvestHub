@@ -301,13 +301,13 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
   Widget _buildMessageBubble(Map<String, String> message, bool isUser) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      margin: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!isUser) ...[_buildBotAvatar(), const SizedBox(width: 8)],
+          if (!isUser) ...[_buildBotAvatar(), const SizedBox(width: 10)],
           Flexible(
             child: Container(
               constraints: BoxConstraints(
@@ -318,42 +318,43 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 vertical: 12.0,
               ),
               decoration: BoxDecoration(
-                color: isUser ? Colors.green.shade600 : Colors.white,
+                color: isUser ? const Color(0xFF16A34A) : Colors.grey.shade50,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
                   bottomLeft:
                       isUser
-                          ? const Radius.circular(20)
+                          ? const Radius.circular(18)
                           : const Radius.circular(4),
                   bottomRight:
                       isUser
                           ? const Radius.circular(4)
-                          : const Radius.circular(20),
+                          : const Radius.circular(18),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                border: isUser 
+                    ? null 
+                    : Border.all(
+                        color: Colors.grey.shade200,
+                        width: 1,
+                      ),
               ),
               child:
                   isUser
                       ? Text(
                         message['text']!,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           color: Colors.white,
                           height: 1.4,
+                          fontWeight: FontWeight.w500,
                         ),
                       )
                       : DefaultTextStyle(
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           color: Colors.black87,
                           height: 1.4,
+                          fontWeight: FontWeight.w400,
                         ),
                         child: RichText(
                           text: parseBotResponse(message['text']!),
@@ -362,7 +363,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                       ),
             ),
           ),
-          if (isUser) ...[const SizedBox(width: 8), _buildUserAvatar()],
+          if (isUser) ...[const SizedBox(width: 10), _buildUserAvatar()],
         ],
       ),
     );
@@ -374,7 +375,8 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.green.shade300, width: 2),
+        border: Border.all(color: const Color(0xFF16A34A), width: 2),
+        color: Colors.white,
       ),
       child: ClipOval(
         child: Image.network(
@@ -386,8 +388,8 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
             return Container(
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
-                color: Colors.green.shade400,
+              decoration: const BoxDecoration(
+                color: Color(0xFF16A34A),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.person, color: Colors.white, size: 18),
@@ -399,12 +401,16 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Colors.grey.shade200,
                 shape: BoxShape.circle,
               ),
-              child: const CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              child: const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
+                ),
               ),
             );
           },
@@ -417,20 +423,9 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
     return Container(
       width: 32,
       height: 32,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.green.shade400, Colors.green.shade600],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+      decoration: const BoxDecoration(
+        color: Color(0xFF16A34A),
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.green.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: const Icon(Icons.eco, color: Colors.white, size: 18),
     );
@@ -438,32 +433,29 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
   Widget _buildTypingIndicator() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildBotAvatar(),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 12.0,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey.shade50,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20),
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomRight: Radius.circular(18),
                 bottomLeft: Radius.circular(4),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              border: Border.all(
+                color: Colors.grey.shade200,
+                width: 1,
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -483,16 +475,15 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
   Widget _buildInputField(AppLocalizations loc) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         child: Row(
@@ -500,25 +491,36 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(25.0),
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(24.0),
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
                 ),
                 child: TextField(
                   controller: _controller,
                   maxLines: null,
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
                   decoration: InputDecoration(
                     hintText: loc.talkToHarvestBot,
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    hintStyle: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                    ),
                     filled: true,
                     fillColor: Colors.transparent,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(24.0),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
+                      horizontal: 18.0,
                       vertical: 12.0,
                     ),
                   ),
@@ -527,23 +529,18 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
             ),
             const SizedBox(width: 12),
             Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.green.shade400, Colors.green.shade600],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                color: Color(0xFF16A34A),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.green.withValues(alpha: 0.3),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.send_rounded, color: Colors.white),
+                icon: const Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onPressed: () {
                   if (_controller.text.trim().isNotEmpty) {
                     _sendMessage(_controller.text.trim());
@@ -572,73 +569,86 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.eco, color: Colors.green),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                loc.harvestBot,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          centerTitle: true, // Ensures the entire row is centered
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
+      backgroundColor: const Color(0xFFFAFAFA),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.black87,
+              size: 18,
             ),
           ),
-          elevation: 0,
+          onPressed: () => Navigator.pop(context),
         ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.green.shade50, Colors.white, Colors.green.shade50],
-          ),
-        ),
-        child: Column(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  final isUser = message['sender'] == 'user';
-                  return _buildMessageBubble(message, isUser);
-                },
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF16A34A),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.eco,
+                color: Colors.white,
+                size: 22,
               ),
             ),
-            if (_isLoading) _buildTypingIndicator(),
-            _buildInputField(loc),
+            const SizedBox(width: 12),
+            Text(
+              loc.harvestBot,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+                letterSpacing: -0.5,
+              ),
+            ),
           ],
         ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Colors.grey.shade200,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 16.0,
+              ),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUser = message['sender'] == 'user';
+                return _buildMessageBubble(message, isUser);
+              },
+            ),
+          ),
+          if (_isLoading) _buildTypingIndicator(),
+          _buildInputField(loc),
+        ],
       ),
     );
   }
@@ -686,7 +696,7 @@ class AnimatedDotState extends State<AnimatedDot>
         width: 8,
         height: 8,
         decoration: BoxDecoration(
-          color: Colors.green.shade400,
+          color: const Color(0xFF16A34A),
           shape: BoxShape.circle,
         ),
       ),
