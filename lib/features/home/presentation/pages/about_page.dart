@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/constants/app_constants.dart';
 
 /// About page displaying app information, technical details, and licensing
 class AboutPage extends StatelessWidget {
@@ -94,7 +95,7 @@ class AboutPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF16A34A).withOpacity(0.3),
+            color: AppConstants.primaryGreen.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 0,
@@ -182,12 +183,12 @@ class AboutPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.info_outline,
-                  color: Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   size: 24,
                 ),
               ),
@@ -243,12 +244,12 @@ class AboutPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.code,
-                  color: Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   size: 24,
                 ),
               ),
@@ -301,12 +302,12 @@ class AboutPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.link,
-                  color: Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   size: 24,
                 ),
               ),
@@ -370,12 +371,12 @@ class AboutPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.gavel,
-                  color: Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   size: 24,
                 ),
               ),
@@ -402,7 +403,7 @@ class AboutPage extends StatelessWidget {
               'View Full License →',
               style: TextStyle(
                 fontSize: 16,
-                color: Color(0xFF16A34A),
+                color: AppConstants.primaryGreen,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -502,7 +503,7 @@ class AboutPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             children: [
-              Icon(icon, size: 24, color: const Color(0xFF16A34A)),
+              Icon(icon, size: 24, color: AppConstants.primaryGreen),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -554,7 +555,7 @@ class AboutPage extends StatelessWidget {
             'MIT License',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color(0xFF16A34A),
+              color: AppConstants.primaryGreen,
             ),
           ),
           content: const SingleChildScrollView(
@@ -576,7 +577,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
               onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 'Close',
-                style: TextStyle(color: Color(0xFF16A34A)),
+                style: TextStyle(color: AppConstants.primaryGreen),
               ),
             ),
           ],

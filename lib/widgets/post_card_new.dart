@@ -4,6 +4,7 @@ import '../models/post.dart';
 import '../services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../screens/comment_page.dart';
+import '../core/constants/app_constants.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -181,15 +182,13 @@ class PostCard extends StatelessWidget {
                       },
             );
           },
-        ),
-
-        // Comment Button (second)
+        ), // Comment Button (second)
         _buildActionButton(
           icon: Icons.mode_comment_outlined,
           activeIcon: Icons.mode_comment,
           count: 0, // TODO: Add comment count to Post model
           color: Colors.grey[600]!,
-          activeColor: Colors.blue,
+          activeColor: AppConstants.primaryGreen,
           onTap: () => _showCommentsBottomSheet(context),
         ),
 
@@ -206,15 +205,13 @@ class PostCard extends StatelessWidget {
               const SnackBar(content: Text('Repost feature coming soon!')),
             );
           },
-        ),
-
-        // Share Button (fourth)
+        ), // Share Button (fourth)
         _buildActionButton(
           icon: Icons.share_outlined,
           activeIcon: Icons.share,
           count: 0,
           color: Colors.grey[600]!,
-          activeColor: Colors.blue,
+          activeColor: AppConstants.primaryGreen,
           onTap: () {
             // TODO: Implement share functionality
             ScaffoldMessenger.of(context).showSnackBar(
@@ -269,56 +266,57 @@ class PostCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder:
-          (context) => DraggableScrollableSheet(
-            initialChildSize: 0.75,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            expand: false,
-            builder:
-                (context, scrollController) => Column(
-                  children: [
-                    // Handle bar
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Comments',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+          (context) => SizedBox(
+            height: MediaQuery.of(context).size.height * 0.85,
+            child: Column(
+              children: [
+                // Minimal header with handle and close button
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      // Handle bar
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            height: 4,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    Divider(height: 1, color: Colors.grey[200]),
-                    // Comments content
-                    Expanded(child: ModernCommentPage(postId: post.id)),
-                  ],
+                      // Close button
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, size: 20),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ), // Thin divider
+                SizedBox(
+                  height: 0.5,
+                  child: Container(color: Colors.grey[200]),
                 ),
+                // Clean comments section - no post content, just comments
+                Expanded(child: ModernCommentPage(postId: post.id)),
+              ],
+            ),
           ),
     );
   }

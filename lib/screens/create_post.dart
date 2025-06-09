@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
+import '../core/constants/app_constants.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -134,7 +135,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     backgroundColor:
                         (!_canPost || _loading)
                             ? Colors.grey.shade300
-                            : const Color(0xFF16A34A),
+                            : AppConstants.primaryGreen,
                     foregroundColor:
                         (!_canPost || _loading)
                             ? Colors.grey.shade600
@@ -212,7 +213,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   elevation: 2,
                   onPressed: _pickImage,
                   tooltip: 'Add Image',
-                  child: Icon(Icons.image, color: const Color(0xFF16A34A)),
+                  child: Icon(Icons.image, color: AppConstants.primaryGreen),
                 ),
               ),
             ],

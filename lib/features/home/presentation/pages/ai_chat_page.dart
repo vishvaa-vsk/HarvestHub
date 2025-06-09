@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../../core/utils/avatar_utils.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class AIChatPage extends StatefulWidget {
   const AIChatPage({super.key});
@@ -459,7 +460,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 vertical: 12.0,
               ),
               decoration: BoxDecoration(
-                color: isUser ? const Color(0xFF16A34A) : Colors.grey.shade50,
+                color: isUser ? AppConstants.primaryGreen : Colors.grey.shade50,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -514,7 +515,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFF16A34A), width: 2),
+        border: Border.all(color: AppConstants.primaryGreen, width: 2),
         color: Colors.white,
       ),
       child: ClipOval(
@@ -528,7 +529,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
               width: 32,
               height: 32,
               decoration: const BoxDecoration(
-                color: Color(0xFF16A34A),
+                color: AppConstants.primaryGreen,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.person, color: Colors.white, size: 18),
@@ -548,7 +549,9 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppConstants.primaryGreen,
+                  ),
                 ),
               ),
             );
@@ -563,7 +566,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       width: 32,
       height: 32,
       decoration: const BoxDecoration(
-        color: Color(0xFF16A34A),
+        color: AppConstants.primaryGreen,
         shape: BoxShape.circle,
       ),
       child: const Icon(Icons.eco, color: Colors.white, size: 18),
@@ -660,7 +663,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: Color(0xFF16A34A),
+                color: AppConstants.primaryGreen,
                 shape: BoxShape.circle,
               ),
               child: IconButton(
@@ -727,7 +730,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF16A34A),
+                color: AppConstants.primaryGreen,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(Icons.eco, color: Colors.white, size: 22),
@@ -815,7 +818,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                     )
                     : const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFF16A34A),
+                        color: AppConstants.primaryGreen,
                       ),
                     ),
           ),
@@ -878,7 +881,7 @@ class AnimatedDotState extends State<AnimatedDot>
         width: 8,
         height: 8,
         decoration: BoxDecoration(
-          color: const Color(0xFF16A34A),
+          color: AppConstants.primaryGreen,
           shape: BoxShape.circle,
         ),
       ),

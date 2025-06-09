@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/core/services/auth_service.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import '../../../../core/constants/app_constants.dart';
 import 'dart:async';
 
 class EditProfilePage extends StatefulWidget {
@@ -236,12 +237,12 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                       Container(
                         padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF16A34A).withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.sms_outlined,
-                          color: const Color(0xFF16A34A),
+                          color: AppConstants.primaryGreen,
                           size: screenWidth < 350 ? 28 : 32,
                         ),
                       ),
@@ -443,7 +444,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF16A34A),
+                                backgroundColor: AppConstants.primaryGreen,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -560,7 +561,9 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF16A34A).withOpacity(0.15),
+                              color: AppConstants.primaryGreen.withOpacity(
+                                0.15,
+                              ),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -572,7 +575,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           child: Icon(
                             Icons.person,
                             size: 40,
-                            color: const Color(0xFF16A34A).withOpacity(0.7),
+                            color: AppConstants.primaryGreen.withOpacity(0.7),
                           ),
                         ),
                       ),
@@ -583,12 +586,14 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           width: 24,
                           height: 24,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF16A34A),
+                            color: AppConstants.primaryGreen,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 1.5),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF16A34A).withOpacity(0.4),
+                                color: AppConstants.primaryGreen.withOpacity(
+                                  0.4,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -647,7 +652,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  const Color(0xFF16A34A).withOpacity(0.1),
+                                  AppConstants.primaryGreen.withOpacity(0.1),
                                   const Color(0xFF22C55E).withOpacity(0.05),
                                 ],
                                 begin: Alignment.topLeft,
@@ -657,7 +662,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             ),
                             child: const Icon(
                               Icons.edit_outlined,
-                              color: Color(0xFF16A34A),
+                              color: AppConstants.primaryGreen,
                               size: 20,
                             ),
                           ),
@@ -735,10 +740,10 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF16A34A),
+                        backgroundColor: AppConstants.primaryGreen,
                         foregroundColor: Colors.white,
                         elevation: 2,
-                        shadowColor: const Color(0xFF16A34A).withOpacity(0.3),
+                        shadowColor: AppConstants.primaryGreen.withOpacity(0.3),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -864,7 +869,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
               ),
               prefixIcon: Container(
                 margin: const EdgeInsets.only(left: 16, right: 12),
-                child: Icon(icon, color: const Color(0xFF16A34A), size: 22),
+                child: Icon(icon, color: AppConstants.primaryGreen, size: 22),
               ),
               prefixIconConstraints: const BoxConstraints(
                 minWidth: 50,
@@ -876,7 +881,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: const BorderSide(
-                  color: Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   width: 2,
                 ),
               ),
@@ -1006,12 +1011,12 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
             Container(
               padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF16A34A).withOpacity(0.1),
+                color: AppConstants.primaryGreen.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF16A34A),
+                color: AppConstants.primaryGreen,
                 size: screenWidth < 350 ? 20 : 24,
               ),
             ),

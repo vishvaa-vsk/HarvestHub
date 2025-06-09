@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../models/post.dart';
 import '../services/firebase_service.dart';
 import 'comment_page.dart';
+import '../core/constants/app_constants.dart';
 
 class PostDetailPage extends StatefulWidget {
   final Post post;
@@ -16,6 +17,13 @@ class PostDetailPage extends StatefulWidget {
 
 class _PostDetailPageState extends State<PostDetailPage> {
   final FirebaseService _firebaseService = FirebaseService();
+  bool _isCommentingMode = false; // Track if user is commenting
+
+  void _onCommentFocusChanged(bool isComposing) {
+    setState(() {
+      _isCommentingMode = isComposing;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,20 +80,33 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 ],
               ),
             ),
-          ),
-
-          // Post Content
+          ), // Post Content
           Expanded(
             child: Column(
               children: [
-                // Main post display
-                _buildMainPost(),
+                // Show post content only when not commenting
+                if (!_isCommentingMode) ...[
+                  // Main post display - Use limited flexible space
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight:
+                          MediaQuery.of(context).size.height *
+                          0.6, // Max 60% of screen
+                    ),
+                    child: SingleChildScrollView(child: _buildMainPost()),
+                  ),
 
-                // Divider
-                Container(height: 8, color: Colors.grey[100]),
+                  // Divider
+                  Container(height: 8, color: Colors.grey[100]),
+                ],
 
-                // Comments section
-                Expanded(child: ModernCommentPage(postId: widget.post.id)),
+                // Comments section - Takes full space when commenting
+                Expanded(
+                  child: ModernCommentPage(
+                    postId: widget.post.id,
+                    onFocusChanged: _onCommentFocusChanged,
+                  ),
+                ),
               ],
             ),
           ),
@@ -106,139 +127,140 @@ class _PostDetailPageState extends State<PostDetailPage> {
         }
 
         final user = snapshot.data ?? {};
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // User info row
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundImage:
-                        user['profilePic'] != null
-                            ? CachedNetworkImageProvider(user['profilePic'])
-                            : null,
-                    child:
-                        user['profilePic'] == null
-                            ? const Icon(Icons.person, size: 24)
-                            : null,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user['name'] ?? 'User',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
+        return SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // User info row
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundImage:
+                          user['profilePic'] != null
+                              ? CachedNetworkImageProvider(user['profilePic'])
+                              : null,
+                      child:
+                          user['profilePic'] == null
+                              ? const Icon(Icons.person, size: 24)
+                              : null,
                     ),
-                  ),
-                  PopupMenuButton<String>(
-                    icon: Icon(Icons.more_horiz, color: Colors.grey[600]),
-                    onSelected: (value) {
-                      // TODO: Handle menu actions
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('$value coming soon!')),
-                      );
-                    },
-                    itemBuilder:
-                        (context) => [
-                          const PopupMenuItem(
-                            value: 'Report',
-                            child: Row(
-                              children: [
-                                Icon(Icons.flag_outlined, size: 20),
-                                SizedBox(width: 12),
-                                Text('Report post'),
-                              ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user['name'] ?? 'User',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
                             ),
                           ),
-                          const PopupMenuItem(
-                            value: 'Block',
-                            child: Row(
-                              children: [
-                                Icon(Icons.block_outlined, size: 20),
-                                SizedBox(width: 12),
-                                Text('Block user'),
-                              ],
+                          Text(
+                            '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 15,
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: Icon(Icons.more_horiz, color: Colors.grey[600]),
+                      onSelected: (value) {
+                        // TODO: Handle menu actions
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('$value coming soon!')),
+                        );
+                      },
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: 'Report',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.flag_outlined, size: 20),
+                                  SizedBox(width: 12),
+                                  Text('Report post'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'Block',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.block_outlined, size: 20),
+                                  SizedBox(width: 12),
+                                  Text('Block user'),
+                                ],
+                              ),
+                            ),
+                          ],
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Post content
+                Text(
+                  widget.post.content,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    height: 1.4,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+
+                // Post image if exists
+                if (widget.post.imageUrl != null) ...[
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.post.imageUrl!,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder:
+                          (context, url) => Container(
+                            height: 300,
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                      errorWidget:
+                          (context, url, error) => Container(
+                            height: 300,
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.error),
+                          ),
+                    ),
                   ),
                 ],
-              ),
 
-              const SizedBox(height: 16),
-
-              // Post content
-              Text(
-                widget.post.content,
-                style: const TextStyle(
-                  fontSize: 20,
-                  height: 1.4,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-
-              // Post image if exists
-              if (widget.post.imageUrl != null) ...[
                 const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.post.imageUrl!,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder:
-                        (context, url) => Container(
-                          height: 300,
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                    errorWidget:
-                        (context, url, error) => Container(
-                          height: 300,
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.error),
-                        ),
-                  ),
+
+                // Post timestamp
+                Text(
+                  _formatDetailedTime(widget.post.timestamp),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 15),
                 ),
+
+                const SizedBox(height: 16),
+
+                // Engagement stats
+                _buildEngagementStats(),
+
+                const SizedBox(height: 16), // Action buttons
+                _buildActionButtons(),
               ],
-
-              const SizedBox(height: 16),
-
-              // Post timestamp
-              Text(
-                _formatDetailedTime(widget.post.timestamp),
-                style: TextStyle(color: Colors.grey[600], fontSize: 15),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Engagement stats
-              _buildEngagementStats(),
-
-              const SizedBox(height: 16),
-
-              // Action buttons
-              _buildActionButtons(),
-            ],
+            ),
           ),
         );
       },
@@ -333,14 +355,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         },
               );
             },
-          ),
-
-          // Comment button (second)
+          ), // Comment button (second)
           _buildActionButton(
             icon: Icons.mode_comment_outlined,
             activeIcon: Icons.mode_comment,
             color: Colors.grey[600]!,
-            activeColor: Colors.blue,
+            activeColor: AppConstants.primaryGreen,
             onTap: () {
               // Auto focus on comment input (handled by ModernCommentPage)
             },
@@ -357,14 +377,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 const SnackBar(content: Text('Repost feature coming soon!')),
               );
             },
-          ),
-
-          // Share button (fourth)
+          ), // Share button (fourth)
           _buildActionButton(
             icon: Icons.share_outlined,
             activeIcon: Icons.share,
             color: Colors.grey[600]!,
-            activeColor: Colors.blue,
+            activeColor: AppConstants.primaryGreen,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Share feature coming soon!')),

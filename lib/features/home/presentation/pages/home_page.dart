@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:harvesthub/main.dart';
-import 'package:flutter/services.dart';
-
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/weather_provider.dart';
-import '../../../auth/presentation/pages/edit_profile_page.dart';
 import '../../../../core/utils/avatar_utils.dart';
+import '../../../auth/presentation/pages/edit_profile_page.dart';
 import '../../../auth/presentation/pages/phone_auth_page.dart';
 import 'ai_chat_page.dart';
 import 'extended_forecast_page.dart';
@@ -25,7 +26,7 @@ class HarvestHubApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16A34A)),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppConstants.primaryGreen),
         useMaterial3: true,
       ),
       home: const MainScreen(),
@@ -51,28 +52,15 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-
-    // Ensure consistent system UI overlay style
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    final localizations =
+        AppLocalizations.of(
+          context,
+        )!; // Ensure consistent system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
 
     // Also set the system UI after the frame is built to ensure it sticks
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          systemNavigationBarColor: Colors.white,
-          systemNavigationBarIconBrightness: Brightness.dark,
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-      );
+      SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
     });
 
     return Scaffold(
@@ -145,14 +133,7 @@ class _MainScreenState extends State<MainScreen> {
     return GestureDetector(
       onTap: () {
         // Set system UI overlay style for consistent navigation bar on tab switch
-        SystemChrome.setSystemUIOverlayStyle(
-          const SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.white,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-          ),
-        );
+        SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
 
         // Handle HarvestBot navigation separately
         if (index == 1) {
@@ -178,7 +159,8 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Icon(
             icon,
-            color: isSelected ? const Color(0xFF16A34A) : Colors.grey.shade500,
+            color:
+                isSelected ? AppConstants.primaryGreen : Colors.grey.shade500,
             size: 24,
           ),
           const SizedBox(height: 4),
@@ -188,7 +170,7 @@ class _MainScreenState extends State<MainScreen> {
               fontSize: 11,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               color:
-                  isSelected ? const Color(0xFF16A34A) : Colors.grey.shade500,
+                  isSelected ? AppConstants.primaryGreen : Colors.grey.shade500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -297,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: AppConstants.backgroundGray,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -307,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF16A34A),
+            color: AppConstants.primaryGreen,
           ),
         ),
         leading: IconButton(
@@ -339,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFF16A34A),
+                        color: AppConstants.primaryGreen,
                         width: 2,
                       ),
                     ),
@@ -355,12 +337,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Container(
                             width: 40,
                             height: 40,
-                            color: const Color(0xFFF0F0F0),
+                            color: AppConstants.dividerGray,
                             child: const Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF16A34A),
+                                  AppConstants.primaryGreen,
                                 ),
                               ),
                             ),
@@ -371,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 40,
                             height: 40,
                             decoration: const BoxDecoration(
-                              color: Color(0xFF16A34A),
+                              color: AppConstants.primaryGreen,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -436,27 +418,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff20c25e), Color(0xff12ab64)],
-                  stops: [0.25, 0.75],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                gradient: AppConstants.primaryGradient,
+                borderRadius: BorderRadius.circular(
+                  AppConstants.largeBorderRadius,
                 ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF16A34A).withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                    spreadRadius: 0,
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
+                boxShadow: AppConstants.primaryShadow,
               ),
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -607,7 +573,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     loc.viewAll,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF16A34A),
+                      color: AppConstants.primaryGreen,
                       fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -738,7 +704,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF16A34A),
+                    color: AppConstants.primaryGreen,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -828,12 +794,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF16A34A).withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.lightbulb,
-                          color: const Color(0xFF16A34A),
+                          color: AppConstants.primaryGreen,
                           size: 24,
                         ),
                       ),
@@ -883,12 +849,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF16A34A).withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.eco,
-                          color: const Color(0xFF16A34A),
+                          color: AppConstants.primaryGreen,
                           size: 24,
                         ),
                       ),
@@ -1015,7 +981,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: const Color(0xFF16A34A),
+                                  color: AppConstants.primaryGreen,
                                   width: 3,
                                 ),
                               ),
@@ -1035,13 +1001,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     return Container(
                                       width: 80,
                                       height: 80,
-                                      color: const Color(0xFFF0F0F0),
+                                      color: AppConstants.dividerGray,
                                       child: const Center(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                Color(0xFF16A34A),
+                                                AppConstants.primaryGreen,
                                               ),
                                         ),
                                       ),
@@ -1051,11 +1017,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     return Container(
                                       width: 80,
                                       height: 80,
-                                      color: const Color(0xFFF0F0F0),
+                                      color: AppConstants.dividerGray,
                                       child: const Icon(
                                         Icons.person,
                                         size: 40,
-                                        color: Color(0xFF9E9E9E),
+                                        color: AppConstants.mediumGray,
                                       ),
                                     );
                                   },
@@ -1071,7 +1037,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF16A34A),
+                              color: AppConstants.primaryGreen,
                               shape: BoxShape.circle,
                               border: Border.all(color: Colors.white, width: 2),
                             ),
@@ -1084,7 +1050,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1F1F1F),
+                            color: AppConstants.textDark,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -1094,7 +1060,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             userPhone,
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF6B7280),
+                              color: AppConstants.textGray,
                             ),
                           ),
                         ],
@@ -1102,13 +1068,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-              ),
-
-              // Divider
+              ), // Divider
               Container(
                 height: 1,
                 margin: const EdgeInsets.symmetric(horizontal: 24),
-                color: const Color(0xFFF0F0F0),
+                color: AppConstants.dividerGray,
               ),
 
               // Dark Mode Section
@@ -1125,7 +1089,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF1F1F1F),
+                        color: AppConstants.textDark,
                       ),
                     ),
                     Switch(
@@ -1133,9 +1097,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onChanged: (value) {
                         // TODO: Implement dark mode logic
                       },
-                      activeColor: const Color(0xFF16A34A),
-                      inactiveThumbColor: const Color(0xFFE5E5E5),
-                      inactiveTrackColor: const Color(0xFFF5F5F5),
+                      activeColor: AppConstants.primaryGreen,
+                      inactiveThumbColor: AppConstants.switchInactive,
+                      inactiveTrackColor: AppConstants.lightGray,
                     ),
                   ],
                 ),
@@ -1145,8 +1109,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 height: 1,
                 margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                color: const Color(0xFFF0F0F0),
-              ), // Menu Items
+                color: AppConstants.dividerGray,
+              ),
+
+              // Menu Items
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1301,7 +1267,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         final theme = Theme.of(context);
-        final green = const Color(0xFF16A34A);
         final greyTile = const Color(0xFFF3F3F3);
         return Container(
           decoration: const BoxDecoration(
@@ -1326,7 +1291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 10,
                     height: 10,
                     decoration: BoxDecoration(
-                      color: green,
+                      color: AppConstants.primaryGreen,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1359,7 +1324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: lang['icon'] as IconData,
                       onTap:
                           () => Navigator.pop(context, lang['code'] as String),
-                      accent: green,
+                      accent: AppConstants.primaryGreen,
                       grey: greyTile,
                     ),
                 ],

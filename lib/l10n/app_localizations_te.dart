@@ -1,5 +1,3 @@
-// ignore: unused_import
-import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -124,7 +122,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get noCropRecommendation => 'పంట సూచన అందుబాటులో లేదు';
 
   @override
-  String get locationServicesRequired => 'ఈ యాప్‌ను ఉపయోగించడానికి స్థానం సేవలు అవసరం.';
+  String get locationServicesRequired =>
+      'ఈ యాప్‌ను ఉపయోగించడానికి స్థానం సేవలు అవసరం.';
 
   @override
   String get failedToLoadInsights => 'అంతర్దృష్టులను లోడ్ చేయడంలో విఫలమైంది';
@@ -145,13 +144,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get enterOTP => 'OTP నమోదు చేయండి';
 
   @override
-  String get pleaseEnterNameAndPhone => 'దయచేసి మీ పేరు మరియు ఫోన్ నంబర్ నమోదు చేయండి';
+  String get pleaseEnterNameAndPhone =>
+      'దయచేసి మీ పేరు మరియు ఫోన్ నంబర్ నమోదు చేయండి';
 
   @override
   String get invalidOTP => 'అసాధువైన OTP';
 
   @override
-  String get failedToSendOTP => 'OTP పంపడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.';
+  String get failedToSendOTP =>
+      'OTP పంపడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.';
 
   @override
   String get failedToSignIn => 'సైన్ ఇన్ చేయడంలో విఫలమైంది';
@@ -196,13 +197,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get welcomeToHarvestHub => 'HarvestHub కు స్వాగతం...';
 
   @override
-  String get shareYourThoughts => 'మీ ఆలోచనలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి.';
+  String get shareYourThoughts =>
+      'మీ ఆలోచనలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి.';
 
   @override
   String get somethingWentWrong => 'ఏదో తప్పు జరిగింది';
 
   @override
-  String get checkConnectionAndTryAgain => 'దయచేసి మీ కనెక్షన్‌ని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి';
+  String get checkConnectionAndTryAgain =>
+      'దయచేసి మీ కనెక్షన్‌ని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి';
 
   @override
   String get tryAgain => 'మళ్లీ ప్రయత్నించండి';
@@ -211,7 +214,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get welcomeToCommunity => 'కమ్యూనిటీకి స్వాగతం!';
 
   @override
-  String get shareYourFarmingExperiences => 'మీ వ్యవసాయ అనుభవాలు, చిట్కాలను పంచుకోండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి';
+  String get shareYourFarmingExperiences =>
+      'మీ వ్యవసాయ అనుభవాలు, చిట్కాలను పంచుకోండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి';
 
   @override
   String get createFirstPost => 'మొదటి పోస్ట్ సృష్టించండి';
@@ -322,76 +326,91 @@ class AppLocalizationsTe extends AppLocalizations {
   String get weatherUpdatesFeature => 'కాలావస్థా నవీకరణలు';
 
   @override
-  String get weatherUpdatesDesc => 'మీ కృషి కార్యకలాపాలను ప్రణాళిక చేయడానికి ఉష్ణోగ్రత, ఆర్ద్రత, గాలి వేగం మరియు 3-రోజుల అంచనాలను కలిగి ఉన్న రియల్-టైమ్ వాతావరణ సమాచారాన్ని పొందండి.';
+  String get weatherUpdatesDesc =>
+      'మీ కృషి కార్యకలాపాలను ప్రణాళిక చేయడానికి ఉష్ణోగ్రత, ఆర్ద్రత, గాలి వేగం మరియు 3-రోజుల అంచనాలను కలిగి ఉన్న రియల్-టైమ్ వాతావరణ సమాచారాన్ని పొందండి.';
 
   @override
   String get aiChatFeature => 'హార్వెస్ట్ బాట్ AI సహాయకుడు';
 
   @override
-  String get aiChatDesc => 'వ్యక్తిగత సలహా, పంట సిఫారసులు మరియు మీ వ్యవసాయ ప్రశ్నలకు సమాధానాలు కోసం మా AI-శక్తి కలిగిన వ్యవసాయ నిపుణుడితో చాట్ చేయండి.';
+  String get aiChatDesc =>
+      'వ్యక్తిగత సలహా, పంట సిఫారసులు మరియు మీ వ్యవసాయ ప్రశ్నలకు సమాధానాలు కోసం మా AI-శక్తి కలిగిన వ్యవసాయ నిపుణుడితో చాట్ చేయండి.';
 
   @override
   String get pestDetectionFeature => 'పొత్తికాయ గుర్తింపు';
 
   @override
-  String get pestDetectionDesc => 'మీ పంటల ఫోటోలను అప్‌లోడ్ చేసి, సంభావ్య పొత్తికాయ సమస్యలను గుర్తించండి మరియు చికిత్స మరియు నివారణకు సిఫారసులు పొందండి.';
+  String get pestDetectionDesc =>
+      'మీ పంటల ఫోటోలను అప్‌లోడ్ చేసి, సంభావ్య పొత్తికాయ సమస్యలను గుర్తించండి మరియు చికిత్స మరియు నివారణకు సిఫారసులు పొందండి.';
 
   @override
   String get communityFeature => 'వ్యవసాయ సమూహం';
 
   @override
-  String get communityDesc => 'ఇతర రైతులతో కనెక్ట్ అవ్వండి, అనుభవాలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు వ్యవసాయ సమూహం నుండి నేర్చుకోండి.';
+  String get communityDesc =>
+      'ఇతర రైతులతో కనెక్ట్ అవ్వండి, అనుభవాలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు వ్యవసాయ సమూహం నుండి నేర్చుకోండి.';
 
   @override
   String get multiLanguageFeature => 'బహుభాషా మద్దతు';
 
   @override
-  String get multiLanguageDesc => 'ఆంగ్లం, హిందీ, తమిళం, తెలుగు మరియు మలయాళం వంటి మీ ఇష్టమైన భాషలో యాప్‌ను ఉపయోగించండి.';
+  String get multiLanguageDesc =>
+      'ఆంగ్లం, హిందీ, తమిళం, తెలుగు మరియు మలయాళం వంటి మీ ఇష్టమైన భాషలో యాప్‌ను ఉపయోగించండి.';
 
   @override
   String get profileManagementFeature => 'ప్రొఫైల్ నిర్వహణ';
 
   @override
-  String get profileManagementDesc => 'వ్యక్తిగత సమాచారం, పంట ప్రాధాన్యతలు మరియు వ్యక్తిగతీకరించిన సిఫారసుల కోసం స్థానం సెట్టింగ్‌లను నిర్వహించండి.';
+  String get profileManagementDesc =>
+      'వ్యక్తిగత సమాచారం, పంట ప్రాధాన్యతలు మరియు వ్యక్తిగతీకరించిన సిఫారసుల కోసం స్థానం సెట్టింగ్‌లను నిర్వహించండి.';
 
   @override
-  String get gettingStartedStep1 => '1. మీ స్థానం మరియు పంట ప్రాధాన్యతలతో మీ ప్రొఫైల్‌ను సెటప్ చేయండి';
+  String get gettingStartedStep1 =>
+      '1. మీ స్థానం మరియు పంట ప్రాధాన్యతలతో మీ ప్రొఫైల్‌ను సెటప్ చేయండి';
 
   @override
-  String get gettingStartedStep2 => '2. ఖచ్చితమైన వాతావరణ నవీకరణల కోసం స్థానం యాక్సెస్‌ను అనుమతించండి';
+  String get gettingStartedStep2 =>
+      '2. ఖచ్చితమైన వాతావరణ నవీకరణల కోసం స్థానం యాక్సెస్‌ను అనుమతించండి';
 
   @override
-  String get gettingStartedStep3 => '3. హోమ్ స్క్రీన్‌లో వాతావరణ అంచనాలు మరియు వ్యవసాయ అంతర్దృష్టులను అన్వేషించండి';
+  String get gettingStartedStep3 =>
+      '3. హోమ్ స్క్రీన్‌లో వాతావరణ అంచనాలు మరియు వ్యవసాయ అంతర్దృష్టులను అన్వేషించండి';
 
   @override
-  String get gettingStartedStep4 => '4. వ్యక్తిగతీకరించిన వ్యవసాయ సలహా కోసం హార్వెస్ట్‌బాట్‌తో చాట్ చేయండి';
+  String get gettingStartedStep4 =>
+      '4. వ్యక్తిగతీకరించిన వ్యవసాయ సలహా కోసం హార్వెస్ట్‌బాట్‌తో చాట్ చేయండి';
 
   @override
-  String get gettingStartedStep5 => '5. ఇతర రైతులతో కనెక్ట్ అవ్వడానికి సమూహంలో చేరండి';
+  String get gettingStartedStep5 =>
+      '5. ఇతర రైతులతో కనెక్ట్ అవ్వడానికి సమూహంలో చేరండి';
 
   @override
   String get weatherUsageTitle => 'వాతావరణ లక్షణాలను ఉపయోగించడం';
 
   @override
-  String get weatherUsageDesc => 'ప్రస్తుత వాతావరణ పరిస్థితులు, 3-రోజుల అంచనాలు మరియు 30-రోజుల విస్తృత అంచనాలను చూడండి. వివరమైన క్యాలెండర్ వీక్షణ కోసం \'మరింత చూడండి\'పై నొక్కండి.';
+  String get weatherUsageDesc =>
+      'ప్రస్తుత వాతావరణ పరిస్థితులు, 3-రోజుల అంచనాలు మరియు 30-రోజుల విస్తృత అంచనాలను చూడండి. వివరమైన క్యాలెండర్ వీక్షణ కోసం \'మరింత చూడండి\'పై నొక్కండి.';
 
   @override
   String get aiChatUsageTitle => 'హార్వెస్ట్‌బాట్ ఉపయోగించడం';
 
   @override
-  String get aiChatUsageDesc => 'పంటలు, వ్యాధులు, ఎరువులు లేదా ఏదైనా వ్యవసాయ అంశం గురించి ప్రశ్నలు అడగండి. మీ సంభాషన ఆధారంగా AI సందర్భానుసారమైన సమాధానాలను ఇస్తుంది.';
+  String get aiChatUsageDesc =>
+      'పంటలు, వ్యాధులు, ఎరువులు లేదా ఏదైనా వ్యవసాయ అంశం గురించి ప్రశ్నలు అడగండి. మీ సంభాషన ఆధారంగా AI సందర్భానుసారమైన సమాధానాలను ఇస్తుంది.';
 
   @override
   String get pestDetectionUsageTitle => 'పొత్తికాయ గుర్తింపు ఉపయోగించడం';
 
   @override
-  String get pestDetectionUsageDesc => 'బాధిత మొక్కల స్పష్టమైన ఫోటోలు తీయండి. వ్యవస్థ విశ్లేషించి గుర్తింపు మరియు చికిత్స సిఫారసులు ఇస్తుంది.';
+  String get pestDetectionUsageDesc =>
+      'బాధిత మొక్కల స్పష్టమైన ఫోటోలు తీయండి. వ్యవస్థ విశ్లేషించి గుర్తింపు మరియు చికిత్స సిఫారసులు ఇస్తుంది.';
 
   @override
   String get communityUsageTitle => 'సమూహ లక్షణాలను ఉపయోగించడం';
 
   @override
-  String get communityUsageDesc => 'పోస్టులు, ఫోటోలు, అనుభవాలను పంచుకోండి. ఇతరుల పోస్టులపై వ్యాఖ్యానించండి మరియు రైతులతో సంబంధాలు నిర్మించండి.';
+  String get communityUsageDesc =>
+      'పోస్టులు, ఫోటోలు, అనుభవాలను పంచుకోండి. ఇతరుల పోస్టులపై వ్యాఖ్యానించండి మరియు రైతులతో సంబంధాలు నిర్మించండి.';
 
   @override
   String get troubleshootingTitle => 'సమస్య పరిష్కారం';
@@ -400,22 +419,26 @@ class AppLocalizationsTe extends AppLocalizations {
   String get locationIssues => 'స్థానం సమస్యలు';
 
   @override
-  String get locationIssuesDesc => 'ఖచ్చితమైన వాతావరణ డేటా కోసం మీ డివైస్ సెట్టింగ్స్‌లో స్థానం సేవలు ప్రారంభించండి.';
+  String get locationIssuesDesc =>
+      'ఖచ్చితమైన వాతావరణ డేటా కోసం మీ డివైస్ సెట్టింగ్స్‌లో స్థానం సేవలు ప్రారంభించండి.';
 
   @override
   String get weatherNotLoading => 'వాతావరణం లోడ్ కావడం లేదు';
 
   @override
-  String get weatherNotLoadingDesc => 'మీ ఇంటర్నెట్ కనెక్షన్ మరియు స్థానం అనుమతులను తనిఖీ చేయండి. హోమ్ స్క్రీన్‌ను రిఫ్రెష్ చేయడానికి క్రిందికి లాగండి.';
+  String get weatherNotLoadingDesc =>
+      'మీ ఇంటర్నెట్ కనెక్షన్ మరియు స్థానం అనుమతులను తనిఖీ చేయండి. హోమ్ స్క్రీన్‌ను రిఫ్రెష్ చేయడానికి క్రిందికి లాగండి.';
 
   @override
   String get aiNotResponding => 'AI స్పందించడంలేదు';
 
   @override
-  String get aiNotRespondingDesc => 'స్థిరమైన ఇంటర్నెట్ కనెక్షన్ ఉందో లేదో చూసుకోండి. AI అర్థం కాకపోతే మీ ప్రశ్నను మళ్లీ అడగండి.';
+  String get aiNotRespondingDesc =>
+      'స్థిరమైన ఇంటర్నెట్ కనెక్షన్ ఉందో లేదో చూసుకోండి. AI అర్థం కాకపోతే మీ ప్రశ్నను మళ్లీ అడగండి.';
 
   @override
-  String get contactSupportDesc => 'అదనపు సహాయం లేదా సమస్యలు నివేదించడానికి, మీరు చేయవచ్చు:';
+  String get contactSupportDesc =>
+      'అదనపు సహాయం లేదా సమస్యలు నివేదించడానికి, మీరు చేయవచ్చు:';
 
   @override
   String get emailSupport => 'మాకు ఈమెయిల్ చేయండి: support@harvesthub.com';
@@ -436,7 +459,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get uploadPlantImage => 'మొక్క చిత్రాన్ని అప్‌లోడ్ చేయండి';
 
   @override
-  String get uploadPlantImageDesc => 'పురుగులు మరియు వ్యాధులను గుర్తించడానికి మొక్క ఆకుల స్పష్టమైన ఫోటో తీయండి లేదా గ్యాలరీ నుండి అప్‌లోడ్ చేయండి.';
+  String get uploadPlantImageDesc =>
+      'పురుగులు మరియు వ్యాధులను గుర్తించడానికి మొక్క ఆకుల స్పష్టమైన ఫోటో తీయండి లేదా గ్యాలరీ నుండి అప్‌లోడ్ చేయండి.';
 
   @override
   String get camera => 'కెమెరా';
@@ -460,7 +484,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get noImageSelected => 'చిత్రం ఎంచుకోబడలేదు';
 
   @override
-  String get uploadImageToGetStarted => 'ప్రారంభించడానికి చిత్రాన్ని అప్‌లోడ్ చేయండి';
+  String get uploadImageToGetStarted =>
+      'ప్రారంభించడానికి చిత్రాన్ని అప్‌లోడ్ చేయండి';
 
   @override
   String get analysisComplete => 'విశ్లేషణ పూర్తయింది';
@@ -469,7 +494,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get noPestsDetected => 'ఈ చిత్రంలో పురుగులు గుర్తించబడలేదు';
 
   @override
-  String get cropsHealthyMessage => 'మీ పంటలు ఆరోగ్యంగా కనిపిస్తున్నాయి! సాధారణ పర్యవేక్షణను కొనసాగించండి మరియు మంచి వ్యవసాయ పద్ధతులను నిర్వహించండి.';
+  String get cropsHealthyMessage =>
+      'మీ పంటలు ఆరోగ్యంగా కనిపిస్తున్నాయి! సాధారణ పర్యవేక్షణను కొనసాగించండి మరియు మంచి వ్యవసాయ పద్ధతులను నిర్వహించండి.';
 
   @override
   String get recommendations => 'సిఫార్సులు';
@@ -478,16 +504,19 @@ class AppLocalizationsTe extends AppLocalizations {
   String get readyToAnalyze => 'విశ్లేషించడానికి సిద్ధం';
 
   @override
-  String get uploadImageAndAnalyze => 'చిత్రాన్ని అప్‌లోడ్ చేసి పురుగులను గుర్తించి సిఫార్సులు పొందడానికి \"విశ్లేషించండి\"ని నొక్కండి';
+  String get uploadImageAndAnalyze =>
+      'చిత్రాన్ని అప్‌లోడ్ చేసి పురుగులను గుర్తించి సిఫార్సులు పొందడానికి \"విశ్లేషించండి\"ని నొక్కండి';
 
   @override
   String get howToUse => 'ఎలా ఉపయోగించాలి';
 
   @override
-  String get takeClearPhotos => 'మొక్క ఆకుల స్పష్టమైన, బాగా వెలుగుతున్న ఫోటోలు తీయండి';
+  String get takeClearPhotos =>
+      'మొక్క ఆకుల స్పష్టమైన, బాగా వెలుగుతున్న ఫోటోలు తీయండి';
 
   @override
-  String get focusOnAffectedAreas => 'కనిపించే లక్షణాలతో ప్రభావిత ప్రాంతాలపై దృష్టి పెట్టండి';
+  String get focusOnAffectedAreas =>
+      'కనిపించే లక్షణాలతో ప్రభావిత ప్రాంతాలపై దృష్టి పెట్టండి';
 
   @override
   String get avoidBlurryImages => 'అస్పష్టమైన లేదా చీకటి చిత్రాలను నివారించండి';

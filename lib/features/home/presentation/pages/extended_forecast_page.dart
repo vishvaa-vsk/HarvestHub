@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/weather_provider.dart';
 
 class ExtendedForecastPage extends StatefulWidget {
@@ -67,7 +68,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppConstants.lightGray,
       appBar: AppBar(
         title: Text(
           loc.thirtyDayForecast,
@@ -103,7 +104,9 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   weatherProvider.futureWeather!.isEmpty)) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppConstants.materialGreen,
+                ),
               ),
             );
           }
@@ -380,20 +383,20 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
     // If date is in past, make it grey
     if (isPast) {
-      backgroundColor = const Color(0xFFF5F5F5);
+      backgroundColor = AppConstants.lightGray;
       textColor = Colors.grey.shade400;
     } else if (isBeyond30Days) {
       // Dates beyond 30 days - show them as inactive
-      backgroundColor = const Color(0xFFF9F9F9);
+      backgroundColor = AppConstants.offWhite;
       textColor = Colors.grey.shade300;
     } else if (isWithin30Days) {
       // Color coding for dates within 30-day forecast period
       if (hasWeather && weatherData['rainChance'] != null) {
         final rainChance = weatherData['rainChance'] as int;
         if (rainChance >= 80) {
-          backgroundColor = const Color(0xFFE3F2FD); // Light blue for 80%+
+          backgroundColor = AppConstants.lightBlue; // Light blue for 80%+
         } else if (rainChance >= 60) {
-          backgroundColor = const Color(0xFFE8F5E9); // Light green for 60-79%
+          backgroundColor = AppConstants.lightGreenBg; // Light green for 60-79%
         } else if (rainChance > 0) {
           backgroundColor = const Color(
             0xFFFFF3E0,
@@ -406,8 +409,8 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
     // Today's highlight (green border for current date)
     if (isToday) {
-      borderColor = const Color(0xFF4CAF50);
-      textColor = const Color(0xFF4CAF50);
+      borderColor = AppConstants.materialGreen;
+      textColor = AppConstants.materialGreen;
     }
 
     return Expanded(
@@ -499,12 +502,12 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.eco,
-                  color: const Color(0xFF16A34A),
+                  color: AppConstants.primaryGreen,
                   size: 24,
                 ),
               ),
@@ -548,7 +551,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   color:
                       _isLoadingRecommendation
                           ? Colors.grey
-                          : const Color(0xFF16A34A),
+                          : AppConstants.primaryGreen,
                   size: 20,
                 ),
                 tooltip: 'Refresh recommendation',
@@ -566,7 +569,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF16A34A),
+                        AppConstants.primaryGreen,
                       ),
                     ),
                   ),

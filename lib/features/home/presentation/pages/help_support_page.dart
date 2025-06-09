@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
@@ -7,7 +8,7 @@ class HelpSupportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
@@ -81,9 +82,9 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Getting Started Section
             _buildSectionCard(
               context,
@@ -97,9 +98,9 @@ class HelpSupportPage extends StatelessWidget {
                 _buildStep(context, loc.gettingStartedStep5),
               ],
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Features & Usage Section
             _buildSectionCard(
               context,
@@ -131,9 +132,9 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Troubleshooting Section
             _buildSectionCard(
               context,
@@ -159,9 +160,9 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Contact Support Section
             _buildSectionCard(
               context,
@@ -198,7 +199,7 @@ class HelpSupportPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF16A34A).withOpacity(0.1),
+                    color: AppConstants.primaryGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -208,7 +209,7 @@ class HelpSupportPage extends StatelessWidget {
                         loc.appVersion,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF16A34A),
+                          color: AppConstants.primaryGreen,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -217,7 +218,7 @@ class HelpSupportPage extends StatelessWidget {
                         loc.lastUpdated,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF16A34A),
+                          color: AppConstants.primaryGreen,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -226,7 +227,7 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),
@@ -262,14 +263,10 @@ class HelpSupportPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A34A).withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  color: const Color(0xFF16A34A),
-                  size: 24,
-                ),
+                child: Icon(icon, color: AppConstants.primaryGreen, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -300,11 +297,7 @@ class HelpSupportPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: const Color(0xFF16A34A),
-          size: 20,
-        ),
+        Icon(icon, color: AppConstants.primaryGreen, size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -345,7 +338,7 @@ class HelpSupportPage extends StatelessWidget {
             height: 6,
             margin: const EdgeInsets.only(top: 6),
             decoration: const BoxDecoration(
-              color: Color(0xFF16A34A),
+              color: AppConstants.primaryGreen,
               shape: BoxShape.circle,
             ),
           ),
@@ -404,10 +397,7 @@ class HelpSupportPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.orange.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.orange.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,11 +443,7 @@ class HelpSupportPage extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: const Color(0xFF16A34A),
-          size: 18,
-        ),
+        Icon(icon, color: AppConstants.primaryGreen, size: 18),
         const SizedBox(width: 12),
         Expanded(
           child: Text(

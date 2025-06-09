@@ -4,11 +4,18 @@ import '../services/firebase_service.dart';
 import '../widgets/comment_tile.dart';
 import '../models/comment.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../core/constants/app_constants.dart';
 
 // Modern Twitter-style comment page (now the main one)
 class ModernCommentPage extends StatefulWidget {
   final String postId;
-  const ModernCommentPage({super.key, required this.postId});
+  final Function(bool)?
+  onFocusChanged; // Callback to notify parent about focus changes
+  const ModernCommentPage({
+    super.key,
+    required this.postId,
+    this.onFocusChanged,
+  });
 
   @override
   State<ModernCommentPage> createState() => _ModernCommentPageState();
@@ -18,22 +25,55 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   bool _isComposingComment = false;
+  bool _hasText = false; // Track if text field has content
+  Map<String, dynamic>? _userData; // Cache user data
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(() {
-      setState(() {
-        _isComposingComment = _focusNode.hasFocus;
-      });
-    });
+    _focusNode.addListener(_onFocusChanged);
+    _controller.addListener(_onTextChanged);
+    _loadUserData();
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChanged);
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _loadUserData() async {
+    final userData = await FirebaseService().getUserByPhone(
+      FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
+    );
+    if (mounted) {
+      setState(() {
+        _userData = userData;
+      });
+    }
+  }
+
+  void _onFocusChanged() {
+    final hasFocus = _focusNode.hasFocus;
+    if (_isComposingComment != hasFocus) {
+      setState(() {
+        _isComposingComment = hasFocus;
+      });
+      // Notify parent about focus change
+      widget.onFocusChanged?.call(hasFocus);
+    }
+  }
+
+  void _onTextChanged() {
+    final hasText = _controller.text.trim().isNotEmpty;
+    if (_hasText != hasText) {
+      setState(() {
+        _hasText = hasText;
+      });
+    }
   }
 
   @override
@@ -43,248 +83,110 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
         // Comment composition area
         _buildCommentComposer(),
 
-        Divider(height: 1, color: Colors.grey[200]),
-
-        // Comments list
+        Divider(height: 1, color: Colors.grey[200]),        // Comments list - isolated to prevent rebuilds
         Expanded(
-          child: StreamBuilder<List<Comment>>(
-            stream: FirebaseService().getComments(widget.postId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    ),
-                  ),
-                );
-              }
-
-              if (snapshot.hasError) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Error loading comments',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Please try again later',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              final comments = snapshot.data ?? [];
-              if (comments.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.mode_comment_outlined,
-                          size: 48,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No comments yet',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Be the first to share your thoughts!',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              return ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: comments.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 0),
-                itemBuilder:
-                    (context, i) => ModernCommentTile(
-                      commentId: comments[i].id,
-                      data: {
-                        'authorId': comments[i].authorId,
-                        'content': comments[i].content,
-                        'timestamp': comments[i].timestamp,
-                      },
-                    ),
-              );
-            },
-          ),
+          child: CommentsListWidget(postId: widget.postId),
         ),
       ],
     );
   }
-
   Widget _buildCommentComposer() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: FutureBuilder<Map<String, dynamic>?>(
-        future: FirebaseService().getUserByPhone(
-          FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
+    return SizedBox(
+      height: _isComposingComment ? 52 : 56, // Slightly smaller when focused
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: _isComposingComment ? 8 : 12, // Less padding when focused
+          vertical: _isComposingComment ? 4 : 6,
         ),
-        builder: (context, snapshot) {
-          final user = snapshot.data ?? {};
+        child: Row(
+          children: [
+            // Compact user avatar - use cached data
+            CircleAvatar(
+              radius: _isComposingComment ? 14 : 16, // Smaller when focused
+              backgroundImage:
+                  _userData?['profilePic'] != null
+                      ? CachedNetworkImageProvider(_userData!['profilePic'])
+                      : null,
+              child:
+                  _userData?['profilePic'] == null
+                      ? Icon(
+                        Icons.person,
+                        size: _isComposingComment ? 14 : 16,
+                      )
+                      : null,
+            ),
+            const SizedBox(width: 8),
 
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // User avatar
-              CircleAvatar(
-                radius: 18,
-                backgroundImage:
-                    user['profilePic'] != null
-                        ? CachedNetworkImageProvider(user['profilePic'])
-                        : null,
-                child:
-                    user['profilePic'] == null
-                        ? const Icon(Icons.person, size: 18)
-                        : null,
-              ),
-              const SizedBox(width: 12),
-
-              // Comment input area
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      maxLines: _isComposingComment ? 4 : 1,
-                      decoration: InputDecoration(
-                        hintText: 'Post your reply',
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[500],
-                        ),
-                      ),
-                      style: const TextStyle(fontSize: 16),
-                      onChanged: (value) {
-                        setState(() {}); // Refresh to update button state
-                      },
-                    ),
-
-                    if (_isComposingComment) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  // TODO: Add image attachment
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Image attachment coming soon!',
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.image_outlined),
-                                iconSize: 20,
-                                color: Colors.blue,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  // TODO: Add emoji picker
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Emoji picker coming soon!',
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.emoji_emotions_outlined),
-                                iconSize: 20,
-                                color: Colors.blue,
-                              ),
-                            ],
-                          ),
-                          ElevatedButton(
-                            onPressed:
-                                _controller.text.trim().isEmpty
-                                    ? null
-                                    : _postComment,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              disabledBackgroundColor: Colors.grey[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 8,
-                              ),
-                            ),
-                            child: const Text(
-                              'Reply',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Quick reply button (when not composing)
-              if (!_isComposingComment && _controller.text.trim().isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: IconButton(
-                    onPressed: _postComment,
-                    icon: const Icon(Icons.send),
-                    color: Colors.blue,
-                    iconSize: 20,
+            // Text input field - larger and more readable
+            Expanded(
+              child: Container(
+                height:
+                    _isComposingComment ? 40 : 44, // Smaller when focused
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color:
+                        _isComposingComment
+                            ? AppConstants.primaryGreen
+                            : Colors.grey[300]!,
+                    width: _isComposingComment ? 1.5 : 1.0,
                   ),
+                  borderRadius: BorderRadius.circular(20),
+                  color:
+                      _isComposingComment
+                          ? AppConstants.lightGreenBg
+                          : Colors.grey[50],
                 ),
-            ],
-          );
-        },
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  style: const TextStyle(
+                    fontSize: 16, // Larger font for readability
+                    height: 1.2,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Post your reply',
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                    ),
+                    hintStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  // Removed onChanged to prevent unnecessary rebuilds
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 8,
+            ), // Send button - always visible, enabled when text exists
+            SizedBox(
+              height: _isComposingComment ? 40 : 44,
+              width: _isComposingComment ? 40 : 44,
+              child: ElevatedButton(
+                onPressed: !_hasText ? null : _postComment,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      !_hasText
+                          ? Colors.grey[300]
+                          : (_isComposingComment
+                              ? AppConstants.darkGreen
+                              : AppConstants.primaryGreen),
+                  foregroundColor:
+                      !_hasText
+                          ? Colors.grey[600]
+                          : Colors.white,
+                  shape: const CircleBorder(),
+                  padding: EdgeInsets.zero,
+                  elevation: _isComposingComment ? 2 : 0,
+                ),
+                child: const Icon(Icons.send, size: 18),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -344,6 +246,119 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
   }
 }
 
+// Separate widget for comments list to prevent unnecessary rebuilds
+class CommentsListWidget extends StatelessWidget {
+  final String postId;
+
+  const CommentsListWidget({super.key, required this.postId});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Comment>>(
+      stream: FirebaseService().getComments(postId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppConstants.primaryGreen,
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading comments',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please try again later',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final comments = snapshot.data ?? [];
+        if (comments.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.mode_comment_outlined,
+                    size: 48,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No comments yet',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Be the first to share your thoughts!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }        return ListView.separated(
+          key: const ValueKey('comments_list'), // Add key for better performance
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: comments.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 0),
+          itemBuilder: (context, i) => ModernCommentTile(
+            key: ValueKey(comments[i].id), // Add key for each comment
+            commentId: comments[i].id,
+            data: {
+              'authorId': comments[i].authorId,
+              'content': comments[i].content,
+              'timestamp': comments[i].timestamp,
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
 // Legacy comment page for backward compatibility
 class CommentPage extends StatefulWidget {
   final String postId;
@@ -395,34 +410,70 @@ class _CommentPageState extends State<CommentPage> {
               );
             },
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Add a comment...',
-                  ), // Localize
+        ), // Compact comment composer
+        SizedBox(
+          height: 60, // Fixed height for predictable layout
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 44,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(22),
+                      color: Colors.grey[50],
+                    ),
+                    child: TextField(
+                      controller: _controller,
+                      style: const TextStyle(fontSize: 16, height: 1.2),
+                      decoration: InputDecoration(
+                        hintText: 'Add a comment...',
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
+                        hintStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () async {
-                  final text = _controller.text.trim();
-                  if (text.isEmpty) return;
-                  final user = FirebaseAuth.instance.currentUser!;
-                  await FirebaseService().addComment(
-                    postId: widget.postId,
-                    authorId: user.phoneNumber!,
-                    content: text,
-                  );
-                  _controller.clear();
-                },
-              ),
-            ],
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 44,
+                  width: 44,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppConstants.primaryGreen,
+                      shape: const CircleBorder(),
+                      padding: EdgeInsets.zero,
+                      elevation: 0,
+                    ),
+                    onPressed: () async {
+                      final text = _controller.text.trim();
+                      if (text.isEmpty) return;
+                      final user = FirebaseAuth.instance.currentUser!;
+                      await FirebaseService().addComment(
+                        postId: widget.postId,
+                        authorId: user.phoneNumber!,
+                        content: text,
+                      );
+                      _controller.clear();
+                    },
+                    child: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
