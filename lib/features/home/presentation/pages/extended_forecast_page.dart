@@ -114,14 +114,13 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
       ),
     );
   }
-
   String _getDateRangeText(AppLocalizations loc) {
     final now = DateTime.now();
-    final startOfMonth = DateTime(now.year, now.month, 1);
-    final endOfMonth = DateTime(now.year, now.month + 1, 0);
+    final startDate = now;
+    final endDate = now.add(const Duration(days: 29)); // 30 days total (including today)
     return loc.weatherForecastCalendar(
-      DateFormat('MMM d').format(startOfMonth), 
-      DateFormat('MMM d').format(endOfMonth)
+      DateFormat('MMM d').format(startDate), 
+      DateFormat('MMM d').format(endDate)
     );
   }
 
@@ -303,7 +302,6 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
       return null;
     }
   }
-
   Widget _buildOldStyleDayCell(
     int dayNumber,
     DateTime date,
@@ -316,22 +314,30 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
         date.month == today.month &&
         date.day == today.day;
 
-    // Check if date is in the past or future (not current month)
+    // Check if date is in the past (before today) or beyond 30 days from today
     final now = DateTime.now();
-    final isPastOrFuture =
-        date.isBefore(DateTime(now.year, now.month, now.day)) ||
-        date.isAfter(DateTime(now.year, now.month + 1, 0));
+    final todayDateOnly = DateTime(now.year, now.month, now.day);
+    final thirtyDaysFromToday = todayDateOnly.add(const Duration(days: 29)); // 30 days total including today
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    
+    final isPast = dateOnly.isBefore(todayDateOnly);
+    final isBeyond30Days = dateOnly.isAfter(thirtyDaysFromToday);
+    final isWithin30Days = !isPast && !isBeyond30Days;
 
     Color backgroundColor = Colors.white;
     Color borderColor = Colors.transparent;
     Color textColor = Colors.black87;
 
-    // If date is in past/future, make it grey
-    if (isPastOrFuture) {
+    // If date is in past, make it grey
+    if (isPast) {
       backgroundColor = const Color(0xFFF5F5F5);
       textColor = Colors.grey.shade400;
-    } else {
-      // Color coding only for current month dates
+    } else if (isBeyond30Days) {
+      // Dates beyond 30 days - show them as inactive
+      backgroundColor = const Color(0xFFF9F9F9);
+      textColor = Colors.grey.shade300;
+    } else if (isWithin30Days) {
+      // Color coding for dates within 30-day forecast period
       if (hasWeather && weatherData['rainChance'] != null) {
         final rainChance = weatherData['rainChance'] as int;
         if (rainChance >= 80) {
@@ -378,10 +384,8 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
-              ),
-
-              // Temperature (only show for current month with weather data)
-              if (!isPastOrFuture &&
+              ),              // Temperature (show for dates within 30-day forecast period with weather data)
+              if (isWithin30Days &&
                   hasWeather &&
                   weatherData['temperature'] != null)
                 Text(
@@ -394,8 +398,8 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                 )
               else
                 const SizedBox(height: 13), // Maintain spacing
-              // Rain percentage (only show for current month with weather data)
-              if (!isPastOrFuture &&
+              // Rain percentage (show for dates within 30-day forecast period with weather data)
+              if (isWithin30Days &&
                   hasWeather &&
                   weatherData['rainChance'] != null)
                 Text(
