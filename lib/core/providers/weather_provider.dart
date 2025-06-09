@@ -17,18 +17,61 @@ class WeatherProvider extends ChangeNotifier {
   bool _isLoading = true;
   String _lang = 'en';
 
+  // Crop recommendation caching
+  String? _cachedExtendedForecastRecommendation;
+  String? _cachedGeneralRecommendation;
+  String? _cachedForecastDataHash;
+  String? _cachedRecommendationLang;
+  DateTime? _cacheTimestamp;
+  static const Duration _cacheExpiration = Duration(
+    hours: 6,
+  ); // Cache for 6 hours
+
   Map<String, dynamic>? get weatherData => _weatherData;
   Map<String, String>? get insights => _insights;
   List<Map<String, dynamic>>? get monthlyForecast => _monthlyForecast;
   List<Map<String, dynamic>>? get futureWeather => _futureWeather;
   bool get isLoading => _isLoading;
   String get lang => _lang;
-
   void setLanguage(String langCode) {
     _lang = langCode;
     _weatherData = null;
     _insights = null;
+    // Clear cache when language changes
+    _clearRecommendationCache();
     notifyListeners();
+  }
+
+  /// Clear all cached recommendations
+  void _clearRecommendationCache() {
+    _cachedExtendedForecastRecommendation = null;
+    _cachedGeneralRecommendation = null;
+    _cachedForecastDataHash = null;
+    _cachedRecommendationLang = null;
+    _cacheTimestamp = null;
+  }
+
+  /// Generate a hash for forecast data to use as cache key
+  String _generateForecastHash(List<Map<String, dynamic>> forecastData) {
+    final dataString = forecastData
+        .map(
+          (day) =>
+              '${day['date']}_${day['temperature']}_${day['condition']}_${day['rainChance']}',
+        )
+        .join('|');
+    return dataString.hashCode.toString();
+  }
+
+  /// Check if cache is valid
+  bool _isCacheValid(String? forecastHash, String lang) {
+    if (_cacheTimestamp == null ||
+        _cachedForecastDataHash != forecastHash ||
+        _cachedRecommendationLang != lang) {
+      return false;
+    }
+
+    final now = DateTime.now();
+    return now.difference(_cacheTimestamp!).abs() < _cacheExpiration;
   }
 
   Future<void> fetchWeatherData() async {
@@ -109,6 +152,8 @@ class WeatherProvider extends ChangeNotifier {
         month: targetDate.month,
       );
       _monthlyForecast = forecastResponse;
+      // Clear cache since we have new forecast data
+      _clearRecommendationCache();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -122,6 +167,8 @@ class WeatherProvider extends ChangeNotifier {
     try {
       // Fetch future weather data from WeatherAPI
       _futureWeather = await _weatherService.getFutureWeather(location, date);
+      // Clear cache since we have new forecast data
+      _clearRecommendationCache();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -166,6 +213,8 @@ class WeatherProvider extends ChangeNotifier {
         location,
         days,
       );
+      // Clear cache since we have new forecast data
+      _clearRecommendationCache();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -180,11 +229,27 @@ class WeatherProvider extends ChangeNotifier {
     if (forecastData == null || forecastData.isEmpty) return null;
 
     try {
+      // Generate hash for caching
+      final forecastHash = _generateForecastHash(forecastData);
+
+      // Check if we have a valid cached recommendation
+      if (_isCacheValid(forecastHash, _lang) &&
+          _cachedGeneralRecommendation != null) {
+        return _cachedGeneralRecommendation;
+      }
+
       final geminiService = GeminiService();
       final recommendation = await geminiService.getCropRecommendation(
         forecastData,
         lang: _lang,
       );
+
+      // Cache the recommendation
+      _cachedGeneralRecommendation = recommendation;
+      _cachedForecastDataHash = forecastHash;
+      _cachedRecommendationLang = _lang;
+      _cacheTimestamp = DateTime.now();
+
       return recommendation;
     } catch (e) {
       return null;
@@ -196,11 +261,27 @@ class WeatherProvider extends ChangeNotifier {
     if (_futureWeather == null || _futureWeather!.isEmpty) return null;
 
     try {
+      // Generate hash for caching
+      final forecastHash = _generateForecastHash(_futureWeather!);
+
+      // Check if we have a valid cached recommendation
+      if (_isCacheValid(forecastHash, _lang) &&
+          _cachedExtendedForecastRecommendation != null) {
+        return _cachedExtendedForecastRecommendation;
+      }
+
       final geminiService = GeminiService();
       final recommendation = await geminiService.getCropRecommendation(
         _futureWeather!,
         lang: _lang,
       );
+
+      // Cache the recommendation
+      _cachedExtendedForecastRecommendation = recommendation;
+      _cachedForecastDataHash = forecastHash;
+      _cachedRecommendationLang = _lang;
+      _cacheTimestamp = DateTime.now();
+
       return recommendation;
     } catch (e) {
       return null;

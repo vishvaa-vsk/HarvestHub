@@ -13,6 +13,8 @@ class ExtendedForecastPage extends StatefulWidget {
 
 class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   DateTime currentMonth = DateTime.now();
+  String? _cachedRecommendation;
+  bool _isLoadingRecommendation = false;
 
   @override
   void initState() {
@@ -26,7 +28,39 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
           weatherProvider.futureWeather!.isEmpty) {
         weatherProvider.fetchExtendedForecast('auto', 30);
       }
+      _loadCropRecommendation();
     });
+  }
+
+  Future<void> _loadCropRecommendation() async {
+    if (mounted && !_isLoadingRecommendation) {
+      setState(() {
+        _isLoadingRecommendation = true;
+      });
+
+      final weatherProvider = Provider.of<WeatherProvider>(
+        context,
+        listen: false,
+      );
+
+      try {
+        final recommendation =
+            await weatherProvider.getExtendedForecastCropRecommendation();
+        if (mounted) {
+          setState(() {
+            _cachedRecommendation = recommendation;
+            _isLoadingRecommendation = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _cachedRecommendation = null;
+            _isLoadingRecommendation = false;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -54,6 +88,16 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
       ),
       body: Consumer<WeatherProvider>(
         builder: (context, weatherProvider, child) {
+          // Reload recommendation when weather data changes
+          if (weatherProvider.futureWeather != null &&
+              weatherProvider.futureWeather!.isNotEmpty &&
+              !_isLoadingRecommendation &&
+              _cachedRecommendation == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _loadCropRecommendation();
+            });
+          }
+
           if (weatherProvider.isLoading &&
               (weatherProvider.futureWeather == null ||
                   weatherProvider.futureWeather!.isEmpty)) {
@@ -488,63 +532,75 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   ],
                 ),
               ),
+              // Add refresh button
+              IconButton(
+                onPressed:
+                    _isLoadingRecommendation
+                        ? null
+                        : () {
+                          setState(() {
+                            _cachedRecommendation = null;
+                          });
+                          _loadCropRecommendation();
+                        },
+                icon: Icon(
+                  Icons.refresh,
+                  color:
+                      _isLoadingRecommendation
+                          ? Colors.grey
+                          : const Color(0xFF16A34A),
+                  size: 20,
+                ),
+                tooltip: 'Refresh recommendation',
+              ),
             ],
           ),
           const SizedBox(height: 12),
-          FutureBuilder<String?>(
-            future: weatherProvider.getExtendedForecastCropRecommendation(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Row(
-                  children: [
-                    const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Color(0xFF16A34A),
-                        ),
+          // Use cached recommendation instead of FutureBuilder
+          _isLoadingRecommendation
+              ? Row(
+                children: [
+                  const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF16A34A),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        loc.analyzingForecast,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              final recommendation = snapshot.data;
-              if (recommendation == null || recommendation.isEmpty) {
-                return Text(
-                  loc.noCropRecommendation,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                    height: 1.5,
                   ),
-                );
-              }
-
-              return Text(
-                recommendation,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      loc.analyzingForecast,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              )
+              : _cachedRecommendation == null || _cachedRecommendation!.isEmpty
+              ? Text(
+                loc.noCropRecommendation,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black87,
                   height: 1.5,
                 ),
-              );
-            },
-          ),
+              )
+              : Text(
+                _cachedRecommendation!,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                  height: 1.5,
+                ),
+              ),
         ],
       ),
     );
