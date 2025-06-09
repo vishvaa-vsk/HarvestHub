@@ -448,6 +448,9 @@ class AppLocalizationsTe extends AppLocalizations {
   String get analyzing => 'విశ్లేషిస్తోంది...';
 
   @override
+  String get analyzingForecast => '30-రోజుల అంచనాలు విశ్లేషిస్తోంది...';
+
+  @override
   String get analyzeImage => 'చిత్రాన్ని విశ్లేషించండి';
 
   @override
@@ -494,4 +497,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get gotIt => 'అర్థమైంది';
+
+  @override
+  String get basedOn30DayForecast => '30-రోజుల వాతావరణ అంచనాల ఆధారంగా';
+
+  @override
+  String get basedOnCurrentConditions => 'ప్రస్తుత వాతావరణ పరిస్థితుల ఆధారంగా';
 }

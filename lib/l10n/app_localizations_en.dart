@@ -448,6 +448,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyzing => 'Analyzing...';
 
   @override
+  String get analyzingForecast => 'Analyzing 30-day forecast...';
+
+  @override
   String get analyzeImage => 'Analyze Image';
 
   @override
@@ -494,4 +497,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gotIt => 'Got it';
+
+  @override
+  String get basedOn30DayForecast => 'Based on 30-day weather forecast';
+
+  @override
+  String get basedOnCurrentConditions => 'Based on current weather conditions';
 }

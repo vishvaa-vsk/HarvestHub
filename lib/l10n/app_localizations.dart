@@ -947,6 +947,12 @@ abstract class AppLocalizations {
   /// **'Analyzing...'**
   String get analyzing;
 
+  /// No description provided for @analyzingForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing 30-day forecast...'**
+  String get analyzingForecast;
+
   /// No description provided for @analyzeImage.
   ///
   /// In en, this message translates to:
@@ -1042,6 +1048,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get gotIt;
+
+  /// No description provided for @basedOn30DayForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on 30-day weather forecast'**
+  String get basedOn30DayForecast;
+
+  /// No description provided for @basedOnCurrentConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on current weather conditions'**
+  String get basedOnCurrentConditions;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

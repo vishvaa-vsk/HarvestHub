@@ -177,11 +177,14 @@
   "camera": "कैमरा",
   "gallery": "गैलरी",
   "analyzing": "विश्लेषण कर रहे हैं...",
+  "analyzingForecast": "30-दिन का पूर्वानुमान का विश्लेषण...",
   "analyzeImage": "छवि का विश्लेषण करें",
   "detectionResults": "पहचान परिणाम",
   "noImageSelected": "कोई छवि चयनित नहीं",
   "uploadImageToGetStarted": "शुरू करने के लिए एक छवि अपलोड करें",
   "analysisComplete": "विश्लेषण पूर्ण",
   "noPestsDetected": "इस छवि में कोई कीट नहीं मिला",
-  "cropsHealthyMessage": "आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।"
+  "cropsHealthyMessage": "आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।",
+  "basedOn30DayForecast": "30-दिन के मौसम पूर्वानुमान के आधार पर",
+  "basedOnCurrentConditions": "वर्तमान मौसम की स्थिति के आधार पर"
 }

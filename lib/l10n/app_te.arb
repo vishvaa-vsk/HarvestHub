@@ -191,6 +191,7 @@
   "camera": "కెమెరా",
   "gallery": "గ్యాలరీ",
   "analyzing": "విశ్లేషిస్తోంది...",
+  "analyzingForecast": "30-రోజుల అంచనాలు విశ్లేషిస్తోంది...",
   "analyzeImage": "చిత్రాన్ని విశ్లేషించండి",
   "detectionResults": "గుర్తింపు ఫలితాలు",
   "noImageSelected": "చిత్రం ఎంచుకోబడలేదు",
@@ -206,5 +207,7 @@
   "focusOnAffectedAreas": "కనిపించే లక్షణాలతో ప్రభావిత ప్రాంతాలపై దృష్టి పెట్టండి",
   "avoidBlurryImages": "అస్పష్టమైన లేదా చీకటి చిత్రాలను నివారించండి",
   "includeMultipleLeaves": "వీలైతే అనేక ఆకులను చేర్చండి",
-  "gotIt": "అర్థమైంది"
+  "gotIt": "అర్థమైంది",
+  "basedOn30DayForecast": "30-రోజుల వాతావరణ అంచనాల ఆధారంగా",
+  "basedOnCurrentConditions": "ప్రస్తుత వాతావరణ పరిస్థితుల ఆధారంగా"
 }

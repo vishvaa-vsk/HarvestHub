@@ -114,13 +114,16 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
       ),
     );
   }
+
   String _getDateRangeText(AppLocalizations loc) {
     final now = DateTime.now();
     final startDate = now;
-    final endDate = now.add(const Duration(days: 29)); // 30 days total (including today)
+    final endDate = now.add(
+      const Duration(days: 29),
+    ); // 30 days total (including today)
     return loc.weatherForecastCalendar(
-      DateFormat('MMM d').format(startDate), 
-      DateFormat('MMM d').format(endDate)
+      DateFormat('MMM d').format(startDate),
+      DateFormat('MMM d').format(endDate),
     );
   }
 
@@ -302,6 +305,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
       return null;
     }
   }
+
   Widget _buildOldStyleDayCell(
     int dayNumber,
     DateTime date,
@@ -317,9 +321,11 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
     // Check if date is in the past (before today) or beyond 30 days from today
     final now = DateTime.now();
     final todayDateOnly = DateTime(now.year, now.month, now.day);
-    final thirtyDaysFromToday = todayDateOnly.add(const Duration(days: 29)); // 30 days total including today
+    final thirtyDaysFromToday = todayDateOnly.add(
+      const Duration(days: 29),
+    ); // 30 days total including today
     final dateOnly = DateTime(date.year, date.month, date.day);
-    
+
     final isPast = dateOnly.isBefore(todayDateOnly);
     final isBeyond30Days = dateOnly.isAfter(thirtyDaysFromToday);
     final isWithin30Days = !isPast && !isBeyond30Days;
@@ -384,7 +390,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
-              ),              // Temperature (show for dates within 30-day forecast period with weather data)
+              ), // Temperature (show for dates within 30-day forecast period with weather data)
               if (isWithin30Days &&
                   hasWeather &&
                   weatherData['temperature'] != null)
@@ -459,25 +465,85 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                loc.recommendedCrop,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      loc.recommendedCrop,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      loc.basedOn30DayForecast,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 9),
-          Text(
-            weatherProvider.insights?['cropRecommendation'] ??
-                loc.noCropRecommendation,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-              height: 1.5,
-            ),
+          const SizedBox(height: 12),
+          FutureBuilder<String?>(
+            future: weatherProvider.getExtendedForecastCropRecommendation(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Row(
+                  children: [
+                    const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF16A34A),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        loc.analyzingForecast,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              final recommendation = snapshot.data;
+              if (recommendation == null || recommendation.isEmpty) {
+                return Text(
+                  loc.noCropRecommendation,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                );
+              }
+
+              return Text(
+                recommendation,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                  height: 1.5,
+                ),
+              );
+            },
           ),
         ],
       ),

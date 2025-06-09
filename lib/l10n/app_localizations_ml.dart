@@ -448,6 +448,9 @@ class AppLocalizationsMl extends AppLocalizations {
   String get analyzing => 'വിശകലനം ചെയ്യുന്നു...';
 
   @override
+  String get analyzingForecast => '30-ദിവസത്തെ പ്രവചനം വിശകലനം ചെയ്യുന്നു...';
+
+  @override
   String get analyzeImage => 'ചിത്രം വിശകലനം ചെയ്യുക';
 
   @override
@@ -494,4 +497,10 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get gotIt => 'മനസ്സിലായി';
+
+  @override
+  String get basedOn30DayForecast => '30-ദിവസത്തെ കാലാവസ്ഥാ പ്രവചനത്തെ അടിസ്ഥാനമാക്കി';
+
+  @override
+  String get basedOnCurrentConditions => 'വर्तमान കാലാവസ്ഥാ സാഹചര്യങ്ങളെ അടിസ്ഥാനമാക്കി';
 }

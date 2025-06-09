@@ -192,6 +192,7 @@
   "camera": "Camera",
   "gallery": "Gallery",
   "analyzing": "Analyzing...",
+  "analyzingForecast": "Analyzing 30-day forecast...",
   "analyzeImage": "Analyze Image",
   "detectionResults": "Detection Results",
   "noImageSelected": "No image selected",
@@ -207,5 +208,7 @@
   "focusOnAffectedAreas": "Focus on affected areas with visible symptoms",
   "avoidBlurryImages": "Avoid blurry or dark images",
   "includeMultipleLeaves": "Include multiple leaves if possible",
-  "gotIt": "Got it"
+  "gotIt": "Got it",
+  "basedOn30DayForecast": "Based on 30-day weather forecast",
+  "basedOnCurrentConditions": "Based on current weather conditions"
 }

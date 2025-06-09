@@ -183,6 +183,23 @@ class WeatherProvider extends ChangeNotifier {
       final geminiService = GeminiService();
       final recommendation = await geminiService.getCropRecommendation(
         forecastData,
+        lang: _lang,
+      );
+      return recommendation;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String?> getExtendedForecastCropRecommendation() async {
+    // Specifically use 30-day extended forecast data only
+    if (_futureWeather == null || _futureWeather!.isEmpty) return null;
+
+    try {
+      final geminiService = GeminiService();
+      final recommendation = await geminiService.getCropRecommendation(
+        _futureWeather!,
+        lang: _lang,
       );
       return recommendation;
     } catch (e) {
