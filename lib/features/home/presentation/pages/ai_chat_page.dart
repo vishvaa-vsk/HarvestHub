@@ -4,6 +4,8 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../../../../core/utils/avatar_utils.dart';
 
 class AIChatPage extends StatefulWidget {
@@ -23,13 +25,67 @@ class _AIChatPageState extends State<AIChatPage> {
   // Context-aware memory variables
   final List<Content> _conversationHistory = [];
   final int _maxHistoryLength = 10; // Keep last 10 exchanges for context
+  // Session storage constants and variables for performance optimization
+  static const String _chatSessionKey = 'harvesthub_chat_session';
+  static const int _maxMessagesInSession = 50; // Limit for low-end devices
+  static const int _saveThrottleMs = 1000; // Throttle save operations
 
+  // Performance optimization variables
+  bool _isSessionLoaded = false;
+  DateTime _lastSaveTime = DateTime.now();
+  bool _hasPendingSave = false; // Track if we have unsaved changes
   @override
   void initState() {
     super.initState();
     _initializeUserAvatar();
+    _loadChatSession(); // Load previous session first
+  }
 
-    // Add welcome message when the chat page is initialized
+  // Load chat session from SharedPreferences with error handling
+  Future<void> _loadChatSession() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final chatData = prefs.getString(_chatSessionKey);
+
+      if (chatData != null && chatData.isNotEmpty) {
+        final List<dynamic> decodedMessages = json.decode(chatData);
+        final List<Map<String, String>> loadedMessages =
+            decodedMessages
+                .map((msg) => Map<String, String>.from(msg))
+                .toList();
+
+        if (mounted) {
+          setState(() {
+            _messages.addAll(loadedMessages);
+            _isSessionLoaded = true;
+          });
+        }
+
+        // Rebuild conversation history from loaded messages
+        _rebuildConversationHistory();
+      } else {
+        // No previous session, add welcome message
+        _addWelcomeMessage();
+        if (mounted) {
+          setState(() {
+            _isSessionLoaded = true;
+          });
+        }
+      }
+    } catch (e) {
+      // If loading fails, start with welcome message
+      print('Failed to load chat session: $e');
+      _addWelcomeMessage();
+      if (mounted) {
+        setState(() {
+          _isSessionLoaded = true;
+        });
+      }
+    }
+  }
+
+  // Add welcome message
+  void _addWelcomeMessage() {
     _messages.add({
       'sender': 'ai',
       'text': '''नमस्ते! 🌾 வணக்கம்! నమస్కారం! നമസ്കാരം! Hello!
@@ -48,6 +104,84 @@ I'm here to help Indian farmers with:
 
 Just ask me anything in your preferred language! 🌱''',
     });
+  }
+
+  // Save chat session with throttling and size limits for performance
+  Future<void> _saveChatSession() async {
+    try {
+      // Throttle saves to avoid excessive I/O on low-end devices
+      final now = DateTime.now();
+      if (now.difference(_lastSaveTime).inMilliseconds < _saveThrottleMs) {
+        _hasPendingSave = true;
+        return;
+      }
+      _lastSaveTime = now;
+      _hasPendingSave = false;
+
+      // Limit messages to prevent memory bloat on low-end devices
+      final messagesToSave =
+          _messages.length > _maxMessagesInSession
+              ? _messages.sublist(_messages.length - _maxMessagesInSession)
+              : _messages;
+
+      final prefs = await SharedPreferences.getInstance();
+      final String encodedMessages = json.encode(messagesToSave);
+
+      // Only save if data has changed to reduce I/O operations
+      final existingData = prefs.getString(_chatSessionKey);
+      if (existingData != encodedMessages) {
+        await prefs.setString(_chatSessionKey, encodedMessages);
+      }
+    } catch (e) {
+      // Silently handle save errors to not disrupt user experience
+      print('Failed to save chat session: $e');
+    }
+  }
+
+  // Rebuild conversation history from loaded messages efficiently
+  void _rebuildConversationHistory() {
+    _conversationHistory.clear();
+
+    // Take last few message pairs to rebuild context efficiently
+    final int startIndex = _messages.length > 10 ? _messages.length - 10 : 0;
+
+    for (int i = startIndex; i < _messages.length; i++) {
+      final message = _messages[i];
+      if (message['sender'] == 'user' || message['sender'] == 'ai') {
+        _conversationHistory.add(Content.text(message['text']!));
+      }
+    }
+  }
+
+  // Clear chat session
+  Future<void> _clearChatSession() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_chatSessionKey);
+
+      if (mounted) {
+        setState(() {
+          _messages.clear();
+          _conversationHistory.clear();
+        });
+      }
+
+      // Add welcome message back
+      _addWelcomeMessage();
+      await _saveChatSession();
+    } catch (e) {
+      print('Failed to clear chat session: $e');
+    }
+  }
+
+  // Get session size for debugging/monitoring (optional)
+  int getSessionSizeKB() {
+    try {
+      final String encoded = json.encode(_messages);
+      return (encoded.length / 1024).round();
+    } catch (e) {
+      return 0;
+    }
   }
 
   Future<void> _initializeUserAvatar() async {
@@ -79,6 +213,9 @@ Just ask me anything in your preferred language! 🌱''',
         _isLoading = true;
       });
     }
+
+    // Save session after adding user message
+    await _saveChatSession();
 
     // Add user message to conversation history
     _addToConversationHistory('user', userMessage);
@@ -167,7 +304,6 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       final response = await model.generateContent(content);
 
       final responseText = response.text ?? 'No response available';
-
       if (mounted) {
         setState(() {
           _messages.add({'sender': 'ai', 'text': responseText});
@@ -177,6 +313,9 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
 
       // Add bot response to conversation history
       _addToConversationHistory('model', responseText);
+
+      // Save session after AI response
+      await _saveChatSession();
 
       // Auto-scroll to bottom when AI responds
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -195,6 +334,8 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
           _isLoading = false;
         });
       }
+      // Save even error messages
+      await _saveChatSession();
     }
   }
 
@@ -331,12 +472,10 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                           ? const Radius.circular(4)
                           : const Radius.circular(18),
                 ),
-                border: isUser 
-                    ? null 
-                    : Border.all(
-                        color: Colors.grey.shade200,
-                        width: 1,
-                      ),
+                border:
+                    isUser
+                        ? null
+                        : Border.all(color: Colors.grey.shade200, width: 1),
               ),
               child:
                   isUser
@@ -452,10 +591,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 bottomRight: Radius.circular(18),
                 bottomLeft: Radius.circular(4),
               ),
-              border: Border.all(
-                color: Colors.grey.shade200,
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.shade200, width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -478,12 +614,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       child: SafeArea(
         child: Row(
@@ -493,10 +624,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 decoration: BoxDecoration(
                   color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
                 ),
                 child: TextField(
                   controller: _controller,
@@ -602,11 +730,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
                 color: const Color(0xFF16A34A),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(
-                Icons.eco,
-                color: Colors.white,
-                size: 22,
-              ),
+              child: const Icon(Icons.eco, color: Colors.white, size: 22),
             ),
             const SizedBox(width: 12),
             Text(
@@ -621,36 +745,94 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
           ],
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.refresh_rounded,
+                color: Colors.black87,
+                size: 18,
+              ),
+            ),
+            onPressed: () async {
+              // Show confirmation dialog
+              final shouldClear = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Clear Chat'),
+                    content: const Text(
+                      'Are you sure you want to clear the chat history?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (shouldClear == true) {
+                await _clearChatSession();
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: Colors.grey.shade200,
-          ),
+          child: Container(height: 1, color: Colors.grey.shade200),
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 16.0,
-              ),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                final isUser = message['sender'] == 'user';
-                return _buildMessageBubble(message, isUser);
-              },
-            ),
+            child:
+                _isSessionLoaded
+                    ? ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 16.0,
+                      ),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final message = _messages[index];
+                        final isUser = message['sender'] == 'user';
+                        return _buildMessageBubble(message, isUser);
+                      },
+                    )
+                    : const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF16A34A),
+                      ),
+                    ),
           ),
           if (_isLoading) _buildTypingIndicator(),
           _buildInputField(loc),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Save any pending changes before disposing
+    if (_hasPendingSave) {
+      _saveChatSession();
+    }
+    super.dispose();
   }
 }
 
