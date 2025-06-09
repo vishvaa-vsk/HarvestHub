@@ -579,57 +579,65 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
                                   );
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: List.generate(6, (index) {
                                     final isActive =
                                         _otpController.text.length == index &&
                                         _otpFocusNode.hasFocus;
                                     final isFilled =
                                         index < _otpController.text.length;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 150,
-                                      ),
-                                      width: 48,
-                                      height: 56,
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color:
-                                              isActive
-                                                  ? Colors.green.shade700
-                                                  : isFilled
-                                                  ? Colors.green.shade400
-                                                  : Colors.grey.shade400,
-                                          width: 2,
+                                    return Flexible(
+                                      child: AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 150,
                                         ),
-                                        boxShadow:
-                                            isActive
-                                                ? [
-                                                  BoxShadow(
-                                                    color: Colors.green
-                                                        .withOpacity(0.15),
-                                                    blurRadius: 6,
-                                                    offset: const Offset(0, 2),
-                                                  ),
-                                                ]
-                                                : [],
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        isFilled
-                                            ? _otpController.text[index]
-                                            : '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.headlineSmall?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: 24,
+                                        width: 48,
+                                        height: 56,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color:
+                                                isActive
+                                                    ? Colors.green.shade700
+                                                    : isFilled
+                                                    ? Colors.green.shade400
+                                                    : Colors.grey.shade400,
+                                            width: 2,
+                                          ),
+                                          boxShadow:
+                                              isActive
+                                                  ? [
+                                                    BoxShadow(
+                                                      color: Colors.green
+                                                          .withOpacity(0.15),
+                                                      blurRadius: 6,
+                                                      offset: const Offset(
+                                                        0,
+                                                        2,
+                                                      ),
+                                                    ),
+                                                  ]
+                                                  : [],
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          isFilled
+                                              ? _otpController.text[index]
+                                              : '',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.headlineSmall?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 24,
+                                          ),
                                         ),
                                       ),
                                     );

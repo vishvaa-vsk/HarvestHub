@@ -35,7 +35,7 @@ class CommentTile extends StatelessWidget {
           title: Text(user['name'] ?? 'User'),
           subtitle: Text(data['content']),
           trailing: Text(
-            _timeAgo((data['timestamp'] as Timestamp).toDate()),
+            _timeAgo(_getDateTime(data['timestamp'])),
             style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         );
@@ -48,6 +48,16 @@ class CommentTile extends StatelessWidget {
     if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     return '${diff.inDays}d ago';
+  }
+
+  DateTime _getDateTime(dynamic timestamp) {
+    if (timestamp is DateTime) {
+      return timestamp;
+    } else if (timestamp is Timestamp) {
+      return timestamp.toDate();
+    } else {
+      throw ArgumentError('Invalid timestamp type: ${timestamp.runtimeType}');
+    }
   }
 }
 
@@ -155,7 +165,7 @@ class ModernCommentTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _timeAgo((data['timestamp'] as Timestamp).toDate()),
+                          _timeAgo(_getDateTime(data['timestamp'])),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -263,5 +273,15 @@ class ModernCommentTile extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours}h';
     if (diff.inDays < 7) return '${diff.inDays}d';
     return '${(diff.inDays / 7).floor()}w';
+  }
+
+  DateTime _getDateTime(dynamic timestamp) {
+    if (timestamp is DateTime) {
+      return timestamp;
+    } else if (timestamp is Timestamp) {
+      return timestamp.toDate();
+    } else {
+      throw ArgumentError('Invalid timestamp type: ${timestamp.runtimeType}');
+    }
   }
 }

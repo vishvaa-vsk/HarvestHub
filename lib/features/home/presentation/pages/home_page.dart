@@ -158,9 +158,7 @@ class _MainScreenState extends State<MainScreen> {
         if (index == 1) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const AIChatPage(),
-            ),
+            MaterialPageRoute(builder: (context) => const AIChatPage()),
           );
         } else {
           // Adjust index for other screens since we removed AIChatPage from _screens
@@ -168,7 +166,7 @@ class _MainScreenState extends State<MainScreen> {
           if (index > 1) {
             adjustedIndex = index - 1;
           }
-          
+
           setState(() {
             _currentIndex = adjustedIndex;
           });
@@ -1134,11 +1132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 1,
                 margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 color: const Color(0xFFF0F0F0),
-              ),
-
-              // Menu Items
+              ), // Menu Items
               Expanded(
-                child: Padding(
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: [
@@ -1190,7 +1186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      const Spacer(),
+                      const SizedBox(height: 20),
 
                       // Separator line before logout
                       Container(
@@ -1220,7 +1216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24), // Extra bottom padding
                     ],
                   ),
                 ),
@@ -1246,7 +1242,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
           child: Row(
             children: [
               Icon(
