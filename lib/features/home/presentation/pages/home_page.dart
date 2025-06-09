@@ -46,7 +46,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> 
+class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin, NavigationPerformanceMixin {
   int _currentIndex = 0;
   late AnimationController _animationController;
@@ -55,7 +55,7 @@ class _MainScreenState extends State<MainScreen>
   Widget? _homeScreen;
   Widget? _pestScreen;
   Widget? _communityScreen;
-  
+
   // Navigation throttling to prevent rapid taps
   bool _isNavigating = false;
 
@@ -84,6 +84,7 @@ class _MainScreenState extends State<MainScreen>
         );
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -91,7 +92,7 @@ class _MainScreenState extends State<MainScreen>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     // Start frame drop monitoring in debug mode
     if (kDebugMode) {
       FrameDropMonitor.startMonitoring();
@@ -101,32 +102,34 @@ class _MainScreenState extends State<MainScreen>
   @override
   void dispose() {
     _animationController.dispose();
-    
+
     // Stop frame drop monitoring
     if (kDebugMode) {
       FrameDropMonitor.stopMonitoring();
-      NavigationPerformanceTracker.printPerformanceSummary();    }
-    
+      NavigationPerformanceTracker.printPerformanceSummary();
+    }
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    
+
     // Set system UI style only once, not on every build
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: [
           _getScreen(0), // Home
-          _getScreen(1), // Pest Detection  
+          _getScreen(1), // Pest Detection
           _getScreen(2), // Community
         ],
       ),
       bottomNavigationBar: _buildOptimizedBottomNavigationBar(localizations),
     );
   }
+
   Widget _buildOptimizedBottomNavigationBar(AppLocalizations localizations) {
     return RepaintBoundary(
       child: Container(
@@ -182,7 +185,9 @@ class _MainScreenState extends State<MainScreen>
         ),
       ),
     );
-  }  Widget _buildOptimizedNavItem({
+  }
+
+  Widget _buildOptimizedNavItem({
     required IconData icon,
     required String label,
     required int index,
@@ -192,7 +197,9 @@ class _MainScreenState extends State<MainScreen>
       child: InkWell(
         onTap: () {
           // Use navigation utility throttling for better performance
-          if (NavigationUtils.canNavigate(throttleDuration: const Duration(milliseconds: 200))) {
+          if (NavigationUtils.canNavigate(
+            throttleDuration: const Duration(milliseconds: 200),
+          )) {
             _handleNavigation(index);
           }
         },
@@ -208,7 +215,10 @@ class _MainScreenState extends State<MainScreen>
                 scale: isSelected ? 1.1 : 1.0,
                 child: Icon(
                   icon,
-                  color: isSelected ? AppConstants.primaryGreen : const Color(0xFF9E9E9E),
+                  color:
+                      isSelected
+                          ? AppConstants.primaryGreen
+                          : const Color(0xFF9E9E9E),
                   size: 24,
                 ),
               ),
@@ -219,7 +229,10 @@ class _MainScreenState extends State<MainScreen>
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? AppConstants.primaryGreen : const Color(0xFF9E9E9E),
+                  color:
+                      isSelected
+                          ? AppConstants.primaryGreen
+                          : const Color(0xFF9E9E9E),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -229,13 +242,15 @@ class _MainScreenState extends State<MainScreen>
         ),
       ),
     );
-  }  void _handleNavigation(int index) {
+  }
+
+  void _handleNavigation(int index) {
     // Throttle navigation to prevent rapid taps and frame drops
     if (_isNavigating) return;
-    
+
     // Track frame drops during navigation
     FrameDropMonitor.markHeavyOperation('Navigation tap to index $index');
-    
+
     // Track navigation performance
     trackNavigation('navigation_tap', () {
       // Prevent unnecessary navigation calls
@@ -243,7 +258,7 @@ class _MainScreenState extends State<MainScreen>
         // Handle HarvestBot navigation separately (doesn't change current index)
         _isNavigating = true;
         NavigationPerformanceTracker.startNavigation('harvestbot_navigation');
-        
+
         Navigator.push(
           context,
           NavigationUtils.buildOptimizedRoute(const AIChatPage()),
@@ -256,20 +271,20 @@ class _MainScreenState extends State<MainScreen>
 
       // Calculate the actual screen index
       final int targetIndex = index > 1 ? index - 1 : index;
-      
+
       // Only update if actually changing screens
       if (targetIndex != _currentIndex) {
         _isNavigating = true;
-        
+
         NavigationPerformanceTracker.startNavigation('tab_switch_$targetIndex');
-        
+
         // Track the setState operation that might cause frame drops
         FrameDropMonitor.trackOperation('setState_navigation', () {
           setState(() {
             _currentIndex = targetIndex;
           });
         });
-        
+
         // Release navigation lock after UI update completes
         WidgetsBinding.instance.addPostFrameCallback((_) {
           NavigationPerformanceTracker.endNavigation('tab_switch_$targetIndex');
@@ -1624,7 +1639,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
-              ),            ],
+              ),
+            ],
           ),
         ),
       ),
@@ -1678,13 +1694,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ) async {
     // Store provider reference before any async operations
     final provider = Provider.of<WeatherProvider>(context, listen: false);
-
     final languages = [
-      {'code': 'en', 'label': loc.english, 'icon': Icons.language},
-      {'code': 'hi', 'label': loc.hindi, 'icon': Icons.translate},
-      {'code': 'ta', 'label': loc.tamil, 'icon': Icons.g_translate},
-      {'code': 'te', 'label': loc.telugu, 'icon': Icons.g_translate},
-      {'code': 'ml', 'label': loc.malayalam, 'icon': Icons.g_translate},
+      {
+        'code': 'en',
+        'label': loc.english,
+        'firstLetter': 'Aa',
+        'fontFamily': 'Poppins',
+      },
+      {
+        'code': 'hi',
+        'label': loc.hindi,
+        'firstLetter': 'हिं',
+        'fontFamily': 'NotoSansDevanagari',
+      },
+      {
+        'code': 'ta',
+        'label': loc.tamil,
+        'firstLetter': 'த',
+        'fontFamily': 'NotoSansTamil',
+      },
+      {
+        'code': 'te',
+        'label': loc.telugu,
+        'firstLetter': 'తె',
+        'fontFamily': 'NotoSansTelugu',
+      },
+      {
+        'code': 'ml',
+        'label': loc.malayalam,
+        'firstLetter': 'മ',
+        'fontFamily': 'NotoSansMalayalam',
+      },
     ];
 
     final selected = await showModalBottomSheet<String>(
@@ -1747,7 +1787,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   for (final lang in languages)
                     _LanguageTileModal(
                       label: lang['label'] as String,
-                      icon: lang['icon'] as IconData,
+                      firstLetter: lang['firstLetter'] as String,
+                      fontFamily: lang['fontFamily'] as String,
                       onTap:
                           () => Navigator.pop(context, lang['code'] as String),
                       accent: AppConstants.primaryGreen,
@@ -1824,13 +1865,15 @@ class CommunityScreen extends StatelessWidget {
 
 class _LanguageTileModal extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final String firstLetter;
+  final String fontFamily;
   final VoidCallback onTap;
   final Color accent;
   final Color grey;
   const _LanguageTileModal({
     required this.label,
-    required this.icon,
+    required this.firstLetter,
+    required this.fontFamily,
     required this.onTap,
     required this.accent,
     required this.grey,
@@ -1850,7 +1893,25 @@ class _LanguageTileModal extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(icon, color: accent, size: 22),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: Text(
+                    firstLetter,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: fontFamily,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
