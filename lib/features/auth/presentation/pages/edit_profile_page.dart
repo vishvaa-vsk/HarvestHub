@@ -51,7 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
         }
       });
     } catch (e) {
-      print('Error initializing SMS autofill: $e');
+      // Error initializing SMS autofill: $e
     }
   }
 
@@ -131,15 +131,17 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                 });
 
             // Show a confirmation message
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Your mobile number has been updated successfully.',
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Your mobile number has been updated successfully.',
+                  ),
                 ),
-              ),
-            );
+              );
 
-            Navigator.pop(context);
+              Navigator.pop(context);
+            }
             return; // Exit the loop if successful
           } catch (e) {
             retryCount++;
@@ -163,13 +165,15 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
           });
 
           // Show a confirmation message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Your profile has been updated successfully.'),
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Your profile has been updated successfully.'),
+              ),
+            );
 
-          Navigator.pop(context);
+            Navigator.pop(context);
+          }
           return; // Exit the loop if successful
         } catch (e) {
           retryCount++;
@@ -188,10 +192,10 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
     final loc = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    String? otp;
-
-    // Initialize SMS autofill for this OTP dialog
+    String? otp; // Initialize SMS autofill for this OTP dialog
     await SmsAutoFill().listenForCode();
+
+    if (!mounted) return null;
 
     await showDialog(
       context: context,
@@ -237,7 +241,9 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                       Container(
                         padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
                         decoration: BoxDecoration(
-                          color: AppConstants.primaryGreen.withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withValues(
+                            alpha: 0.1,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -383,16 +389,23 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                                 });
                                 startResendTimerInDialog();
 
+                                // Store ScaffoldMessenger before async operation
+                                final scaffoldMessenger = ScaffoldMessenger.of(
+                                  context,
+                                );
+
                                 // Restart SMS listening
                                 await SmsAutoFill().listenForCode();
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('OTP resent successfully'),
-                                    backgroundColor: Colors.green,
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                if (mounted) {
+                                  scaffoldMessenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text('OTP resent successfully'),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
                               },
                               child: Text(
                                 'Resend',
@@ -561,8 +574,8 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppConstants.primaryGreen.withOpacity(
-                                0.15,
+                              color: AppConstants.primaryGreen.withValues(
+                                alpha: 0.15,
                               ),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
@@ -575,7 +588,9 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           child: Icon(
                             Icons.person,
                             size: 40,
-                            color: AppConstants.primaryGreen.withOpacity(0.7),
+                            color: AppConstants.primaryGreen.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                         ),
                       ),
@@ -591,8 +606,8 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             border: Border.all(color: Colors.white, width: 1.5),
                             boxShadow: [
                               BoxShadow(
-                                color: AppConstants.primaryGreen.withOpacity(
-                                  0.4,
+                                color: AppConstants.primaryGreen.withValues(
+                                  alpha: 0.4,
                                 ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
@@ -628,12 +643,12 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                   border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 20,
                       offset: const Offset(0, 4),
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 8,
                       offset: const Offset(0, 1),
                     ),
@@ -652,8 +667,12 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  AppConstants.primaryGreen.withOpacity(0.1),
-                                  const Color(0xFF22C55E).withOpacity(0.05),
+                                  AppConstants.primaryGreen.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  const Color(
+                                    0xFF22C55E,
+                                  ).withValues(alpha: 0.05),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -743,7 +762,9 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                         backgroundColor: AppConstants.primaryGreen,
                         foregroundColor: Colors.white,
                         elevation: 2,
-                        shadowColor: AppConstants.primaryGreen.withOpacity(0.3),
+                        shadowColor: AppConstants.primaryGreen.withValues(
+                          alpha: 0.3,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -843,7 +864,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
             border: Border.all(color: const Color(0xFFE1E5E9), width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.02),
+                color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -1011,7 +1032,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
             Container(
               padding: EdgeInsets.all(screenWidth < 350 ? 12 : 16),
               decoration: BoxDecoration(
-                color: AppConstants.primaryGreen.withOpacity(0.1),
+                color: AppConstants.primaryGreen.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(

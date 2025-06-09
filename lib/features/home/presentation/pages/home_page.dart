@@ -38,7 +38,7 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 25,
             offset: const Offset(0, -8),
             spreadRadius: 0,
@@ -190,7 +190,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -231,28 +231,26 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLocationEnabled = isEnabled;
       });
     }
-
     if (isEnabled) {
       _fetchWeatherAndInsights();
     } else if (mounted) {
-      final context = this.context;
       final loc = AppLocalizations.of(context)!;
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return AlertDialog(
             title: Text(loc.enableLocationServices),
             content: Text(loc.locationServicesRequired),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(dialogContext).pop();
                 },
                 child: Text(loc.cancel),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(dialogContext).pop();
                   Geolocator.openLocationSettings();
                 },
                 child: Text(loc.openSettings),
@@ -467,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Icon(
                         _getWeatherIcon(current['condition']),
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         size: 80,
                       ),
                     ],
@@ -665,7 +663,6 @@ class _HomeScreenState extends State<HomeScreen> {
           } catch (e) {
             dayName = day['date'];
           }
-
           return Container(
             width: 120,
             margin: const EdgeInsets.only(right: 12),
@@ -675,7 +672,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -780,7 +777,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -794,7 +791,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppConstants.primaryGreen.withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withValues(
+                            alpha: 0.1,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -835,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -849,7 +848,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppConstants.primaryGreen.withOpacity(0.1),
+                          color: AppConstants.primaryGreen.withValues(
+                            alpha: 0.1,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -1182,15 +1183,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         iconColor: const Color(0xFFEF4444),
                         onTap: () async {
                           try {
+                            final navigator = Navigator.of(context);
                             await FirebaseAuth.instance.signOut();
-                            Navigator.pop(context);
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PhoneAuthPage(),
-                              ),
-                              (route) => false,
-                            );
+                            if (mounted) {
+                              navigator.pop();
+                              navigator.pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const PhoneAuthPage(),
+                                ),
+                                (route) => false,
+                              );
+                            }
                           } catch (e) {
                             debugPrint('Error during logout: $e');
                           }
@@ -1253,6 +1256,9 @@ class _HomeScreenState extends State<HomeScreen> {
     BuildContext context,
     AppLocalizations loc,
   ) async {
+    // Store provider reference before any async operations
+    final provider = Provider.of<WeatherProvider>(context, listen: false);
+
     final languages = [
       {'code': 'en', 'label': loc.english, 'icon': Icons.language},
       {'code': 'hi', 'label': loc.hindi, 'icon': Icons.translate},
@@ -1339,17 +1345,22 @@ class _HomeScreenState extends State<HomeScreen> {
     if (selected != null) {
       final rootState = harvestHubAppKey.currentState;
       if (rootState != null) {
-        await rootState.setLocale(selected);
-        SystemChrome.setSystemUIOverlayStyle(
-          const SystemUiOverlayStyle(
-            systemNavigationBarColor: Color(0xFFF6F8F7),
-            systemNavigationBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-          ),
-        );
-        final provider = Provider.of<WeatherProvider>(context, listen: false);
-        await provider.fetchWeatherAndInsights();
+        try {
+          await (rootState as dynamic).setLocale(selected);
+          SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(
+              systemNavigationBarColor: Color(0xFFF6F8F7),
+              systemNavigationBarIconBrightness: Brightness.dark,
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+            ),
+          );
+          if (mounted) {
+            await provider.fetchWeatherAndInsights();
+          }
+        } catch (e) {
+          debugPrint('Error setting locale: $e');
+        }
       }
     }
   }

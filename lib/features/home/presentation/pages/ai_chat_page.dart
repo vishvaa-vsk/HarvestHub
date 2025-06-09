@@ -75,7 +75,7 @@ class _AIChatPageState extends State<AIChatPage> {
       }
     } catch (e) {
       // If loading fails, start with welcome message
-      print('Failed to load chat session: $e');
+      // Failed to load chat session: $e
       _addWelcomeMessage();
       if (mounted) {
         setState(() {
@@ -135,7 +135,7 @@ Just ask me anything in your preferred language! 🌱''',
       }
     } catch (e) {
       // Silently handle save errors to not disrupt user experience
-      print('Failed to save chat session: $e');
+      // Failed to save chat session: $e
     }
   }
 
@@ -171,7 +171,7 @@ Just ask me anything in your preferred language! 🌱''',
       _addWelcomeMessage();
       await _saveChatSession();
     } catch (e) {
-      print('Failed to clear chat session: $e');
+      // Failed to clear chat session: $e
     }
   }
 

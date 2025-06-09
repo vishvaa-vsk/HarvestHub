@@ -107,13 +107,13 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: AppConstants.primaryGreen.withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -122,7 +122,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppConstants.primaryGreen.withOpacity(0.1),
+                      color: AppConstants.primaryGreen.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -190,7 +190,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                           ? Colors.white
                           : Colors.grey[500],
                   elevation: _image != null && !_scanning ? 2 : 0,
-                  shadowColor: AppConstants.primaryGreen.withOpacity(0.3),
+                  shadowColor: AppConstants.primaryGreen.withValues(alpha: 0.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -260,7 +260,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -332,7 +332,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: AppConstants.primaryGreen
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -369,11 +369,11 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
                                       color: AppConstants.primaryGreen
-                                          .withOpacity(0.05),
+                                          .withValues(alpha: 0.05),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: AppConstants.primaryGreen
-                                            .withOpacity(0.2),
+                                            .withValues(alpha: 0.2),
                                         width: 1,
                                       ),
                                     ),
@@ -470,7 +470,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
         foregroundColor: AppConstants.primaryGreen,
         elevation: 0,
         side: BorderSide(
-          color: AppConstants.primaryGreen.withOpacity(0.3),
+          color: AppConstants.primaryGreen.withValues(alpha: 0.3),
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -504,7 +504,7 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppConstants.primaryGreen.withOpacity(0.1),
+                  color: AppConstants.primaryGreen.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(

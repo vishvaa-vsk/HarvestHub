@@ -144,7 +144,7 @@ class GeminiService {
         3. Planting timeline suggestions
         4. Key weather-related considerations
 
-        Weather Forecast Data (${forecastDays} days):
+        Weather Forecast Data ($forecastDays days):
         ${monthlyForecast.map((day) => '- Date: ${day['date']}, Max Temp: ${day['temperature']['max']}°C, Min Temp: ${day['temperature']['min']}°C, Condition: ${day['condition']}, Rain Chance: ${day['rainChance']}%').join('\n')}
         
         Please provide a detailed but concise recommendation (maximum 4 sentences).

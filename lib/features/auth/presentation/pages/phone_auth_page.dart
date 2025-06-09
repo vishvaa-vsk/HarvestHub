@@ -32,7 +32,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
   String? _errorMessage;
   final FocusNode _phoneFocusNode = FocusNode();
   final FocusNode _otpFocusNode = FocusNode(); // Dedicated FocusNode for OTP
-  String? _appSignature;
   bool _autoFillEnabled = false;
   Timer? _otpTimer;
   int _otpTimeLeft = 60;
@@ -283,12 +282,13 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
       final userCredential = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
-
       if (userCredential.user != null) {
         await _storeUserData(userCredential.user!.phoneNumber!);
-        await _onOtpVerified(
-          context,
-        ); // Call the function to set preferred language
+        if (mounted) {
+          await _onOtpVerified(
+            context,
+          ); // Call the function to set preferred language
+        }
       } else {
         if (mounted) {
           setState(() {
@@ -354,15 +354,15 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
 
   Future<void> _initializeAutoFill() async {
     try {
-      // Get app signature for SMS autofill
-      _appSignature = await SmsAutoFill().getAppSignature;
+      // Initialize SMS autofill
+      await SmsAutoFill().getAppSignature;
 
       // Listen for auto fill state changes
       listenForCode();
 
-      print('SMS AutoFill initialized with signature: $_appSignature');
+      // SMS AutoFill initialized
     } catch (e) {
-      print('Error initializing SMS AutoFill: $e');
+      // Error initializing SMS AutoFill: $e
       // Handle error silently but log for debugging
     }
   }
@@ -616,7 +616,9 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
                                                   ? [
                                                     BoxShadow(
                                                       color: Colors.green
-                                                          .withOpacity(0.15),
+                                                          .withValues(
+                                                            alpha: 0.15,
+                                                          ),
                                                       blurRadius: 6,
                                                       offset: const Offset(
                                                         0,

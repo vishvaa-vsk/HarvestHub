@@ -26,8 +26,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'screens/community_feed.dart';
 
-final GlobalKey<_HarvestHubAppState> harvestHubAppKey =
-    GlobalKey<_HarvestHubAppState>();
+final GlobalKey<State<HarvestHubApp>> harvestHubAppKey =
+    GlobalKey<State<HarvestHubApp>>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +41,6 @@ void main() async {
   );
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
-
 
   // Preload common avatars for better performance
   _preloadAvatars();

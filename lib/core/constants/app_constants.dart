@@ -40,11 +40,10 @@ class AppConstants {
   static const double borderRadius = 16.0;
   static const double smallBorderRadius = 8.0;
   static const double largeBorderRadius = 20.0;
-
   // Shadow constants
   static final List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.1),
+      color: Colors.black.withValues(alpha: 0.1),
       blurRadius: 8,
       offset: const Offset(0, 2),
     ),
@@ -52,13 +51,13 @@ class AppConstants {
 
   static final List<BoxShadow> primaryShadow = [
     BoxShadow(
-      color: primaryGreen.withOpacity(0.3),
+      color: primaryGreen.withValues(alpha: 0.3),
       blurRadius: 20,
       offset: const Offset(0, 8),
       spreadRadius: 0,
     ),
     BoxShadow(
-      color: Colors.black.withOpacity(0.1),
+      color: Colors.black.withValues(alpha: 0.1),
       blurRadius: 10,
       offset: const Offset(0, 4),
       spreadRadius: 0,

@@ -66,26 +66,30 @@ class _CreatePostPageState extends State<CreatePostPage> {
         imageUrl: imageUrl,
       );
 
-      setState(() => _loading = false);
-      Navigator.pop(context);
+      if (mounted) {
+        setState(() => _loading = false);
+        Navigator.pop(context);
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Post created successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Post created successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
 
-      // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to create post: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create post: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

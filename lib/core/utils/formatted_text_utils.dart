@@ -33,7 +33,6 @@ class FormattedText extends StatelessWidget {
     List<TextSpan> spans = [];
     // First handle double asterisks (bold)
     RegExp boldPattern = RegExp(r'\*\*(.*?)\*\*');
-    String remainingText = text;
     int lastMatchEnd = 0;
 
     // Find all bold patterns

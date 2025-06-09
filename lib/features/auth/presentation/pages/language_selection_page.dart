@@ -12,7 +12,7 @@ class LanguageSelectionPage extends StatefulWidget {
     {'code': 'ta', 'native': 'தமிழ்'},
     {'code': 'te', 'native': 'తెలుగు'},
     {'code': 'ml', 'native': 'മലയാളം'},
-    {'code': 'hi', 'native': 'हिंदी'}
+    {'code': 'hi', 'native': 'हिंदी'},
   ];
 
   @override
@@ -43,7 +43,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       widget.onLanguageSelected!(_selectedCode!);
       return;
     }
-    if (context.mounted) {
+    if (mounted) {
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -188,7 +188,7 @@ class _LanguageTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? accent.withOpacity(0.08) : grey,
+          color: selected ? accent.withValues(alpha: 0.08) : grey,
           border: Border.all(
             color: selected ? accent : grey,
             width: selected ? 2 : 1,

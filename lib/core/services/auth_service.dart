@@ -50,14 +50,12 @@ class AuthService {
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
-          print('Verification ID set: $_verificationId'); // Logging with print
+          // Debug logging removed for production
           onCodeSent(verificationId);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
-          print(
-            'Verification ID set during timeout: $_verificationId',
-          ); // Logging with print
+          // Debug logging removed for production
         },
         timeout: const Duration(seconds: 60),
       );
