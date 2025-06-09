@@ -83,13 +83,15 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
         // Comment composition area
         _buildCommentComposer(),
 
-        Divider(height: 1, color: Colors.grey[200]),        // Comments list - isolated to prevent rebuilds
-        Expanded(
-          child: CommentsListWidget(postId: widget.postId),
-        ),
+        Divider(
+          height: 1,
+          color: Colors.grey[200],
+        ), // Comments list - isolated to prevent rebuilds
+        Expanded(child: CommentsListWidget(postId: widget.postId)),
       ],
     );
   }
+
   Widget _buildCommentComposer() {
     return SizedBox(
       height: _isComposingComment ? 52 : 56, // Slightly smaller when focused
@@ -109,10 +111,7 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
                       : null,
               child:
                   _userData?['profilePic'] == null
-                      ? Icon(
-                        Icons.person,
-                        size: _isComposingComment ? 14 : 16,
-                      )
+                      ? Icon(Icons.person, size: _isComposingComment ? 14 : 16)
                       : null,
             ),
             const SizedBox(width: 8),
@@ -120,8 +119,7 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
             // Text input field - larger and more readable
             Expanded(
               child: Container(
-                height:
-                    _isComposingComment ? 40 : 44, // Smaller when focused
+                height: _isComposingComment ? 40 : 44, // Smaller when focused
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -147,13 +145,8 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
                   decoration: InputDecoration(
                     hintText: 'Post your reply',
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                    ),
-                    hintStyle: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   // Removed onChanged to prevent unnecessary rebuilds
                 ),
@@ -174,10 +167,7 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
                           : (_isComposingComment
                               ? AppConstants.darkGreen
                               : AppConstants.primaryGreen),
-                  foregroundColor:
-                      !_hasText
-                          ? Colors.grey[600]
-                          : Colors.white,
+                  foregroundColor: !_hasText ? Colors.grey[600] : Colors.white,
                   shape: const CircleBorder(),
                   padding: EdgeInsets.zero,
                   elevation: _isComposingComment ? 2 : 0,
@@ -277,11 +267,7 @@ class CommentsListWidget extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     'Error loading comments',
@@ -294,10 +280,7 @@ class CommentsListWidget extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Please try again later',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                   ),
                 ],
               ),
@@ -330,29 +313,30 @@ class CommentsListWidget extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Be the first to share your thoughts!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                   ),
                 ],
               ),
             ),
           );
-        }        return ListView.separated(
-          key: const ValueKey('comments_list'), // Add key for better performance
+        }
+        return ListView.separated(
+          key: const ValueKey(
+            'comments_list',
+          ), // Add key for better performance
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: comments.length,
           separatorBuilder: (context, index) => const SizedBox(height: 0),
-          itemBuilder: (context, i) => ModernCommentTile(
-            key: ValueKey(comments[i].id), // Add key for each comment
-            commentId: comments[i].id,
-            data: {
-              'authorId': comments[i].authorId,
-              'content': comments[i].content,
-              'timestamp': comments[i].timestamp,
-            },
-          ),
+          itemBuilder:
+              (context, i) => ModernCommentTile(
+                key: ValueKey(comments[i].id), // Add key for each comment
+                commentId: comments[i].id,
+                data: {
+                  'authorId': comments[i].authorId,
+                  'content': comments[i].content,
+                  'timestamp': comments[i].timestamp,
+                },
+              ),
         );
       },
     );
