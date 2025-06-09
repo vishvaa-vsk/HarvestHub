@@ -116,7 +116,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Select Language'**
+  /// **'Select Preferred Language'**
   String get selectLanguage;
 
   /// No description provided for @english.
@@ -191,6 +191,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
   /// No description provided for @errorLoadingUserData.
   ///
   /// In en, this message translates to:
@@ -260,7 +266,7 @@ abstract class AppLocalizations {
   /// No description provided for @weatherForecastCalendar.
   ///
   /// In en, this message translates to:
-  /// **'Weather Forecast'**
+  /// **'Weather Forecast: {startDate} - {endDate}'**
   String weatherForecastCalendar(Object startDate, Object endDate);
 
   /// No description provided for @viewMore.

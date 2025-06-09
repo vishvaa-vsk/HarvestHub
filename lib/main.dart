@@ -26,6 +26,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'screens/community_feed.dart';
 import 'utils/startup_performance.dart';
+import 'widgets/ultra_minimal_startup_screen.dart';
 
 final GlobalKey<State<HarvestHubApp>> harvestHubAppKey =
     GlobalKey<State<HarvestHubApp>>();
@@ -33,9 +34,9 @@ final GlobalKey<State<HarvestHubApp>> harvestHubAppKey =
 void main() async {
   // Mark startup beginning for performance monitoring
   StartupPerformance.markAppStart();
-  
+
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Set system UI overlay style early
   StartupPerformance.markStart('system_ui_setup');
   SystemChrome.setSystemUIOverlayStyle(
@@ -47,15 +48,21 @@ void main() async {
     ),
   );
   StartupPerformance.markEnd('system_ui_setup');
-    // Optimize critical path - initialize only essential services  
+  // CRITICAL: Make startup completely non-blocking
   StartupPerformance.markStart('async_initialization');
-  
-  // Load dotenv first (smaller, faster)
-  await StartupPerformance.measure('dotenv_load', () => dotenv.load(fileName: ".env"));
-  
-  // Initialize Firebase core only (minimal required)
-  await StartupPerformance.measure('firebase_init', () => Firebase.initializeApp());
-  
+
+  // Run Firebase and dotenv in parallel with timeout to prevent blocking
+  await StartupPerformance.measure('firebase_dotenv_parallel', () async {
+    await Future.wait([
+      Firebase.initializeApp().timeout(
+        const Duration(seconds: 3),
+      ), // Reduced timeout
+      dotenv
+          .load(fileName: ".env")
+          .timeout(const Duration(seconds: 2)), // Reduced timeout
+    ]);
+  });
+
   StartupPerformance.markEnd('async_initialization');
 
   StartupPerformance.markStart('app_creation');
@@ -66,10 +73,11 @@ void main() async {
     ),
   );
   StartupPerformance.markEnd('app_creation');
-  
-  // Preload avatars asynchronously after app starts
-  _preloadAvatarsAsync();
-  
+  // Defer avatar preloading with much longer delay to prevent any startup blocking
+  Future.delayed(const Duration(seconds: 5), () {
+    _preloadAvatarsAsync();
+  });
+
   // Track when first frame is rendered
   StartupPerformance.onFirstFrameCallback();
 }
@@ -111,43 +119,52 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
   void initState() {
     super.initState();
     _loadLocale();
-  }  Future<void> _loadLocale() async {
+  }
+
+  Future<void> _loadLocale() async {
     try {
-      // Defer locale loading to avoid blocking startup
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          final langCode = prefs.getString('preferred_language');
-          if (mounted) {
-            setState(() {
-              _languagePicked = langCode != null;
-              if (langCode != null) {
-                _locale = Locale(langCode);
-              }
-            });
-            
-            // Set WeatherProvider language asynchronously to avoid blocking
-            if (langCode != null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  final provider = Provider.of<WeatherProvider>(
-                    context,
-                    listen: false,
-                  );
-                  provider.setLanguage(langCode);
+      // Use multiple layers of deferral to prevent any blocking
+      Future.microtask(() {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Add even more delay to prevent startup blocking
+          Future.delayed(const Duration(seconds: 1), () async {
+            try {
+              final prefs = await SharedPreferences.getInstance();
+              final langCode = prefs.getString('preferred_language');
+              if (mounted) {
+                setState(() {
+                  _languagePicked = langCode != null;
+                  if (langCode != null) {
+                    _locale = Locale(langCode);
+                  }
+                });
+
+                // Set WeatherProvider language asynchronously with additional deferral
+                if (langCode != null) {
+                  Future.microtask(() {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        final provider = Provider.of<WeatherProvider>(
+                          context,
+                          listen: false,
+                        );
+                        provider.setLanguage(langCode);
+                      }
+                    });
+                  });
                 }
-              });
+              }
+            } catch (e) {
+              // Handle any errors gracefully
+              if (mounted) {
+                setState(() {
+                  _languagePicked = false;
+                  _locale = const Locale('en');
+                });
+              }
             }
-          }
-        } catch (e) {
-          // Handle any errors gracefully
-          if (mounted) {
-            setState(() {
-              _languagePicked = false;
-              _locale = const Locale('en');
-            });
-          }
-        }
+          });
+        });
       });
     } catch (e) {
       // Handle any errors gracefully
@@ -240,8 +257,9 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
               : StreamBuilder<User?>(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (context, snapshot) {
+                  // Use a more efficient loading state to prevent frame drops
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const UltraMinimalStartupScreen();
                   }
                   if (!snapshot.hasData) {
                     return const PhoneAuthPage();

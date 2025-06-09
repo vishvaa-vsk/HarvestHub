@@ -54,6 +54,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get logout => 'लॉगआउट';
 
   @override
+  String get loading => 'Loading...';
+
+  @override
   String get errorLoadingUserData => 'उपयोगकर्ता डेटा लोड करने में त्रुटि';
 
   @override

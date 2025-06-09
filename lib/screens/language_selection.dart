@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageSelectionPage extends StatelessWidget {
-  const LanguageSelectionPage({super.key});
+  const LanguageSelectionPage({super.key, required this.onLanguageSelected});
+
+  final Function(String) onLanguageSelected;
 
   static const List<Map<String, String>> languages = [
     {'code': 'en', 'label': 'English'},
@@ -11,14 +13,10 @@ class LanguageSelectionPage extends StatelessWidget {
     {'code': 'te', 'label': 'తెలుগు'},
     {'code': 'ml', 'label': 'മലയാളം'},
   ];
-
   Future<void> _setLanguage(BuildContext context, String code) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language_code', code);
-    // You should trigger app locale change here
-    if (context.mounted) {
-      Navigator.of(context).pop(code);
-    }
+    await prefs.setString('preferred_language', code);
+    onLanguageSelected(code);
   }
 
   @override

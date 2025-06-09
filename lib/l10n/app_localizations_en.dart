@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeMessage => 'Welcome to HarvestHub!';
 
   @override
-  String get selectLanguage => 'Select Language';
+  String get selectLanguage => 'Select Preferred Language';
 
   @override
   String get english => 'English';
@@ -52,6 +52,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout => 'Logout';
+
+  @override
+  String get loading => 'Loading...';
 
   @override
   String get errorLoadingUserData => 'Error loading user data';
@@ -102,7 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String weatherForecastCalendar(Object startDate, Object endDate) {
-    return 'Weather Forecast';
+    return 'Weather Forecast: $startDate - $endDate';
   }
 
   @override

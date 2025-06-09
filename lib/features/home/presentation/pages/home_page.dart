@@ -200,7 +200,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   bool _isLocationEnabled = true;
   bool _hasRequestedLocationPermission = false;
-
   @override
   void initState() {
     super.initState();
@@ -209,11 +208,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // Mark start of HomeScreen initialization
     StartupPerformance.markStart('HomeScreen.initState');
 
-    // Defer location check and weather fetching until after first frame
+    // IMMEDIATE completion to prevent blocking - defer ALL operations
+    StartupPerformance.markEnd('HomeScreen.initState');
+
+    // Use EXTREME deferral to ensure UI renders first
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      StartupPerformance.markEnd('HomeScreen.initState');
-      StartupPerformance.markStart('HomeScreen.locationServices');
-      _checkLocationServices();
+      // Wait for UI to be fully rendered before starting ANY operations
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          // Only start after UI is completely stable
+          _initializeLocationServicesBackground();
+        }
+      });
+    });
+  }
+
+  /// Initialize location services completely in background to prevent any startup blocking
+  void _initializeLocationServicesBackground() {
+    // Run in background with extreme deferral
+    Future.microtask(() {
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          StartupPerformance.markStart('HomeScreen.locationServices');
+          _checkLocationServicesAsync();
+        }
+      });
     });
   }
 
@@ -234,12 +253,38 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Async version of location services check to prevent blocking
+  Future<void> _checkLocationServicesAsync() async {
+    // Run in background microtask to avoid blocking UI
+    Future.microtask(() async {
+      try {
+        await _checkLocationServices();
+      } catch (e) {
+        debugPrint('Location services check error: $e');
+        if (mounted) {
+          setState(() {
+            _isLocationEnabled = false;
+          });
+        }
+        StartupPerformance.markEnd('HomeScreen.locationServices');
+      }
+    });
+  }
+
   Future<void> _checkLocationServices() async {
     try {
+      // Batch all location checks together to reduce overhead
+      final List<Future> locationChecks = [
+        Geolocator.checkPermission(),
+        Geolocator.isLocationServiceEnabled(),
+      ];
+
       StartupPerformance.markStart('HomeScreen.locationPermissionCheck');
-      // Check current permission status
-      LocationPermission permission = await Geolocator.checkPermission();
+      final results = await Future.wait(locationChecks);
       StartupPerformance.markEnd('HomeScreen.locationPermissionCheck');
+
+      var permission = results[0] as LocationPermission;
+      final isServiceEnabled = results[1] as bool;
 
       // If permission is denied, request it
       if (permission == LocationPermission.denied) {
@@ -265,11 +310,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return;
       }
 
-      StartupPerformance.markStart('HomeScreen.locationServiceCheck');
-      // Check if location services are enabled on the device
-      final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
-      StartupPerformance.markEnd('HomeScreen.locationServiceCheck');
-
       if (mounted) {
         setState(() {
           _isLocationEnabled =
@@ -278,13 +318,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   permission == LocationPermission.whileInUse);
         });
       }
-
       if (_isLocationEnabled) {
-        // Defer weather fetching to avoid blocking UI
-        _fetchWeatherAndInsights();
+        // Use extreme deferral to ensure weather fetching doesn't block startup
+        Future.microtask(() {
+          // Add significant delay to ensure UI is completely rendered
+          Future.delayed(const Duration(seconds: 3), () {
+            if (mounted) {
+              _fetchWeatherAndInsightsAsync();
+            }
+          });
+        });
       } else if (!isServiceEnabled && mounted) {
         // Show dialog only after UI is ready - for location services
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 1000), () {
           if (mounted) {
             _showLocationServiceDialog();
           }
@@ -362,28 +408,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _fetchWeatherAndInsights() async {
-    if (mounted) {
-      StartupPerformance.markStart('HomeScreen.weatherFetch');
+  /// Completely async weather fetching to prevent any blocking
+  Future<void> _fetchWeatherAndInsightsAsync() async {
+    // Run in background with additional delay to avoid any potential blocking
+    Future.microtask(() async {
+      // Add another delay layer to ensure complete UI stability
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      // Use progressive loading - start weather fetch without blocking UI
-      final weatherProvider = Provider.of<WeatherProvider>(
-        context,
-        listen: false,
-      );
+      if (mounted) {
+        StartupPerformance.markStart('HomeScreen.weatherFetch');
+        final weatherProvider = Provider.of<WeatherProvider>(
+          context,
+          listen: false,
+        );
 
-      // Fetch weather data asynchronously without waiting
-      Future.microtask(() async {
         try {
           await weatherProvider.fetchWeatherAndInsights();
           StartupPerformance.markEnd('HomeScreen.weatherFetch');
         } catch (e) {
-          // Handle errors gracefully without blocking UI
           debugPrint('Weather fetch error: $e');
           StartupPerformance.markEnd('HomeScreen.weatherFetch');
         }
-      });
-    }
+      }
+    });
   }
 
   @override
