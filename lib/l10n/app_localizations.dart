@@ -437,6 +437,54 @@ abstract class AppLocalizations {
   /// **'What\'s on your mind?'**
   String get whatsOnYourMind;
 
+  /// No description provided for @welcomeToHarvestHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to the HarvestHub...'**
+  String get welcomeToHarvestHub;
+
+  /// No description provided for @shareYourThoughts.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts, ask questions, and connect with fellow farmers.'**
+  String get shareYourThoughts;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @checkConnectionAndTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your connection and try again'**
+  String get checkConnectionAndTryAgain;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @welcomeToCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to the Community!'**
+  String get welcomeToCommunity;
+
+  /// No description provided for @shareYourFarmingExperiences.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your farming experiences, tips, and connect with fellow farmers'**
+  String get shareYourFarmingExperiences;
+
+  /// No description provided for @createFirstPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create first post'**
+  String get createFirstPost;
+
   /// No description provided for @currentWeather.
   ///
   /// In en, this message translates to:

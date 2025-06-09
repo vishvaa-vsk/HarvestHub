@@ -193,6 +193,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatsOnYourMind => 'What\'s on your mind?';
 
   @override
+  String get welcomeToHarvestHub => 'Welcome to the HarvestHub...';
+
+  @override
+  String get shareYourThoughts => 'Share your thoughts, ask questions, and connect with fellow farmers.';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get checkConnectionAndTryAgain => 'Please check your connection and try again';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get welcomeToCommunity => 'Welcome to the Community!';
+
+  @override
+  String get shareYourFarmingExperiences => 'Share your farming experiences, tips, and connect with fellow farmers';
+
+  @override
+  String get createFirstPost => 'Create first post';
+
+  @override
   String get currentWeather => 'Current Weather';
 
   @override

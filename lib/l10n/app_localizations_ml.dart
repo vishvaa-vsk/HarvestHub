@@ -193,6 +193,30 @@ class AppLocalizationsMl extends AppLocalizations {
   String get whatsOnYourMind => 'നിങ്ങളുടെ മനസ്സിൽ എന്താണ്?';
 
   @override
+  String get welcomeToHarvestHub => 'HarvestHub ലേക്ക് സ്വാഗതം...';
+
+  @override
+  String get shareYourThoughts => 'നിങ്ങളുടെ ആശയങ്ങൾ പങ്കിടുക, ചോദ്യങ്ങൾ ചോദിക്കുക, സഹ കർഷകരുമായി ബന്ധപ്പെടുക.';
+
+  @override
+  String get somethingWentWrong => 'എന്തോ തെറ്റ് സംഭവിച്ചു';
+
+  @override
+  String get checkConnectionAndTryAgain => 'ദയവായി നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക';
+
+  @override
+  String get tryAgain => 'വീണ്ടും ശ്രമിക്കുക';
+
+  @override
+  String get welcomeToCommunity => 'സമൂഹത്തിലേക്ക് സ്വാഗതം!';
+
+  @override
+  String get shareYourFarmingExperiences => 'നിങ്ങളുടെ കൃഷിയനുഭവങ്ങൾ, നുറുങ്ങുകൾ പങ്കിടുക, സഹ കർഷകരുമായി ബന്ധപ്പെടുക';
+
+  @override
+  String get createFirstPost => 'ആദ്യ പോസ്റ്റ് സൃഷ്ടിക്കുക';
+
+  @override
   String get currentWeather => 'നിലവിലെ കാലാവസ്ഥ';
 
   @override

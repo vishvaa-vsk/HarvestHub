@@ -193,6 +193,30 @@ class AppLocalizationsTe extends AppLocalizations {
   String get whatsOnYourMind => 'మీ మనసులో ఏముంది?';
 
   @override
+  String get welcomeToHarvestHub => 'HarvestHub కు స్వాగతం...';
+
+  @override
+  String get shareYourThoughts => 'మీ ఆలోచనలను పంచుకోండి, ప్రశ్నలు అడగండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి.';
+
+  @override
+  String get somethingWentWrong => 'ఏదో తప్పు జరిగింది';
+
+  @override
+  String get checkConnectionAndTryAgain => 'దయచేసి మీ కనెక్షన్‌ని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి';
+
+  @override
+  String get tryAgain => 'మళ్లీ ప్రయత్నించండి';
+
+  @override
+  String get welcomeToCommunity => 'కమ్యూనిటీకి స్వాగతం!';
+
+  @override
+  String get shareYourFarmingExperiences => 'మీ వ్యవసాయ అనుభవాలు, చిట్కాలను పంచుకోండి మరియు తోటి రైతులతో కనెక్ట్ అవ్వండి';
+
+  @override
+  String get createFirstPost => 'మొదటి పోస్ట్ సృష్టించండి';
+
+  @override
   String get currentWeather => 'ప్రస్తుత వాతావరణం';
 
   @override

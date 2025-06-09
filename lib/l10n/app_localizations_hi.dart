@@ -15,13 +15,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get welcomeMessage => 'हार्वेस्टहब में आपका स्वागत है!';
 
   @override
-  String get selectLanguage => 'भाषा चुनें';
+  String get selectLanguage => 'पसंदीदा भाषा चुनें';
 
   @override
   String get english => 'अंग्रेज़ी';
 
   @override
-  String get hindi => 'हिन्दी';
+  String get hindi => 'हिंदी';
 
   @override
   String get tamil => 'तमिल';
@@ -102,7 +102,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String weatherForecastCalendar(Object startDate, Object endDate) {
-    return 'मौसम पूर्वानुमान';
+    return 'मौसम पूर्वानुमान: $startDate - $endDate';
   }
 
   @override
@@ -178,7 +178,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get talkToHarvestBot => 'हार्वेस्टबॉट से बात करें';
 
   @override
-  String get createPost => 'पोस्ट बनाएँ';
+  String get createPost => 'पोस्ट बनाएं';
 
   @override
   String get addComment => 'टिप्पणी जोड़ें...';
@@ -187,10 +187,34 @@ class AppLocalizationsHi extends AppLocalizations {
   String get post => 'पोस्ट';
 
   @override
-  String get noPostsYet => 'अभी तक कोई पोस्ट नहीं है।';
+  String get noPostsYet => 'अभी तक कोई पोस्ट नहीं।';
 
   @override
   String get whatsOnYourMind => 'आपके मन में क्या है?';
+
+  @override
+  String get welcomeToHarvestHub => 'HarvestHub में आपका स्वागत है...';
+
+  @override
+  String get shareYourThoughts => 'अपने विचार साझा करें, प्रश्न पूछें, और साथी किसानों से जुड़ें।';
+
+  @override
+  String get somethingWentWrong => 'कुछ गलत हो गया';
+
+  @override
+  String get checkConnectionAndTryAgain => 'कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें';
+
+  @override
+  String get tryAgain => 'पुनः प्रयास करें';
+
+  @override
+  String get welcomeToCommunity => 'समुदाय में आपका स्वागत है!';
+
+  @override
+  String get shareYourFarmingExperiences => 'अपने कृषि अनुभव, सुझाव साझा करें और साथी किसानों से जुड़ें';
+
+  @override
+  String get createFirstPost => 'पहली पोस्ट बनाएं';
 
   @override
   String get currentWeather => 'वर्तमान मौसम';
@@ -445,29 +469,29 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cropsHealthyMessage => 'आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।';
 
   @override
-  String get recommendations => 'सिफारिशें';
+  String get recommendations => 'Recommendations';
 
   @override
-  String get readyToAnalyze => 'विश्लेषण के लिए तैयार';
+  String get readyToAnalyze => 'Ready to analyze';
 
   @override
-  String get uploadImageAndAnalyze => 'एक छवि अपलोड करें और कीट पहचान और सिफारिशें प्राप्त करने के लिए \"विश्लेषण\" पर टैप करें';
+  String get uploadImageAndAnalyze => 'Upload an image and tap \"Analyze\" to detect pests and get recommendations';
 
   @override
-  String get howToUse => 'उपयोग कैसे करें';
+  String get howToUse => 'How to use';
 
   @override
-  String get takeClearPhotos => 'पौधे की पत्तियों की स्पष्ट, अच्छी रोशनी वाली तस्वीरें लें';
+  String get takeClearPhotos => 'Take clear, well-lit photos of plant leaves';
 
   @override
-  String get focusOnAffectedAreas => 'दिखाई देने वाले लक्षणों के साथ प्रभावित क्षेत्रों पर ध्यान दें';
+  String get focusOnAffectedAreas => 'Focus on affected areas with visible symptoms';
 
   @override
-  String get avoidBlurryImages => 'धुंधली या अंधेरी छवियों से बचें';
+  String get avoidBlurryImages => 'Avoid blurry or dark images';
 
   @override
-  String get includeMultipleLeaves => 'यदि संभव हो तो कई पत्तियों को शामिल करें';
+  String get includeMultipleLeaves => 'Include multiple leaves if possible';
 
   @override
-  String get gotIt => 'समझ गया';
+  String get gotIt => 'Got it';
 }

@@ -115,7 +115,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Welcome to the HarvestHub...',
+                              AppLocalizations.of(context)!.welcomeToHarvestHub,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -124,7 +124,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Share your thoughts, ask questions, and connect with fellow farmers.',
+                              AppLocalizations.of(context)!.shareYourThoughts,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.green[600],
@@ -168,7 +168,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Something went wrong',
+                            AppLocalizations.of(context)!.somethingWentWrong,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -177,7 +177,9 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Please check your connection and try again',
+                            AppLocalizations.of(
+                              context,
+                            )!.checkConnectionAndTryAgain,
                             style: TextStyle(
                               color: Colors.green[600],
                               fontSize: 14,
@@ -197,7 +199,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text('Try again'),
+                            child: Text(AppLocalizations.of(context)!.tryAgain),
                           ),
                         ],
                       ),
@@ -219,7 +221,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Welcome to the Community!',
+                            AppLocalizations.of(context)!.welcomeToCommunity,
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
@@ -228,7 +230,9 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Share your farming experiences, tips, and connect with fellow farmers',
+                            AppLocalizations.of(
+                              context,
+                            )!.shareYourFarmingExperiences,
                             style: TextStyle(
                               color: Colors.green[600],
                               fontSize: 16,
@@ -255,7 +259,9 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                                   ),
                                 ),
                             icon: const Icon(Icons.add),
-                            label: const Text('Create first post'),
+                            label: Text(
+                              AppLocalizations.of(context)!.createFirstPost,
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,

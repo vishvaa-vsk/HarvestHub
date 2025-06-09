@@ -193,6 +193,30 @@ class AppLocalizationsTa extends AppLocalizations {
   String get whatsOnYourMind => 'உங்கள் மனதில் என்ன உள்ளது?';
 
   @override
+  String get welcomeToHarvestHub => 'HarvestHub இல் உங்களை வரவேற்கிறோம்...';
+
+  @override
+  String get shareYourThoughts => 'உங்கள் எண்ணங்களைப் பகிரவும், கேள்விகள் கேட்கவும், சக விவசாயிகளுடன் இணைந்தொழுகவும்.';
+
+  @override
+  String get somethingWentWrong => 'ஏதோ தவறு நடந்தது';
+
+  @override
+  String get checkConnectionAndTryAgain => 'உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்';
+
+  @override
+  String get tryAgain => 'மீண்டும் முயற்சிக்கவும்';
+
+  @override
+  String get welcomeToCommunity => 'சமூகத்திற்கு வரவேற்கிறோம்!';
+
+  @override
+  String get shareYourFarmingExperiences => 'உங்கள் விவசாய அனுபவங்கள், குறிப்புகளைப் பகிரவும் மற்றும் சக விவசாயிகளுடன் இணைந்தொழுகவும்';
+
+  @override
+  String get createFirstPost => 'முதல் இடுகையை உருவாக்கவும்';
+
+  @override
   String get currentWeather => 'தற்போதைய காலநிலை';
 
   @override
