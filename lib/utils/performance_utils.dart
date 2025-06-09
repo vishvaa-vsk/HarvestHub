@@ -185,3 +185,48 @@ class _PerformanceMonitorState extends State<_PerformanceMonitor> {
     return widget.child;
   }
 }
+
+/// Navigation performance utilities
+class NavigationUtils {
+  static const Duration _defaultNavigationThrottle = Duration(milliseconds: 300);
+  static DateTime? _lastNavigationTime;
+
+  /// Throttle navigation to prevent rapid taps causing frame drops
+  static bool canNavigate({Duration? throttleDuration}) {
+    final now = DateTime.now();
+    final threshold = throttleDuration ?? _defaultNavigationThrottle;
+    
+    if (_lastNavigationTime == null || 
+        now.difference(_lastNavigationTime!) > threshold) {
+      _lastNavigationTime = now;
+      return true;
+    }
+    return false;
+  }
+
+  /// Reset navigation throttle (useful for testing)
+  static void resetThrottle() {
+    _lastNavigationTime = null;
+  }
+
+  /// Optimized route builder that reduces animation overhead
+  static Route<T> buildOptimizedRoute<T extends Object?>(
+    Widget page, {
+    Duration? transitionDuration,
+    Curve? curve,
+  }) {
+    return PageRouteBuilder<T>(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: transitionDuration ?? const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: curve ?? Curves.fastOutSlowIn,
+          ),
+          child: child,
+        );
+      },
+    );
+  }
+}

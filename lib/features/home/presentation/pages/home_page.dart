@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +10,9 @@ import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:harvesthub/main.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/weather_provider.dart';
+import '../../../../utils/performance_utils.dart';
+import '../../../../utils/navigation_performance_tracker.dart';
+import '../../../../utils/frame_drop_monitor.dart';
 import '../../../../core/utils/avatar_utils.dart';
 import '../../../../utils/startup_performance.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
@@ -42,143 +46,237 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> 
+    with SingleTickerProviderStateMixin, NavigationPerformanceMixin {
   int _currentIndex = 0;
+  late AnimationController _animationController;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const PestDetectionScreen(),
-    CommunityFeedPage(), // Use the new Community Feed
-  ];
+  // Cached screen instances for performance
+  Widget? _homeScreen;
+  Widget? _pestScreen;
+  Widget? _communityScreen;
+  
+  // Navigation throttling to prevent rapid taps
+  bool _isNavigating = false;
+
+  // Performance optimization: Lazy load screens only when needed
+  Widget _getScreen(int index) {
+    switch (index) {
+      case 0:
+        return _homeScreen ??= RepaintBoundary(
+          key: const ValueKey('home'),
+          child: const HomeScreen(),
+        );
+      case 1:
+        return _pestScreen ??= RepaintBoundary(
+          key: const ValueKey('pest'),
+          child: const PestDetectionScreen(),
+        );
+      case 2:
+        return _communityScreen ??= RepaintBoundary(
+          key: const ValueKey('community'),
+          child: CommunityFeedPage(),
+        );
+      default:
+        return _homeScreen ??= RepaintBoundary(
+          key: const ValueKey('home'),
+          child: const HomeScreen(),
+        );
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    
+    // Start frame drop monitoring in debug mode
+    if (kDebugMode) {
+      FrameDropMonitor.startMonitoring();
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    
+    // Stop frame drop monitoring
+    if (kDebugMode) {
+      FrameDropMonitor.stopMonitoring();
+      NavigationPerformanceTracker.printPerformanceSummary();    }
+    
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final localizations =
-        AppLocalizations.of(
-          context,
-        )!; // Ensure consistent system UI overlay style
-    SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
-
-    // Also set the system UI after the frame is built to ensure it sticks
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
-    });
-
+    final localizations = AppLocalizations.of(context)!;
+    
+    // Set system UI style only once, not on every build
     return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: _buildModernBottomNavigationBar(localizations),
-    );
-  }
-
-  Widget _buildModernBottomNavigationBar(AppLocalizations localizations) {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 25,
-            offset: const Offset(0, -8),
-            spreadRadius: 0,
-          ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          _getScreen(0), // Home
+          _getScreen(1), // Pest Detection  
+          _getScreen(2), // Community
         ],
       ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+      bottomNavigationBar: _buildOptimizedBottomNavigationBar(localizations),
+    );
+  }
+  Widget _buildOptimizedBottomNavigationBar(AppLocalizations localizations) {
+    return RepaintBoundary(
+      child: Container(
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x14000000),
+              blurRadius: 25,
+              offset: Offset(0, -8),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildOptimizedNavItem(
+                  icon: Icons.home_filled,
+                  label: localizations.home,
+                  index: 0,
+                  isSelected: _currentIndex == 0,
+                ),
+                _buildOptimizedNavItem(
+                  icon: Icons.smart_toy_rounded,
+                  label: localizations.harvestBot,
+                  index: 1,
+                  isSelected: false, // Never selected since it navigates away
+                ),
+                _buildOptimizedNavItem(
+                  icon: Icons.pest_control_rounded,
+                  label: localizations.pestDetection,
+                  index: 2,
+                  isSelected: _currentIndex == 1, // Adjusted index
+                ),
+                _buildOptimizedNavItem(
+                  icon: Icons.people_alt_rounded,
+                  label: localizations.community,
+                  index: 3,
+                  isSelected: _currentIndex == 2, // Adjusted index
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }  Widget _buildOptimizedNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isSelected,
+  }) {
+    return RepaintBoundary(
+      child: InkWell(
+        onTap: () {
+          // Use navigation utility throttling for better performance
+          if (NavigationUtils.canNavigate(throttleDuration: const Duration(milliseconds: 200))) {
+            _handleNavigation(index);
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildNavItem(
-                icon: Icons.home_filled,
-                label: localizations.home,
-                index: 0,
-                isSelected: _currentIndex == 0,
+              // Use Transform instead of AnimatedContainer for better performance
+              Transform.scale(
+                scale: isSelected ? 1.1 : 1.0,
+                child: Icon(
+                  icon,
+                  color: isSelected ? AppConstants.primaryGreen : const Color(0xFF9E9E9E),
+                  size: 24,
+                ),
               ),
-              _buildNavItem(
-                icon: Icons.smart_toy_rounded,
-                label: localizations.harvestBot,
-                index: 1,
-                isSelected: false, // Never selected since it navigates away
-              ),
-              _buildNavItem(
-                icon: Icons.pest_control_rounded,
-                label: localizations.pestDetection,
-                index: 2,
-                isSelected: _currentIndex == 1, // Adjusted index
-              ),
-              _buildNavItem(
-                icon: Icons.people_alt_rounded,
-                label: localizations.community,
-                index: 3,
-                isSelected: _currentIndex == 2, // Adjusted index
+              const SizedBox(height: 4),
+              // Optimize text animation
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? AppConstants.primaryGreen : const Color(0xFF9E9E9E),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         ),
       ),
     );
-  }
+  }  void _handleNavigation(int index) {
+    // Throttle navigation to prevent rapid taps and frame drops
+    if (_isNavigating) return;
+    
+    // Track frame drops during navigation
+    FrameDropMonitor.markHeavyOperation('Navigation tap to index $index');
+    
+    // Track navigation performance
+    trackNavigation('navigation_tap', () {
+      // Prevent unnecessary navigation calls
+      if (index == 1) {
+        // Handle HarvestBot navigation separately (doesn't change current index)
+        _isNavigating = true;
+        NavigationPerformanceTracker.startNavigation('harvestbot_navigation');
+        
+        Navigator.push(
+          context,
+          NavigationUtils.buildOptimizedRoute(const AIChatPage()),
+        ).then((_) {
+          NavigationPerformanceTracker.endNavigation('harvestbot_navigation');
+          _isNavigating = false;
+        });
+        return;
+      }
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required int index,
-    required bool isSelected,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        // Set system UI overlay style for consistent navigation bar on tab switch
-        SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
-
-        // Handle HarvestBot navigation separately
-        if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AIChatPage()),
-          );
-        } else {
-          // Adjust index for other screens since we removed AIChatPage from _screens
-          int adjustedIndex = index;
-          if (index > 1) {
-            adjustedIndex = index - 1;
-          }
-
+      // Calculate the actual screen index
+      final int targetIndex = index > 1 ? index - 1 : index;
+      
+      // Only update if actually changing screens
+      if (targetIndex != _currentIndex) {
+        _isNavigating = true;
+        
+        NavigationPerformanceTracker.startNavigation('tab_switch_$targetIndex');
+        
+        // Track the setState operation that might cause frame drops
+        FrameDropMonitor.trackOperation('setState_navigation', () {
           setState(() {
-            _currentIndex = adjustedIndex;
+            _currentIndex = targetIndex;
           });
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color:
-                isSelected ? AppConstants.primaryGreen : Colors.grey.shade500,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color:
-                  isSelected ? AppConstants.primaryGreen : Colors.grey.shade500,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
+        });
+        
+        // Release navigation lock after UI update completes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          NavigationPerformanceTracker.endNavigation('tab_switch_$targetIndex');
+          _isNavigating = false;
+        });
+      }
+    });
   }
 }
 
@@ -436,121 +534,123 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: AppConstants.backgroundGray,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          loc.appTitle,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppConstants.primaryGreen,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black54),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: FutureBuilder<String>(
-              future: AvatarUtils.getAvatarWithFallback(
-                userId:
-                    FirebaseAuth.instance.currentUser?.phoneNumber ?? 'guest',
-              ),
-              builder: (context, avatarSnapshot) {
-                final avatarUrl =
-                    avatarSnapshot.data ??
-                    'https://avatar.iran.liara.run/public/1';
-
-                return GestureDetector(
-                  onTap: () {
-                    _scaffoldKey.currentState?.openDrawer();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppConstants.primaryGreen,
-                        width: 2,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        avatarUrl,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            width: 40,
-                            height: 40,
-                            color: AppConstants.dividerGray,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppConstants.primaryGreen,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              color: AppConstants.primaryGreen,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
+    return RepaintBoundary(
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: AppConstants.backgroundGray,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            loc.appTitle,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppConstants.primaryGreen,
             ),
           ),
-        ],
-      ),
-      drawer: _buildModernDrawer(context, loc),
-      body:
-          _isLocationEnabled
-              ? SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildWeatherCard(context),
-                    const SizedBox(height: 16),
-                    _buildInsightsSection(context),
-                  ],
+          leading: IconButton(
+            icon: const Icon(Icons.menu, color: Colors.black54),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: FutureBuilder<String>(
+                future: AvatarUtils.getAvatarWithFallback(
+                  userId:
+                      FirebaseAuth.instance.currentUser?.phoneNumber ?? 'guest',
                 ),
-              )
-              : Center(
-                child: Text(
-                  loc.locationServicesRequired,
-                  textAlign: TextAlign.center,
-                ),
+                builder: (context, avatarSnapshot) {
+                  final avatarUrl =
+                      avatarSnapshot.data ??
+                      'https://avatar.iran.liara.run/public/1';
+
+                  return GestureDetector(
+                    onTap: () {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppConstants.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          avatarUrl,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              width: 40,
+                              height: 40,
+                              color: AppConstants.dividerGray,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppConstants.primaryGreen,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                color: AppConstants.primaryGreen,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
+            ),
+          ],
+        ),
+        drawer: _buildModernDrawer(context, loc),
+        body:
+            _isLocationEnabled
+                ? SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildWeatherCard(context),
+                      const SizedBox(height: 16),
+                      _buildInsightsSection(context),
+                    ],
+                  ),
+                )
+                : Center(
+                  child: Text(
+                    loc.locationServicesRequired,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+      ),
     );
   }
 
@@ -1524,8 +1624,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ),            ],
           ),
         ),
       ),

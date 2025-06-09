@@ -16,19 +16,29 @@ class CommunityFeedPage extends StatefulWidget {
   State<CommunityFeedPage> createState() => _CommunityFeedPageState();
 }
 
-class _CommunityFeedPageState extends State<CommunityFeedPage> {
+class _CommunityFeedPageState extends State<CommunityFeedPage>
+    with AutomaticKeepAliveClientMixin {
   final FirebaseService _firebaseService = FirebaseService();
   final ScrollController _scrollController = ScrollController();
   bool _showFab = true;
-
+  
   // Performance optimization: throttle scroll events
   late final Throttler _scrollThrottler;
+
+  // Cache for better performance
+  Stream<List<Post>>? _postsStream;
+
+  @override
+  bool get wantKeepAlive => true; // Keep state alive when switching tabs
 
   @override
   void initState() {
     super.initState();
     _scrollThrottler = Throttler(milliseconds: 100);
     _scrollController.addListener(_scrollListener);
+    
+    // Initialize stream only once
+    _postsStream = _firebaseService.getCommunityPosts();
   }
 
   @override
@@ -51,23 +61,14 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    // Set system UI overlay style for consistent navigation bar
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: StreamBuilder<List<Post>>(
-        stream: _firebaseService.getCommunityPosts(),
+        stream: _postsStream,
         builder: (context, snapshot) {
           return CustomScrollView(
             controller: _scrollController,
@@ -288,31 +289,33 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                     ),
                   ),
                 )
-              else
-                SliverList(
+              else                SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final posts = snapshot.data!;
                       if (index >= posts.length) return null;
 
-                      return PerformanceUtils.monitorPerformance(
-                        name: 'PostCard_$index',
-                        child: PostCard(
-                          post: posts[index],
-                          onTap:
-                              () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (_) => PostDetailPage(post: posts[index]),
-                                ),
+                      // Use RepaintBoundary to isolate post rebuilds
+                      return RepaintBoundary(
+                        key: ValueKey('post_${posts[index].id}'),
+                        child: PerformanceUtils.monitorPerformance(
+                          name: 'PostCard_$index',
+                          child: PostCard(
+                            post: posts[index],
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PostDetailPage(post: posts[index]),
                               ),
+                            ),
+                          ),
                         ),
                       );
                     },
                     childCount: snapshot.data?.length ?? 0,
                     addAutomaticKeepAlives: false, // Reduce memory usage
-                    addRepaintBoundaries: true, // Improve painting performance
+                    addRepaintBoundaries: false, // We're handling this manually
+                    addSemanticIndexes: false, // Disable for performance
                   ),
                 ),
             ],
