@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../services/gemini_service.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../utils/startup_performance.dart';
 
 /// A provider class for managing weather data and agricultural insights.
 ///
@@ -14,8 +15,10 @@ class WeatherProvider extends ChangeNotifier {
   Map<String, String>? _insights;
   List<Map<String, dynamic>>? _monthlyForecast;
   List<Map<String, dynamic>>? _futureWeather;
-  bool _isLoading = true;
+  bool _isLoading = false; // Start as false to prevent immediate loading
+  bool _insightsLoading = false; // Track insights loading separately
   String _lang = 'en';
+  bool _initialized = false; // Track initialization state
 
   // Crop recommendation caching
   String? _cachedExtendedForecastRecommendation;
@@ -26,14 +29,25 @@ class WeatherProvider extends ChangeNotifier {
   static const Duration _cacheExpiration = Duration(
     hours: 6,
   ); // Cache for 6 hours
-
   Map<String, dynamic>? get weatherData => _weatherData;
   Map<String, String>? get insights => _insights;
   List<Map<String, dynamic>>? get monthlyForecast => _monthlyForecast;
   List<Map<String, dynamic>>? get futureWeather => _futureWeather;
   bool get isLoading => _isLoading;
+  bool get isInsightsLoading => _insightsLoading;
   String get lang => _lang;
+  bool get isInitialized => _initialized;
+
+  /// Initialize the provider when first accessed (lazy initialization)
+  void _ensureInitialized() {
+    if (!_initialized) {
+      _initialized = true;
+      // Initialization can be done here if needed
+    }
+  }
+
   void setLanguage(String langCode) {
+    _ensureInitialized();
     _lang = langCode;
     _weatherData = null;
     _insights = null;
@@ -75,6 +89,7 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWeatherData() async {
+    _ensureInitialized();
     if (_weatherData != null) return;
     _isLoading = true;
     notifyListeners();
@@ -87,10 +102,13 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWeatherAndInsights() async {
+    _ensureInitialized();
     if (_weatherData != null && _insights != null) return;
+    StartupPerformance.markStart('WeatherProvider.fetchWeatherAndInsights');
     _isLoading = true;
     notifyListeners();
     try {
+      StartupPerformance.markStart('WeatherProvider.locationCheck');
       final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isLocationEnabled) {
         throw Exception('Location services are disabled.');
@@ -104,19 +122,50 @@ class WeatherProvider extends ChangeNotifier {
           throw Exception('Location permission denied.');
         }
       }
+      StartupPerformance.markEnd('WeatherProvider.locationCheck');
+
+      StartupPerformance.markStart('WeatherProvider.getPosition');
       final position = await Geolocator.getCurrentPosition();
-      final weatherFuture = _weatherService.getWeatherData(
+      StartupPerformance.markEnd('WeatherProvider.getPosition');
+
+      StartupPerformance.markStart('WeatherProvider.fetchWeatherData');
+      // First, fetch weather data immediately (fast operation)
+      _weatherData = await _weatherService.getWeatherData(
         latitude: position.latitude,
         longitude: position.longitude,
         lang: _lang,
       );
-      final insightsFuture = weatherFuture.then<Map<String, String>>((
-        weatherData,
-      ) {
-        final current = weatherData['current'];
+      StartupPerformance.markEnd('WeatherProvider.fetchWeatherData');
+
+      // Update UI with weather data immediately
+      _isLoading = false;
+      notifyListeners();
+
+      // Defer heavy AI insights to background to avoid blocking startup
+      _fetchInsightsInBackground();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    } finally {
+      StartupPerformance.markEnd('WeatherProvider.fetchWeatherAndInsights');
+    }
+  }
+
+  /// Fetch AI insights in background without blocking startup
+  void _fetchInsightsInBackground() {
+    // Set insights loading state
+    _insightsLoading = true;
+    notifyListeners();
+
+    // Use Future.microtask to ensure this runs after UI is updated
+    Future.microtask(() async {
+      try {
+        StartupPerformance.markStart('WeatherProvider.fetchInsights');
+        final current = _weatherData?['current'];
         if (current != null) {
           final geminiService = GeminiService();
-          return geminiService.getAgriculturalInsights(
+          _insights = await geminiService.getAgriculturalInsights(
             temperature: (current['temperature'] as num).toDouble(),
             humidity: (current['humidity'] as num).toDouble(),
             rainfall: (current['precipitation'] as num?)?.toDouble() ?? 0.0,
@@ -125,19 +174,26 @@ class WeatherProvider extends ChangeNotifier {
             lang: _lang,
           );
         }
-        return Future.value({});
-      });
-      final results = await Future.wait([weatherFuture, insightsFuture]);
-      _weatherData = results[0] as Map<String, dynamic>?;
-      _insights = results[1] as Map<String, String>?;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+        StartupPerformance.markEnd('WeatherProvider.fetchInsights');
+      } catch (e) {
+        // Handle insights error gracefully - app should still work without insights
+        debugPrint('Error fetching insights: $e');
+        _insights = {
+          'farmingTip': 'Insights temporarily unavailable',
+          'cropRecommendation': 'Please try again later',
+        };
+        StartupPerformance.markEnd('WeatherProvider.fetchInsights');
+      } finally {
+        // Clear insights loading state and notify listeners
+        _insightsLoading = false;
+        notifyListeners();
+      }
+    });
   }
 
   // Optimized fetchMonthlyForecast to support pagination and reduce loading times
   Future<void> fetchMonthlyForecast({int monthOffset = 0}) async {
+    _ensureInitialized();
     _isLoading = true;
     notifyListeners();
 

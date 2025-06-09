@@ -14,6 +14,11 @@ class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
 
+  // User data cache for performance
+  final Map<String, Map<String, dynamic>> _userCache = {};
+  final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheExpiration = Duration(minutes: 5);
+
   // Collection constants
   static const String _usersCollection = 'users';
   static const String _postsCollection = 'communityPosts';
@@ -52,18 +57,75 @@ class FirebaseService {
     }
   }
 
-  // Get user by phone number with error handling
+  // Get user by phone number with caching for performance
   Future<Map<String, dynamic>?> getUserByPhone(String phoneNumber) async {
     try {
       if (phoneNumber.trim().isEmpty) {
         throw ArgumentError('Phone number cannot be empty');
       }
 
+      // Check cache first
+      final cacheKey = phoneNumber.trim();
+      if (_userCache.containsKey(cacheKey)) {
+        final cacheTime = _cacheTimestamps[cacheKey];
+        if (cacheTime != null &&
+            DateTime.now().difference(cacheTime) < _cacheExpiration) {
+          return _userCache[cacheKey];
+        }
+      }
+
+      // Fetch from Firestore
       final doc =
           await _firestore.collection(_usersCollection).doc(phoneNumber).get();
-      return doc.exists ? doc.data() : null;
+      final userData = doc.exists ? doc.data() : null;
+
+      // Cache the result
+      if (userData != null) {
+        _userCache[cacheKey] = userData;
+        _cacheTimestamps[cacheKey] = DateTime.now();
+      }
+
+      return userData;
     } catch (e) {
       throw Exception('Failed to fetch user by phone: $e');
+    }
+  }
+
+  // Get user from cache only (for synchronous access)
+  Map<String, dynamic>? getUserFromCache(String phoneNumber) {
+    final cacheKey = phoneNumber.trim();
+    if (_userCache.containsKey(cacheKey)) {
+      final cacheTime = _cacheTimestamps[cacheKey];
+      if (cacheTime != null &&
+          DateTime.now().difference(cacheTime) < _cacheExpiration) {
+        return _userCache[cacheKey];
+      }
+    }
+    return null;
+  }
+
+  // Clear user cache
+  void clearUserCache() {
+    _userCache.clear();
+    _cacheTimestamps.clear();
+  }
+
+  // Preload user data for multiple users (batch loading)
+  Future<void> preloadUsersData(List<String> phoneNumbers) async {
+    final uncachedNumbers =
+        phoneNumbers.where((number) {
+          final cached = getUserFromCache(number);
+          return cached == null;
+        }).toList();
+
+    if (uncachedNumbers.isEmpty) return;
+
+    try {
+      // Batch load users
+      final futures = uncachedNumbers.map((number) => getUserByPhone(number));
+      await Future.wait(futures);
+    } catch (e) {
+      // Handle batch loading errors gracefully
     }
   }
 

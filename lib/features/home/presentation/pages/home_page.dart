@@ -10,6 +10,7 @@ import 'package:harvesthub/main.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/weather_provider.dart';
 import '../../../../core/utils/avatar_utils.dart';
+import '../../../../utils/startup_performance.dart';
 import '../../../auth/presentation/pages/edit_profile_page.dart';
 import '../../../auth/presentation/pages/phone_auth_page.dart';
 import 'ai_chat_page.dart';
@@ -193,82 +194,195 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>(); // Added GlobalKey
 
   bool _isLocationEnabled = true;
+  bool _hasRequestedLocationPermission = false;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationServices();
+    // Add app lifecycle observer
+    WidgetsBinding.instance.addObserver(this);
+    // Mark start of HomeScreen initialization
+    StartupPerformance.markStart('HomeScreen.initState');
+
+    // Defer location check and weather fetching until after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      StartupPerformance.markEnd('HomeScreen.initState');
+      StartupPerformance.markStart('HomeScreen.locationServices');
+      _checkLocationServices();
+    });
   }
 
   @override
   void dispose() {
+    // Remove app lifecycle observer
+    WidgetsBinding.instance.removeObserver(this);
     // Cancel any ongoing operations or listeners here if needed
     super.dispose();
   }
 
-  Future<void> _checkLocationServices() async {
-    final permission = await Geolocator.requestPermission();
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // When app resumes, check location services again
+    if (state == AppLifecycleState.resumed) {
+      _checkLocationServices();
+    }
+  }
 
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
+  Future<void> _checkLocationServices() async {
+    try {
+      StartupPerformance.markStart('HomeScreen.locationPermissionCheck');
+      // Check current permission status
+      LocationPermission permission = await Geolocator.checkPermission();
+      StartupPerformance.markEnd('HomeScreen.locationPermissionCheck');
+
+      // If permission is denied, request it
+      if (permission == LocationPermission.denied) {
+        if (!_hasRequestedLocationPermission) {
+          _hasRequestedLocationPermission = true;
+          permission = await Geolocator.requestPermission();
+        }
+      }
+
+      // Check if permission is still denied after request
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          setState(() {
+            _isLocationEnabled = false;
+          });
+        }
+        // Show dialog to guide user to settings if permission is permanently denied
+        if (permission == LocationPermission.deniedForever) {
+          _showLocationPermissionDialog();
+        }
+        StartupPerformance.markEnd('HomeScreen.locationServices');
+        return;
+      }
+
+      StartupPerformance.markStart('HomeScreen.locationServiceCheck');
+      // Check if location services are enabled on the device
+      final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
+      StartupPerformance.markEnd('HomeScreen.locationServiceCheck');
+
+      if (mounted) {
+        setState(() {
+          _isLocationEnabled =
+              isServiceEnabled &&
+              (permission == LocationPermission.always ||
+                  permission == LocationPermission.whileInUse);
+        });
+      }
+
+      if (_isLocationEnabled) {
+        // Defer weather fetching to avoid blocking UI
+        _fetchWeatherAndInsights();
+      } else if (!isServiceEnabled && mounted) {
+        // Show dialog only after UI is ready - for location services
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _showLocationServiceDialog();
+          }
+        });
+      }
+      StartupPerformance.markEnd('HomeScreen.locationServices');
+    } catch (e) {
+      // Handle errors gracefully
+      debugPrint('Location services check error: $e');
       if (mounted) {
         setState(() {
           _isLocationEnabled = false;
         });
       }
-      return;
+      StartupPerformance.markEnd('HomeScreen.locationServices');
     }
+  }
 
-    final isEnabled = await Geolocator.isLocationServiceEnabled();
+  void _showLocationPermissionDialog() {
+    final loc = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(loc.enableLocationServices),
+          content: Text(
+            '${loc.locationServicesRequired}\n\nLocation permission is permanently denied. Please enable it in app settings.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text(loc.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Geolocator.openAppSettings();
+              },
+              child: Text(loc.openSettings),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-    if (mounted) {
-      setState(() {
-        _isLocationEnabled = isEnabled;
-      });
-    }
-    if (isEnabled) {
-      _fetchWeatherAndInsights();
-    } else if (mounted) {
-      final loc = AppLocalizations.of(context)!;
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text(loc.enableLocationServices),
-            content: Text(loc.locationServicesRequired),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-                child: Text(loc.cancel),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  Geolocator.openLocationSettings();
-                },
-                child: Text(loc.openSettings),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
+  void _showLocationServiceDialog() {
+    final loc = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(loc.enableLocationServices),
+          content: Text(loc.locationServicesRequired),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text(loc.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Geolocator.openLocationSettings();
+              },
+              child: Text(loc.openSettings),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _fetchWeatherAndInsights() async {
     if (mounted) {
-      Provider.of<WeatherProvider>(
+      StartupPerformance.markStart('HomeScreen.weatherFetch');
+
+      // Use progressive loading - start weather fetch without blocking UI
+      final weatherProvider = Provider.of<WeatherProvider>(
         context,
         listen: false,
-      ).fetchWeatherAndInsights();
+      );
+
+      // Fetch weather data asynchronously without waiting
+      Future.microtask(() async {
+        try {
+          await weatherProvider.fetchWeatherAndInsights();
+          StartupPerformance.markEnd('HomeScreen.weatherFetch');
+        } catch (e) {
+          // Handle errors gracefully without blocking UI
+          debugPrint('Weather fetch error: $e');
+          StartupPerformance.markEnd('HomeScreen.weatherFetch');
+        }
+      });
     }
   }
 
@@ -757,13 +871,32 @@ class _HomeScreenState extends State<HomeScreen> {
     final loc = AppLocalizations.of(context)!;
     return Consumer<WeatherProvider>(
       builder: (context, weatherProvider, child) {
+        // Show loading only for main weather data, not for insights
         if (weatherProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
         final insights = weatherProvider.insights;
-        if (insights == null) {
-          return Text(loc.failedToLoadInsights);
+        final isInsightsLoading = weatherProvider.isInsightsLoading;
+
+        // Show skeleton loading for insights while weather data is available
+        if (insights == null && isInsightsLoading) {
+          return _buildInsightsSkeletonLoader();
+        }
+
+        // Show error state only if insights failed and not loading
+        if (insights == null && !isInsightsLoading) {
+          return Column(
+            children: [
+              _buildInsightsSkeletonLoader(showError: true),
+              const SizedBox(height: 8),
+              Text(
+                loc.failedToLoadInsights,
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
         }
 
         return Column(
@@ -815,7 +948,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    insights['farmingTip'] ?? loc.noFarmingTip,
+                    insights?['farmingTip'] ?? loc.noFarmingTip,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
@@ -887,7 +1020,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    insights['cropRecommendation'] ?? loc.noCropRecommendation,
+                    insights?['cropRecommendation'] ?? loc.noCropRecommendation,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
@@ -900,6 +1033,147 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         );
       },
+    );
+  }
+
+  /// Build skeleton loader for insights while AI is processing
+  Widget _buildInsightsSkeletonLoader({bool showError = false}) {
+    return Column(
+      children: [
+        // Farming Tip Skeleton
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color:
+                          showError
+                              ? Colors.red.withValues(alpha: 0.1)
+                              : AppConstants.primaryGreen.withValues(
+                                alpha: 0.1,
+                              ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      showError ? Icons.error_outline : Icons.lightbulb,
+                      color: showError ? Colors.red : AppConstants.primaryGreen,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildShimmer(height: 18, width: 120),
+                        const SizedBox(height: 4),
+                        _buildShimmer(height: 12, width: 200),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              _buildShimmer(height: 16, width: double.infinity),
+              const SizedBox(height: 6),
+              _buildShimmer(height: 16, width: double.infinity),
+              const SizedBox(height: 6),
+              _buildShimmer(height: 16, width: 250),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Crop Recommendation Skeleton
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color:
+                          showError
+                              ? Colors.red.withValues(alpha: 0.1)
+                              : AppConstants.materialGreen.withValues(
+                                alpha: 0.1,
+                              ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      showError ? Icons.error_outline : Icons.eco,
+                      color:
+                          showError ? Colors.red : AppConstants.materialGreen,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildShimmer(height: 18, width: 150),
+                        const SizedBox(height: 4),
+                        _buildShimmer(height: 12, width: 180),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              _buildShimmer(height: 16, width: double.infinity),
+              const SizedBox(height: 6),
+              _buildShimmer(height: 16, width: double.infinity),
+              const SizedBox(height: 6),
+              _buildShimmer(height: 16, width: 280),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build shimmer effect for skeleton loading
+  Widget _buildShimmer({required double height, required double width}) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: const SizedBox(),
     );
   }
 

@@ -43,9 +43,7 @@ class AvatarCacheService {
           _memoryCache[identifier] = cachedUrl;
           return cachedUrl;
         }
-      }
-
-      // Generate a new avatar URL from the API (ONE TIME ONLY)
+      } // Generate a new avatar URL from the API (ONE TIME ONLY)
       final newAvatarUrl = await _generateAvatarUrl();
 
       // Cache in both memory and persistent storage

@@ -7,6 +7,7 @@ import '../services/firebase_service.dart';
 import '../widgets/post_card.dart';
 import 'create_post.dart';
 import 'post_detail.dart';
+import '../utils/performance_utils.dart';
 
 class CommunityFeedPage extends StatefulWidget {
   const CommunityFeedPage({super.key});
@@ -20,9 +21,13 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
   final ScrollController _scrollController = ScrollController();
   bool _showFab = true;
 
+  // Performance optimization: throttle scroll events
+  late final Throttler _scrollThrottler;
+
   @override
   void initState() {
     super.initState();
+    _scrollThrottler = Throttler(milliseconds: 100);
     _scrollController.addListener(_scrollListener);
   }
 
@@ -30,17 +35,21 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _scrollThrottler.dispose();
     super.dispose();
   }
 
   void _scrollListener() {
-    if (_scrollController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (_showFab) setState(() => _showFab = false);
-    } else if (_scrollController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_showFab) setState(() => _showFab = true);
-    }
+    // Throttle scroll events to prevent excessive setState calls
+    _scrollThrottler.run(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_showFab) setState(() => _showFab = false);
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_showFab) setState(() => _showFab = true);
+      }
+    });
   }
 
   @override
@@ -281,20 +290,30 @@ class _CommunityFeedPageState extends State<CommunityFeedPage> {
                 )
               else
                 SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final posts = snapshot.data!;
-                    return PostCard(
-                      post: posts[index],
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => PostDetailPage(post: posts[index]),
-                            ),
-                          ),
-                    );
-                  }, childCount: snapshot.data?.length ?? 0),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final posts = snapshot.data!;
+                      if (index >= posts.length) return null;
+
+                      return PerformanceUtils.monitorPerformance(
+                        name: 'PostCard_$index',
+                        child: PostCard(
+                          post: posts[index],
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => PostDetailPage(post: posts[index]),
+                                ),
+                              ),
+                        ),
+                      );
+                    },
+                    childCount: snapshot.data?.length ?? 0,
+                    addAutomaticKeepAlives: false, // Reduce memory usage
+                    addRepaintBoundaries: true, // Improve painting performance
+                  ),
                 ),
             ],
           );

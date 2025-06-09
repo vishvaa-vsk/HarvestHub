@@ -36,6 +36,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
   Timer? _otpTimer;
   int _otpTimeLeft = 60;
   bool _canResend = false;
+  bool _hasRequestedSmsPermission = false;
 
   @override
   void codeUpdated() {
@@ -117,7 +118,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
           'createdAt': FieldValue.serverTimestamp(),
         });
       }
-
       await _authService.sendOTP(
         phoneNumber,
         (verificationId) {
@@ -136,6 +136,16 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
             Future.delayed(const Duration(milliseconds: 300), () {
               _otpFocusNode.requestFocus();
             });
+
+            // Request SMS autofill permission when OTP field is shown
+            if (!_hasRequestedSmsPermission) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (mounted) {
+                  _showSmsAutofillInfo();
+                  _hasRequestedSmsPermission = true;
+                }
+              });
+            }
 
             // Show helpful message about autofill
             ScaffoldMessenger.of(context).showSnackBar(
@@ -354,17 +364,49 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
 
   Future<void> _initializeAutoFill() async {
     try {
-      // Initialize SMS autofill
+      // Initialize SMS autofill - modern Android versions don't require explicit SMS permission
       await SmsAutoFill().getAppSignature;
 
       // Listen for auto fill state changes
       listenForCode();
+
+      // Request SMS autofill info if not already shown
+      if (!_hasRequestedSmsPermission) {
+        _hasRequestedSmsPermission = true;
+        // Show informational message about SMS autofill
+        Future.delayed(Duration(seconds: 1), () {
+          if (mounted) {
+            _showSmsAutofillInfo();
+          }
+        });
+      }
 
       // SMS AutoFill initialized
     } catch (e) {
       // Error initializing SMS AutoFill: $e
       // Handle error silently but log for debugging
     }
+  }
+
+  void _showSmsAutofillInfo() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'SMS autofill is enabled. OTP will be filled automatically when received.',
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.blue.shade600,
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override

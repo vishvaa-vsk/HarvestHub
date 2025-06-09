@@ -6,19 +6,61 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../screens/comment_page.dart';
 import '../core/constants/app_constants.dart';
 
+// Simple user data cache to prevent redundant Firebase calls
+class _UserDataCache {
+  static final Map<String, Map<String, dynamic>> _cache = {};
+  static final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheExpiry = Duration(minutes: 5);
+
+  static Future<Map<String, dynamic>?> getUserData(String authorId) async {
+    // Check if we have cached data
+    if (_cache.containsKey(authorId)) {
+      final timestamp = _cacheTimestamps[authorId];
+      if (timestamp != null &&
+          DateTime.now().difference(timestamp) < _cacheExpiry) {
+        return _cache[authorId];
+      }
+    }
+
+    // Fetch new data
+    try {
+      final userData = await FirebaseService().getUserByPhone(authorId);
+      if (userData != null) {
+        _cache[authorId] = userData;
+        _cacheTimestamps[authorId] = DateTime.now();
+        return userData;
+      }
+    } catch (e) {
+      // Return cached data if available, even if expired
+      return _cache[authorId];
+    }
+
+    return null;
+  }
+
+  static Map<String, dynamic>? getCachedUserData(String authorId) {
+    return _cache[authorId];
+  }
+}
+
 class PostCard extends StatelessWidget {
   final Post post;
   final VoidCallback onTap;
   final FirebaseService _firebaseService = FirebaseService();
 
   PostCard({super.key, required this.post, required this.onTap});
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>?>(
-      future: _firebaseService.getUserByPhone(post.authorId),
+      future: _UserDataCache.getUserData(post.authorId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+          // Try to show cached data immediately while loading
+          final cachedData = _UserDataCache.getCachedUserData(post.authorId);
+          if (cachedData != null) {
+            return _buildPostCard(context, cachedData);
+          }
+          // Show skeleton loading if no cached data
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
             padding: const EdgeInsets.all(16),
@@ -27,118 +69,122 @@ class PostCard extends StatelessWidget {
         }
 
         final user = snapshot.data ?? {};
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.grey[200]!, width: 0.5),
-            ),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Avatar
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundImage:
-                        user['profilePic'] != null
-                            ? CachedNetworkImageProvider(user['profilePic'])
-                            : null,
-                    child:
-                        user['profilePic'] == null
-                            ? const Icon(Icons.person, size: 22)
-                            : null,
-                  ),
-                  const SizedBox(width: 12),
-                  // Content Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        return _buildPostCard(context, user);
+      },
+    );
+  }
+
+  Widget _buildPostCard(BuildContext context, Map<String, dynamic> user) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[200]!, width: 0.5),
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Avatar
+              CircleAvatar(
+                radius: 22,
+                backgroundImage:
+                    user['profilePic'] != null
+                        ? CachedNetworkImageProvider(user['profilePic'])
+                        : null,
+                child:
+                    user['profilePic'] == null
+                        ? const Icon(Icons.person, size: 22)
+                        : null,
+              ),
+              const SizedBox(width: 12),
+              // Content Column
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Row with Name and Time
+                    Row(
                       children: [
-                        // Header Row with Name and Time
-                        Row(
-                          children: [
-                            Text(
-                              user['name'] ?? 'User',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '·',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _timeAgo(post.timestamp),
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Post Content
                         Text(
-                          post.content,
-                          style: const TextStyle(fontSize: 15, height: 1.4),
-                        ),
-                        // Post Image (if exists)
-                        if (post.imageUrl != null) ...[
-                          const SizedBox(height: 12),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: CachedNetworkImage(
-                              imageUrl: post.imageUrl!,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              placeholder:
-                                  (context, url) => Container(
-                                    height: 200,
-                                    color: Colors.grey[200],
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
-                              errorWidget:
-                                  (context, url, error) => Container(
-                                    height: 200,
-                                    color: Colors.grey[200],
-                                    child: const Icon(Icons.error),
-                                  ),
-                            ),
+                          user['name'] ?? 'User',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
-                        ],
-                        const SizedBox(height: 16),
-                        // Action Buttons Row (Twitter style)
-                        _buildActionButtons(context),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '·',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _timeAgo(post.timestamp),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 15,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    // Post Content
+                    Text(
+                      post.content,
+                      style: const TextStyle(fontSize: 15, height: 1.4),
+                    ),
+                    // Post Image (if exists)
+                    if (post.imageUrl != null) ...[
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: CachedNetworkImage(
+                          imageUrl: post.imageUrl!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) => Container(
+                                height: 200,
+                                color: Colors.grey[200],
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          errorWidget:
+                              (context, url, error) => Container(
+                                height: 200,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.error),
+                              ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    // Action Buttons Row (Twitter style)
+                    _buildActionButtons(context),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

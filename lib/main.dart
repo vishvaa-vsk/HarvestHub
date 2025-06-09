@@ -25,47 +25,75 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'screens/community_feed.dart';
+import 'utils/startup_performance.dart';
 
 final GlobalKey<State<HarvestHubApp>> harvestHubAppKey =
     GlobalKey<State<HarvestHubApp>>();
 
 void main() async {
+  // Mark startup beginning for performance monitoring
+  StartupPerformance.markAppStart();
+  
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Set system UI overlay style early
+  StartupPerformance.markStart('system_ui_setup');
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.white, // or your app's background color
+      systemNavigationBarColor: Colors.white,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp();
+  StartupPerformance.markEnd('system_ui_setup');
+    // Optimize critical path - initialize only essential services  
+  StartupPerformance.markStart('async_initialization');
+  
+  // Load dotenv first (smaller, faster)
+  await StartupPerformance.measure('dotenv_load', () => dotenv.load(fileName: ".env"));
+  
+  // Initialize Firebase core only (minimal required)
+  await StartupPerformance.measure('firebase_init', () => Firebase.initializeApp());
+  
+  StartupPerformance.markEnd('async_initialization');
 
-  // Preload common avatars for better performance
-  _preloadAvatars();
-
+  StartupPerformance.markStart('app_creation');
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => WeatherProvider())],
       child: HarvestHubApp(key: harvestHubAppKey),
     ),
   );
+  StartupPerformance.markEnd('app_creation');
+  
+  // Preload avatars asynchronously after app starts
+  _preloadAvatarsAsync();
+  
+  // Track when first frame is rendered
+  StartupPerformance.onFirstFrameCallback();
 }
 
-/// Preload common avatars to improve performance
-void _preloadAvatars() {
-  // Preload HarvestBot avatar
-  AvatarUtils.preloadAvatar(userId: 'harvestbot');
+/// Preload common avatars asynchronously to improve performance without blocking startup
+void _preloadAvatarsAsync() {
+  // Run avatar preloading in the background to avoid blocking main thread
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      // Preload HarvestBot avatar
+      await AvatarUtils.preloadAvatar(userId: 'harvestbot');
 
-  // Preload guest user avatar
-  AvatarUtils.preloadAvatar(userId: 'guest');
+      // Preload guest user avatar
+      await AvatarUtils.preloadAvatar(userId: 'guest');
 
-  // If user is already authenticated, preload their avatar
-  final currentUser = FirebaseAuth.instance.currentUser;
-  if (currentUser?.phoneNumber != null) {
-    AvatarUtils.preloadAvatar(userId: currentUser!.phoneNumber!);
-  }
+      // If user is already authenticated, preload their avatar
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser?.phoneNumber != null) {
+        await AvatarUtils.preloadAvatar(userId: currentUser!.phoneNumber!);
+      }
+    } catch (e) {
+      // Silently handle preload errors to avoid impacting app startup
+    }
+  });
 }
 
 class HarvestHubApp extends StatefulWidget {
@@ -83,28 +111,52 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
   void initState() {
     super.initState();
     _loadLocale();
-  }
-
-  Future<void> _loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    final langCode = prefs.getString('preferred_language');
-    if (mounted) {
-      setState(() {
-        _languagePicked = langCode != null;
-        if (langCode != null) {
-          _locale = Locale(langCode);
-          // Set WeatherProvider language
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              final provider = Provider.of<WeatherProvider>(
-                context,
-                listen: false,
-              );
-              provider.setLanguage(langCode);
+  }  Future<void> _loadLocale() async {
+    try {
+      // Defer locale loading to avoid blocking startup
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final langCode = prefs.getString('preferred_language');
+          if (mounted) {
+            setState(() {
+              _languagePicked = langCode != null;
+              if (langCode != null) {
+                _locale = Locale(langCode);
+              }
+            });
+            
+            // Set WeatherProvider language asynchronously to avoid blocking
+            if (langCode != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  final provider = Provider.of<WeatherProvider>(
+                    context,
+                    listen: false,
+                  );
+                  provider.setLanguage(langCode);
+                }
+              });
             }
-          });
+          }
+        } catch (e) {
+          // Handle any errors gracefully
+          if (mounted) {
+            setState(() {
+              _languagePicked = false;
+              _locale = const Locale('en');
+            });
+          }
         }
       });
+    } catch (e) {
+      // Handle any errors gracefully
+      if (mounted) {
+        setState(() {
+          _languagePicked = false;
+          _locale = const Locale('en');
+        });
+      }
     }
   }
 

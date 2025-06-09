@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
 import '../core/constants/app_constants.dart';
+import '../utils/performance_utils.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -18,24 +19,32 @@ class _CreatePostPageState extends State<CreatePostPage> {
   bool _loading = false;
   bool _canPost = false;
 
+  // Performance optimization: debounce text changes
+  late final Debouncer _textDebouncer;
+
   @override
   void initState() {
     super.initState();
+    _textDebouncer = Debouncer(milliseconds: 200);
     _controller.addListener(_onTextChanged);
   }
 
   void _onTextChanged() {
-    final canPost = _controller.text.trim().isNotEmpty;
-    if (canPost != _canPost) {
-      setState(() {
-        _canPost = canPost;
-      });
-    }
+    // Debounce text changes to prevent excessive setState calls
+    _textDebouncer.run(() {
+      final canPost = _controller.text.trim().isNotEmpty;
+      if (canPost != _canPost && mounted) {
+        setState(() {
+          _canPost = canPost;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
+    _textDebouncer.dispose();
     _controller.dispose();
     super.dispose();
   }

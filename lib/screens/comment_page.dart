@@ -5,6 +5,7 @@ import '../widgets/comment_tile.dart';
 import '../models/comment.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../core/constants/app_constants.dart';
+import '../utils/performance_utils.dart';
 
 // Modern Twitter-style comment page (now the main one)
 class ModernCommentPage extends StatefulWidget {
@@ -28,18 +29,23 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
   bool _hasText = false; // Track if text field has content
   Map<String, dynamic>? _userData; // Cache user data
 
+  // Performance optimization: debounce text changes
+  late final Debouncer _textDebouncer;
+
   @override
   void initState() {
     super.initState();
+    _textDebouncer = Debouncer(milliseconds: 150);
     _focusNode.addListener(_onFocusChanged);
-    _controller.addListener(_onTextChanged);
+    _controller.addListener(_onTextChangedDebounced);
     _loadUserData();
   }
 
   @override
   void dispose() {
     _focusNode.removeListener(_onFocusChanged);
-    _controller.removeListener(_onTextChanged);
+    _controller.removeListener(_onTextChangedDebounced);
+    _textDebouncer.dispose();
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -67,13 +73,16 @@ class _ModernCommentPageState extends State<ModernCommentPage> {
     }
   }
 
-  void _onTextChanged() {
-    final hasText = _controller.text.trim().isNotEmpty;
-    if (_hasText != hasText) {
-      setState(() {
-        _hasText = hasText;
-      });
-    }
+  void _onTextChangedDebounced() {
+    // Debounce text changes to prevent excessive setState calls
+    _textDebouncer.run(() {
+      final hasText = _controller.text.trim().isNotEmpty;
+      if (_hasText != hasText && mounted) {
+        setState(() {
+          _hasText = hasText;
+        });
+      }
+    });
   }
 
   @override
