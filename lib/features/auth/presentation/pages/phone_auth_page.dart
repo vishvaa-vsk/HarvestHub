@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/services/auth_service.dart';
 import 'language_selection_page.dart';
 import 'dart:async';
@@ -319,12 +320,24 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
   }
 
   Future<void> _onOtpVerified(BuildContext context) async {
-    // Navigate to the language selection screen after OTP verification
+    // Check if user needs to select language (first time user)
+    final prefs = await SharedPreferences.getInstance();
+    final hasSelectedLanguage = prefs.getString('preferred_language') != null;
+
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LanguageSelectionPage()),
-      );
+      if (!hasSelectedLanguage) {
+        // First time user or no language selected - show language selection
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LanguageSelectionPage(),
+          ),
+        );
+      } else {
+        // Returning user with language already selected - go directly to home
+        // The StreamBuilder in main.dart will handle the navigation automatically
+        // No need to explicitly navigate here
+      }
     }
   }
 

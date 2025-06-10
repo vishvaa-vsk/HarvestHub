@@ -113,7 +113,8 @@ class HarvestHubApp extends StatefulWidget {
 
 class _HarvestHubAppState extends State<HarvestHubApp> {
   Locale? _locale;
-  bool _languagePicked = false;
+  bool _isLanguageLoaded = false;
+  bool _isFirstTimeUser = false;
 
   @override
   void initState() {
@@ -131,11 +132,16 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
             try {
               final prefs = await SharedPreferences.getInstance();
               final langCode = prefs.getString('preferred_language');
+
               if (mounted) {
                 setState(() {
-                  _languagePicked = langCode != null;
+                  _isLanguageLoaded = true;
+                  // Show language selection only if no language preference exists
+                  _isFirstTimeUser = langCode == null;
                   if (langCode != null) {
                     _locale = Locale(langCode);
+                  } else {
+                    _locale = const Locale('en'); // Default to English
                   }
                 });
 
@@ -158,7 +164,8 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
               // Handle any errors gracefully
               if (mounted) {
                 setState(() {
-                  _languagePicked = false;
+                  _isLanguageLoaded = true;
+                  _isFirstTimeUser = false;
                   _locale = const Locale('en');
                 });
               }
@@ -170,7 +177,8 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
       // Handle any errors gracefully
       if (mounted) {
         setState(() {
-          _languagePicked = false;
+          _isLanguageLoaded = true;
+          _isFirstTimeUser = false;
           _locale = const Locale('en');
         });
       }
@@ -180,10 +188,11 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
   Future<void> setLocale(String langCode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('preferred_language', langCode);
+    await prefs.setBool('has_completed_onboarding', true);
     if (mounted) {
       setState(() {
         _locale = Locale(langCode);
-        _languagePicked = true;
+        _isFirstTimeUser = false;
       });
     }
     // Set WeatherProvider language
@@ -249,24 +258,32 @@ class _HarvestHubAppState extends State<HarvestHubApp> {
         '/home': (context) => const MainScreen(),
         '/community': (context) => CommunityFeedPage(),
       },
-      home:
-          !_languagePicked
-              ? LanguageSelectionPage(
-                onLanguageSelected: (code) => setLocale(code),
-              )
-              : StreamBuilder<User?>(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (context, snapshot) {
-                  // Use a more efficient loading state to prevent frame drops
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const UltraMinimalStartupScreen();
-                  }
-                  if (!snapshot.hasData) {
-                    return const PhoneAuthPage();
-                  }
-                  return const MainScreen();
-                },
-              ),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // Use a more efficient loading state to prevent frame drops
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !_isLanguageLoaded) {
+            return const UltraMinimalStartupScreen();
+          }
+
+          // Check authentication first
+          if (!snapshot.hasData) {
+            // User is not authenticated, show phone auth
+            return const PhoneAuthPage();
+          }
+
+          // User is authenticated - check if they need language selection
+          if (_isFirstTimeUser) {
+            return LanguageSelectionPage(
+              onLanguageSelected: (code) => setLocale(code),
+            );
+          }
+
+          // User is authenticated and has completed onboarding
+          return const MainScreen();
+        },
+      ),
     );
   }
 }

@@ -62,6 +62,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     if (_selectedCode == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('preferred_language', _selectedCode!);
+    await prefs.setBool('has_completed_onboarding', true);
     Intl.defaultLocale = _selectedCode!;
     if (widget.onLanguageSelected != null) {
       widget.onLanguageSelected!(_selectedCode!);
