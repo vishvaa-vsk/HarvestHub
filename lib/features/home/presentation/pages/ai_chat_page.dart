@@ -20,6 +20,8 @@ class _AIChatPageState extends State<AIChatPage> {
   final List<Map<String, String>> _messages = [];
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocusNode =
+      FocusNode(); // Add focus node for keyboard optimization
   bool _isLoading = false;
   String _userAvatarUrl = '';
 
@@ -34,12 +36,38 @@ class _AIChatPageState extends State<AIChatPage> {
   // Performance optimization variables
   bool _isSessionLoaded = false;
   DateTime _lastSaveTime = DateTime.now();
-  bool _hasPendingSave = false; // Track if we have unsaved changes
-  @override
+  bool _hasPendingSave = false; // Track if we have unsaved changes  @override
   void initState() {
     super.initState();
     _initializeUserAvatar();
     _loadChatSession(); // Load previous session first
+
+    // Aggressive keyboard optimization for instant response
+    _inputFocusNode.addListener(() {
+      if (_inputFocusNode.hasFocus) {
+        // Force keyboard to show immediately when focused
+        SystemChannels.textInput.invokeMethod('TextInput.show');
+      }
+    });
+
+    // Optimize keyboard appearance for faster response
+    SystemChannels.textInput.invokeMethod(
+      'TextInput.setClientConfiguration',
+      <String, dynamic>{
+        'inputType': <String, dynamic>{
+          'name': 'TextInputType.multiline',
+          'signed': false,
+          'decimal': false,
+        },
+        'inputAction': 'TextInputAction.send',
+        'enableDeltaModel': false, // Disable delta model for faster input
+      },
+    );
+
+    // Pre-warm the text input service
+    Future.microtask(() {
+      SystemChannels.textInput.invokeMethod('TextInput.clearClient');
+    });
   }
 
   // Load chat session from SharedPreferences with error handling
@@ -219,16 +247,13 @@ Just ask me anything in your preferred language! 🌱''',
     await _saveChatSession();
 
     // Add user message to conversation history
-    _addToConversationHistory('user', userMessage);
-
-    // Auto-scroll to bottom when new message is added
+    _addToConversationHistory(
+      'user',
+      userMessage,
+    ); // Auto-scroll to bottom when new message is added - instant for better performance
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
 
@@ -316,16 +341,10 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
       _addToConversationHistory('model', responseText);
 
       // Save session after AI response
-      await _saveChatSession();
-
-      // Auto-scroll to bottom when AI responds
+      await _saveChatSession(); // Auto-scroll to bottom when AI responds - instant for better performance
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
         }
       });
     } catch (e) {
@@ -601,9 +620,9 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
               children: [
                 AnimatedDot(),
                 const SizedBox(width: 4),
-                AnimatedDot(delay: const Duration(milliseconds: 200)),
+                AnimatedDot(delay: const Duration(milliseconds: 100)),
                 const SizedBox(width: 4),
-                AnimatedDot(delay: const Duration(milliseconds: 400)),
+                AnimatedDot(delay: const Duration(milliseconds: 200)),
               ],
             ),
           ),
@@ -623,36 +642,75 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         child: Row(
           children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(color: Colors.grey.shade300, width: 1),
-                ),
-                child: TextField(
-                  controller: _controller,
-                  maxLines: null,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+              child: GestureDetector(
+                // Manual tap handling for instant keyboard response
+                onTap: () {
+                  // Force immediate focus and keyboard
+                  _inputFocusNode.requestFocus();
+                  // Trigger keyboard immediately
+                  SystemChannels.textInput.invokeMethod('TextInput.show');
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
-                  decoration: InputDecoration(
-                    hintText: loc.talkToHarvestBot,
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade500,
+                  child: TextField(
+                    controller: _controller,
+                    focusNode: _inputFocusNode,
+                    maxLines: null,
+                    textInputAction: TextInputAction.send,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    enableInteractiveSelection: true,
+                    autofocus: false,
+                    // Disable all animations and transitions
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    // Aggressive keyboard configuration
+                    onTap: () {
+                      // Double ensure keyboard shows immediately
+                      if (!_inputFocusNode.hasFocus) {
+                        _inputFocusNode.requestFocus();
+                        // Force show keyboard without delay
+                        Future.microtask(() {
+                          SystemChannels.textInput.invokeMethod(
+                            'TextInput.show',
+                          );
+                        });
+                      }
+                    },
+                    style: const TextStyle(
+                      color: Colors.black87,
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                     ),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 18.0,
-                      vertical: 12.0,
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        _sendMessage(value.trim());
+                        _controller.clear();
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: loc.talkToHarvestBot,
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      filled: false,
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 12.0,
+                      ),
                     ),
                   ),
                 ),
@@ -697,10 +755,13 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
         statusBarIconBrightness: Brightness.dark,
       ),
     );
-
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
+      resizeToAvoidBottomInset: true, // Enable proper keyboard handling
+      // Additional keyboard optimization
+      extendBody: false,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -835,6 +896,7 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
     if (_hasPendingSave) {
       _saveChatSession();
     }
+    _inputFocusNode.dispose();
     super.dispose();
   }
 }
@@ -852,17 +914,16 @@ class AnimatedDotState extends State<AnimatedDot>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 600), // Faster animation
       vsync: this,
     )..repeat(reverse: true);
 
     _animation = Tween<double>(
-      begin: 0.3,
+      begin: 0.4,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 

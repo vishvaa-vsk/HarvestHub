@@ -151,7 +151,7 @@ class _MainScreenState extends State<MainScreen>
         child: SafeArea(
           child: Container(
             height: 60, // Reduced height to prevent overflow
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -250,6 +250,7 @@ class _MainScreenState extends State<MainScreen>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
+                  softWrap: false, // Prevent text wrapping
                 ),
               ),
             ],
