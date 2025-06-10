@@ -506,4 +506,63 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get basedOnCurrentConditions => 'वर्तमान मौसम की स्थिति के आधार पर';
+
+  @override
+  String get personalInformation => 'व्यक्तिगत जानकारी';
+
+  @override
+  String get updateYourProfileDetails => 'अपने प्रोफ़ाइल विवरण अपडेट करें';
+
+  @override
+  String get fullName => 'पूरा नाम';
+
+  @override
+  String get enterYourFullName => 'अपना पूरा नाम दर्ज करें';
+
+  @override
+  String get emailAddress => 'ईमेल पता';
+
+  @override
+  String get enterYourEmailAddress => 'अपना ईमेल पता दर्ज करें';
+
+  @override
+  String get enterYourPhoneNumber => 'अपना फोन नंबर दर्ज करें';
+
+  @override
+  String get saveChanges => 'परिवर्तन सहेजें';
+
+  @override
+  String get changeProfilePicture => 'प्रोफ़ाइल चित्र बदलें';
+
+  @override
+  String get remove => 'हटाएं';
+
+  @override
+  String get profileUpdatedSuccessfully => 'आपकी प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई है।';
+
+  @override
+  String get mobileNumberUpdatedSuccessfully => 'आपका मोबाइल नंबर सफलतापूर्वक अपडेट हो गया है।';
+
+  @override
+  String get pleaseEnterVerificationCode => 'कृपया अपने फोन पर भेजे गए सत्यापन कोड को दर्ज करें';
+
+  @override
+  String get otpAutoFilledSuccessfully => 'OTP सफलतापूर्वक स्वत: भर गया!';
+
+  @override
+  String get otpWillBeFilledAutomatically => 'SMS प्राप्त होने पर OTP स्वचालित रूप से भर जाएगा';
+
+  @override
+  String get didntReceiveOTP => 'OTP नहीं मिला? ';
+
+  @override
+  String get resend => 'फिर से भेजें';
+
+  @override
+  String resendInSeconds(Object seconds) {
+    return '${seconds}s में फिर से भेजें';
+  }
+
+  @override
+  String get otpResentSuccessfully => 'OTP सफलतापूर्वक फिर से भेजा गया';
 }

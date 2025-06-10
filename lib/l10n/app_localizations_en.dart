@@ -506,4 +506,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get basedOnCurrentConditions => 'Based on current weather conditions';
+
+  @override
+  String get personalInformation => 'Personal Information';
+
+  @override
+  String get updateYourProfileDetails => 'Update your profile details';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get enterYourFullName => 'Enter your full name';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get enterYourEmailAddress => 'Enter your email address';
+
+  @override
+  String get enterYourPhoneNumber => 'Enter your phone number';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get changeProfilePicture => 'Change Profile Picture';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Your profile has been updated successfully.';
+
+  @override
+  String get mobileNumberUpdatedSuccessfully => 'Your mobile number has been updated successfully.';
+
+  @override
+  String get pleaseEnterVerificationCode => 'Please enter the verification code sent to your phone';
+
+  @override
+  String get otpAutoFilledSuccessfully => 'OTP auto-filled successfully!';
+
+  @override
+  String get otpWillBeFilledAutomatically => 'OTP will be filled automatically when SMS is received';
+
+  @override
+  String get didntReceiveOTP => 'Didn\'t receive OTP? ';
+
+  @override
+  String get resend => 'Resend';
+
+  @override
+  String resendInSeconds(Object seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get otpResentSuccessfully => 'OTP resent successfully';
 }

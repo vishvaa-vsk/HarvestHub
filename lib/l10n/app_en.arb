@@ -203,5 +203,29 @@
   "includeMultipleLeaves": "Include multiple leaves if possible",
   "gotIt": "Got it",
   "basedOn30DayForecast": "Based on 30-day weather forecast",
-  "basedOnCurrentConditions": "Based on current weather conditions"
+  "basedOnCurrentConditions": "Based on current weather conditions",
+  "personalInformation": "Personal Information",
+  "updateYourProfileDetails": "Update your profile details",
+  "fullName": "Full Name",
+  "enterYourFullName": "Enter your full name",
+  "emailAddress": "Email Address",
+  "enterYourEmailAddress": "Enter your email address",
+  "enterYourPhoneNumber": "Enter your phone number",
+  "saveChanges": "Save Changes",
+  "changeProfilePicture": "Change Profile Picture",
+  "remove": "Remove",
+  "profileUpdatedSuccessfully": "Your profile has been updated successfully.",
+  "mobileNumberUpdatedSuccessfully": "Your mobile number has been updated successfully.",
+  "pleaseEnterVerificationCode": "Please enter the verification code sent to your phone",
+  "otpAutoFilledSuccessfully": "OTP auto-filled successfully!",
+  "otpWillBeFilledAutomatically": "OTP will be filled automatically when SMS is received",
+  "didntReceiveOTP": "Didn't receive OTP? ",
+  "resend": "Resend",
+  "resendInSeconds": "Resend in {seconds}s",
+  "@resendInSeconds": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "otpResentSuccessfully": "OTP resent successfully"
 }

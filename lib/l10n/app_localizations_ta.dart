@@ -506,4 +506,63 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get basedOnCurrentConditions => 'தற்போதைய வானிலை நிலவரங்களின் அடிப்படையில்';
+
+  @override
+  String get personalInformation => 'தனிப்பட்ட தகவல்';
+
+  @override
+  String get updateYourProfileDetails => 'உங்கள் சுயவிவர விவரங்களை புதுப்பிக்கவும்';
+
+  @override
+  String get fullName => 'முழு பெயர்';
+
+  @override
+  String get enterYourFullName => 'உங்கள் முழு பெயரை உள்ளிடவும்';
+
+  @override
+  String get emailAddress => 'மின்னஞ்சல் முகவரி';
+
+  @override
+  String get enterYourEmailAddress => 'உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+
+  @override
+  String get enterYourPhoneNumber => 'உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்';
+
+  @override
+  String get saveChanges => 'மாற்றங்களை சேமிக்கவும்';
+
+  @override
+  String get changeProfilePicture => 'சுயவிவர படத்தை மாற்றவும்';
+
+  @override
+  String get remove => 'அகற்று';
+
+  @override
+  String get profileUpdatedSuccessfully => 'உங்கள் சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.';
+
+  @override
+  String get mobileNumberUpdatedSuccessfully => 'உங்கள் மொபைல் எண் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.';
+
+  @override
+  String get pleaseEnterVerificationCode => 'உங்கள் தொலைபேசிக்கு அனுப்பப்பட்ட சரிபார்ப்பு குறியீட்டை உள்ளிடவும்';
+
+  @override
+  String get otpAutoFilledSuccessfully => 'OTP வெற்றிகரமாக தானாகவே நிரப்பப்பட்டது!';
+
+  @override
+  String get otpWillBeFilledAutomatically => 'SMS பெறப்படும்போது OTP தானாகவே நிரப்பப்படும்';
+
+  @override
+  String get didntReceiveOTP => 'OTP கிடைக்கவில்லையா? ';
+
+  @override
+  String get resend => 'மீண்டும் அனுப்பு';
+
+  @override
+  String resendInSeconds(Object seconds) {
+    return '$secondsவி-யில் மீண்டும் அனுப்பு';
+  }
+
+  @override
+  String get otpResentSuccessfully => 'OTP வெற்றிகரமாக மீண்டும் அனுப்பப்பட்டது';
 }

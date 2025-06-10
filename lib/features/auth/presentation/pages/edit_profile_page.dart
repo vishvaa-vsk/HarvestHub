@@ -95,6 +95,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
     const maxRetries = 5;
     int retryCount = 0;
     final user = FirebaseAuth.instance.currentUser; // Get the current user
+    final loc = AppLocalizations.of(context)!;
 
     if (user == null) {
       return;
@@ -128,16 +129,10 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                   'name': _nameController.text,
                   'email': _emailController.text,
                   'phoneNumber': _phoneController.text,
-                });
-
-            // Show a confirmation message
+                }); // Show a confirmation message
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Your mobile number has been updated successfully.',
-                  ),
-                ),
+                SnackBar(content: Text(loc.mobileNumberUpdatedSuccessfully)),
               );
 
               Navigator.pop(context);
@@ -162,14 +157,10 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
             'name': _nameController.text,
             'email': _emailController.text,
             'phoneNumber': _phoneController.text,
-          });
-
-          // Show a confirmation message
+          }); // Show a confirmation message
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Your profile has been updated successfully.'),
-              ),
+              SnackBar(content: Text(loc.profileUpdatedSuccessfully)),
             );
 
             Navigator.pop(context);
@@ -264,7 +255,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Please enter the verification code sent to your phone',
+                        loc.pleaseEnterVerificationCode,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: screenWidth < 350 ? 13 : 14,
@@ -307,8 +298,8 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             Expanded(
                               child: Text(
                                 autoFillEnabledInDialog
-                                    ? 'OTP auto-filled successfully!'
-                                    : 'OTP will be filled automatically when SMS is received',
+                                    ? loc.otpAutoFilledSuccessfully
+                                    : loc.otpWillBeFilledAutomatically,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color:
@@ -373,7 +364,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Didn't receive OTP? ",
+                            loc.didntReceiveOTP,
                             style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: 14,
@@ -396,11 +387,10 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
 
                                 // Restart SMS listening
                                 await SmsAutoFill().listenForCode();
-
                                 if (mounted) {
                                   scaffoldMessenger.showSnackBar(
                                     SnackBar(
-                                      content: Text('OTP resent successfully'),
+                                      content: Text(loc.otpResentSuccessfully),
                                       backgroundColor: Colors.green,
                                       duration: Duration(seconds: 2),
                                     ),
@@ -408,7 +398,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                                 }
                               },
                               child: Text(
-                                'Resend',
+                                loc.resend,
                                 style: TextStyle(
                                   color: Colors.green.shade700,
                                   fontWeight: FontWeight.bold,
@@ -418,7 +408,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                             )
                           else
                             Text(
-                              'Resend in ${otpTimeLeftInDialog}s',
+                              loc.resendInSeconds(otpTimeLeftInDialog),
                               style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontSize: 14,
@@ -691,7 +681,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Personal Information',
+                                  loc.personalInformation,
                                   style: TextStyle(
                                     fontSize: screenWidth < 350 ? 18 : 20,
                                     fontWeight: FontWeight.w700,
@@ -701,7 +691,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Update your profile details',
+                                  loc.updateYourProfileDetails,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -714,13 +704,11 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                         ],
                       ),
 
-                      const SizedBox(height: 32),
-
-                      // Premium Form Fields
+                      const SizedBox(height: 32), // Premium Form Fields
                       _buildPremiumTextField(
                         controller: _nameController,
-                        label: 'Full Name',
-                        hint: 'Enter your full name',
+                        label: loc.fullName,
+                        hint: loc.enterYourFullName,
                         icon: Icons.person_outline,
                         textInputAction: TextInputAction.next,
                       ),
@@ -728,8 +716,8 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
 
                       _buildPremiumTextField(
                         controller: _emailController,
-                        label: 'Email Address',
-                        hint: 'Enter your email address',
+                        label: loc.emailAddress,
+                        hint: loc.enterYourEmailAddress,
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
@@ -738,8 +726,8 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
 
                       _buildPremiumTextField(
                         controller: _phoneController,
-                        label: 'Phone Number',
-                        hint: 'Enter your phone number',
+                        label: loc.phoneNumber,
+                        hint: loc.enterYourPhoneNumber,
                         icon: Icons.phone_outlined,
                         keyboardType: TextInputType.phone,
                         textInputAction: TextInputAction.done,
@@ -780,7 +768,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                           const Icon(Icons.save_outlined, size: 20),
                           const SizedBox(width: 8),
                           Text(
-                            'Save Changes',
+                            loc.saveChanges,
                             style: TextStyle(
                               fontSize: screenWidth < 350 ? 14 : 16,
                               fontWeight: FontWeight.w600,
@@ -809,7 +797,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        'Cancel',
+                        loc.cancel,
                         style: TextStyle(
                           fontSize: screenWidth < 350 ? 14 : 16,
                           fontWeight: FontWeight.w500,
@@ -934,6 +922,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
   // Show image picker options
   void _showImagePickerOptions() {
     final screenWidth = MediaQuery.of(context).size.width;
+    final loc = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -962,7 +951,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Change Profile Picture',
+                  loc.changeProfilePicture,
                   style: TextStyle(
                     fontSize: screenWidth < 350 ? 16 : 18,
                     fontWeight: FontWeight.w600,
@@ -976,7 +965,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                     Expanded(
                       child: _buildImageOption(
                         icon: Icons.camera_alt,
-                        label: 'Camera',
+                        label: loc.camera,
                         onTap: () {
                           Navigator.pop(context);
                           // Implement camera functionality
@@ -986,7 +975,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                     Expanded(
                       child: _buildImageOption(
                         icon: Icons.photo_library,
-                        label: 'Gallery',
+                        label: loc.gallery,
                         onTap: () {
                           Navigator.pop(context);
                           // Implement gallery functionality
@@ -996,7 +985,7 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                     Expanded(
                       child: _buildImageOption(
                         icon: Icons.delete,
-                        label: 'Remove',
+                        label: loc.remove,
                         onTap: () {
                           Navigator.pop(context);
                           // Implement remove functionality

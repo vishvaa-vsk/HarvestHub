@@ -186,5 +186,29 @@
   "noPestsDetected": "इस छवि में कोई कीट नहीं मिला",
   "cropsHealthyMessage": "आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।",
   "basedOn30DayForecast": "30-दिन के मौसम पूर्वानुमान के आधार पर",
-  "basedOnCurrentConditions": "वर्तमान मौसम की स्थिति के आधार पर"
+  "basedOnCurrentConditions": "वर्तमान मौसम की स्थिति के आधार पर",
+  "personalInformation": "व्यक्तिगत जानकारी",
+  "updateYourProfileDetails": "अपने प्रोफ़ाइल विवरण अपडेट करें",
+  "fullName": "पूरा नाम",
+  "enterYourFullName": "अपना पूरा नाम दर्ज करें",
+  "emailAddress": "ईमेल पता",
+  "enterYourEmailAddress": "अपना ईमेल पता दर्ज करें",
+  "enterYourPhoneNumber": "अपना फोन नंबर दर्ज करें",
+  "saveChanges": "परिवर्तन सहेजें",
+  "changeProfilePicture": "प्रोफ़ाइल चित्र बदलें",
+  "remove": "हटाएं",
+  "profileUpdatedSuccessfully": "आपकी प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई है।",
+  "mobileNumberUpdatedSuccessfully": "आपका मोबाइल नंबर सफलतापूर्वक अपडेट हो गया है।",
+  "pleaseEnterVerificationCode": "कृपया अपने फोन पर भेजे गए सत्यापन कोड को दर्ज करें",
+  "otpAutoFilledSuccessfully": "OTP सफलतापूर्वक स्वत: भर गया!",
+  "otpWillBeFilledAutomatically": "SMS प्राप्त होने पर OTP स्वचालित रूप से भर जाएगा",
+  "didntReceiveOTP": "OTP नहीं मिला? ",
+  "resend": "फिर से भेजें",
+  "resendInSeconds": "{seconds}s में फिर से भेजें",
+  "@resendInSeconds": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "otpResentSuccessfully": "OTP सफलतापूर्वक फिर से भेजा गया"
 }

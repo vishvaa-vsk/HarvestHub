@@ -209,5 +209,29 @@
   "includeMultipleLeaves": "వీలైతే అనేక ఆకులను చేర్చండి",
   "gotIt": "అర్థమైంది",
   "basedOn30DayForecast": "30-రోజుల వాతావరణ అంచనాల ఆధారంగా",
-  "basedOnCurrentConditions": "ప్రస్తుత వాతావరణ పరిస్థితుల ఆధారంగా"
+  "basedOnCurrentConditions": "ప్రస్తుత వాతావరణ పరిస్థితుల ఆధారంగా",
+  "personalInformation": "వ్యక్తిగత సమాచారం",
+  "updateYourProfileDetails": "మీ ప్రొఫైల్ వివరాలను అప్‌డేట్ చేయండి",
+  "fullName": "పూర్తి పేరు",
+  "enterYourFullName": "మీ పూర్తి పేరును నమోదు చేయండి",
+  "emailAddress": "ఇమెయిల్ చిరునామా",
+  "enterYourEmailAddress": "మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి",
+  "enterYourPhoneNumber": "మీ ఫోన్ నంబరును నమోదు చేయండి",
+  "saveChanges": "మార్పులను సేవ్ చేయండి",
+  "changeProfilePicture": "ప్రొఫైల్ చిత్రాన్ని మార్చండి",
+  "remove": "తొలగించు",
+  "profileUpdatedSuccessfully": "మీ ప్రొఫైల్ విజయవంతంగా అప్‌డేట్ చేయబడింది.",
+  "mobileNumberUpdatedSuccessfully": "మీ మొబైల్ నంబర్ విజయవంతంగా అప్‌డేట్ చేయబడింది.",
+  "pleaseEnterVerificationCode": "దయచేసి మీ ఫోన్‌కు పంపబడిన ధృవీకరణ కోడ్‌ను నమోదు చేయండి",
+  "otpAutoFilledSuccessfully": "OTP విజయవంతంగా స్వయంచాలకంగా నింపబడింది!",
+  "otpWillBeFilledAutomatically": "SMS అందినప్పుడు OTP స్వయంచాలకంగా నింపబడుతుంది",
+  "didntReceiveOTP": "OTP అందలేదా? ",
+  "resend": "మళ్లీ పంపు",
+  "resendInSeconds": "{seconds}సె. లో మళ్లీ పంపు",
+  "@resendInSeconds": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "otpResentSuccessfully": "OTP విజయవంతంగా మళ్లీ పంపబడింది"
 }

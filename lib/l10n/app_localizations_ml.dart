@@ -505,5 +505,64 @@ class AppLocalizationsMl extends AppLocalizations {
   String get basedOn30DayForecast => '30-ദിവസത്തെ കാലാവസ്ഥാ പ്രവചനത്തെ അടിസ്ഥാനമാക്കി';
 
   @override
-  String get basedOnCurrentConditions => 'വर्तमान കാലാവസ്ഥാ സാഹചര്യങ്ങളെ അടിസ്ഥാനമാക്കി';
+  String get basedOnCurrentConditions => 'വর्तमান കാലാവസ്ഥാ സാഹചര്യങ്ങളെ അടിസ്ഥാനമാക്കി';
+
+  @override
+  String get personalInformation => 'വ്യക്തിഗത വിവരങ്ങൾ';
+
+  @override
+  String get updateYourProfileDetails => 'നിങ്ങളുടെ പ്രൊഫൈൽ വിശദാംശങ്ങൾ അപ്‌ഡേറ്റ് ചെയ്യുക';
+
+  @override
+  String get fullName => 'പൂർണ്ണ നാമം';
+
+  @override
+  String get enterYourFullName => 'നിങ്ങളുടെ പൂർണ്ണ നാമം നൽകുക';
+
+  @override
+  String get emailAddress => 'ഇമെയിൽ വിലാസം';
+
+  @override
+  String get enterYourEmailAddress => 'നിങ്ങളുടെ ഇമെയിൽ വിലാസം നൽകുക';
+
+  @override
+  String get enterYourPhoneNumber => 'നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകുക';
+
+  @override
+  String get saveChanges => 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക';
+
+  @override
+  String get changeProfilePicture => 'പ്രൊഫൈൽ ചിത്രം മാറ്റുക';
+
+  @override
+  String get remove => 'നീക്കം ചെയ്യുക';
+
+  @override
+  String get profileUpdatedSuccessfully => 'നിങ്ങളുടെ പ്രൊഫൈൽ വിജയകരമായി അപ്‌ഡേറ്റ് ചെയ്തു.';
+
+  @override
+  String get mobileNumberUpdatedSuccessfully => 'നിങ്ങളുടെ മൊബൈൽ നമ്പർ വിജയകരമായി അപ്‌ഡേറ്റ് ചെയ്തു.';
+
+  @override
+  String get pleaseEnterVerificationCode => 'നിങ്ങളുടെ ഫോണിലേക്ക് അയച്ച സ്ഥിരീകരണ കോഡ് നൽകുക';
+
+  @override
+  String get otpAutoFilledSuccessfully => 'OTP വിജയകരമായി സ്വയം പൂരിപ്പിച്ചു!';
+
+  @override
+  String get otpWillBeFilledAutomatically => 'SMS ലഭിക്കുമ്പോൾ OTP സ്വയമേവ പൂരിപ്പിക്കും';
+
+  @override
+  String get didntReceiveOTP => 'OTP ലഭിച്ചില്ലേ? ';
+
+  @override
+  String get resend => 'വീണ്ടും അയക്കുക';
+
+  @override
+  String resendInSeconds(Object seconds) {
+    return '$secondsസെ. കഴിഞ്ഞ് വീണ്ടും അയക്കുക';
+  }
+
+  @override
+  String get otpResentSuccessfully => 'OTP വിജയകരമായി വീണ്ടും അയച്ചു';
 }

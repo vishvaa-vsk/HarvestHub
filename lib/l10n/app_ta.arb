@@ -209,5 +209,29 @@
   "includeMultipleLeaves": "முடிந்தால் பல இலைகளை சேர்க்கவும்",
   "gotIt": "புரிந்தது",
   "basedOn30DayForecast": "30-நாள் வானிலை முன்னறிவிப்பின் அடிப்படையில்",
-  "basedOnCurrentConditions": "தற்போதைய வானிலை நிலவரங்களின் அடிப்படையில்"
+  "basedOnCurrentConditions": "தற்போதைய வானிலை நிலவரங்களின் அடிப்படையில்",
+  "personalInformation": "தனிப்பட்ட தகவல்",
+  "updateYourProfileDetails": "உங்கள் சுயவிவர விவரங்களை புதுப்பிக்கவும்",
+  "fullName": "முழு பெயர்",
+  "enterYourFullName": "உங்கள் முழு பெயரை உள்ளிடவும்",
+  "emailAddress": "மின்னஞ்சல் முகவரி",
+  "enterYourEmailAddress": "உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்",
+  "enterYourPhoneNumber": "உங்கள் தொலைபேசி எண்ணை உள்ளிடவும்",
+  "saveChanges": "மாற்றங்களை சேமிக்கவும்",
+  "changeProfilePicture": "சுயவிவர படத்தை மாற்றவும்",
+  "remove": "அகற்று",
+  "profileUpdatedSuccessfully": "உங்கள் சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
+  "mobileNumberUpdatedSuccessfully": "உங்கள் மொபைல் எண் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
+  "pleaseEnterVerificationCode": "உங்கள் தொலைபேசிக்கு அனுப்பப்பட்ட சரிபார்ப்பு குறியீட்டை உள்ளிடவும்",
+  "otpAutoFilledSuccessfully": "OTP வெற்றிகரமாக தானாகவே நிரப்பப்பட்டது!",
+  "otpWillBeFilledAutomatically": "SMS பெறப்படும்போது OTP தானாகவே நிரப்பப்படும்",
+  "didntReceiveOTP": "OTP கிடைக்கவில்லையா? ",
+  "resend": "மீண்டும் அனுப்பு",
+  "resendInSeconds": "{seconds}வி-யில் மீண்டும் அனுப்பு",
+  "@resendInSeconds": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "otpResentSuccessfully": "OTP வெற்றிகரமாக மீண்டும் அனுப்பப்பட்டது"
 }

@@ -1066,6 +1066,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Based on current weather conditions'**
   String get basedOnCurrentConditions;
+
+  /// No description provided for @personalInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInformation;
+
+  /// No description provided for @updateYourProfileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your profile details'**
+  String get updateYourProfileDetails;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @enterYourFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get enterYourFullName;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @enterYourEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
+  String get enterYourEmailAddress;
+
+  /// No description provided for @enterYourPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get enterYourPhoneNumber;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @changeProfilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile Picture'**
+  String get changeProfilePicture;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile has been updated successfully.'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @mobileNumberUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mobile number has been updated successfully.'**
+  String get mobileNumberUpdatedSuccessfully;
+
+  /// No description provided for @pleaseEnterVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code sent to your phone'**
+  String get pleaseEnterVerificationCode;
+
+  /// No description provided for @otpAutoFilledSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP auto-filled successfully!'**
+  String get otpAutoFilledSuccessfully;
+
+  /// No description provided for @otpWillBeFilledAutomatically.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP will be filled automatically when SMS is received'**
+  String get otpWillBeFilledAutomatically;
+
+  /// No description provided for @didntReceiveOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive OTP? '**
+  String get didntReceiveOTP;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// No description provided for @resendInSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendInSeconds(Object seconds);
+
+  /// No description provided for @otpResentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP resent successfully'**
+  String get otpResentSuccessfully;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
