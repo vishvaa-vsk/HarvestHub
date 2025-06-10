@@ -150,8 +150,8 @@ class _MainScreenState extends State<MainScreen>
         ),
         child: SafeArea(
           child: Container(
-            height: 60, // Reduced height to prevent overflow
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            height: 66, // Increased height to accommodate larger icons and text
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -215,10 +215,10 @@ class _MainScreenState extends State<MainScreen>
         child: Container(
           width: double.infinity,
           constraints: const BoxConstraints(
-            minHeight: 50,
-            maxHeight: 52, // Constrain height to prevent overflow
+            minHeight: 54,
+            maxHeight: 58, // Increased height constraint for larger content
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -231,21 +231,25 @@ class _MainScreenState extends State<MainScreen>
                         ? AppConstants.primaryGreen
                         : const Color(0xFF9E9E9E),
                 size:
-                    isSelected ? 22 : 20, // Subtle size change instead of scale
+                    isSelected
+                        ? 26
+                        : 24, // Increased icon sizes for better visibility
               ),
-              const SizedBox(height: 2), // Reduced spacing
+              const SizedBox(
+                height: 3,
+              ), // Slightly more spacing for better readability
               // Optimize text rendering with height constraint
               Flexible(
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 9, // Reduced font size for better fit
+                    fontSize: 11, // Increased font size for better readability
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color:
                         isSelected
                             ? AppConstants.primaryGreen
                             : const Color(0xFF9E9E9E),
-                    height: 1.0, // Tight line height
+                    height: 1.1, // Slightly more relaxed line height
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
