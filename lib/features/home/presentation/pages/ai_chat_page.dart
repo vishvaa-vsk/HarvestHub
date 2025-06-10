@@ -789,21 +789,26 @@ Remember: You're helping real farmers improve their livelihoods. Be practical, e
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppConstants.primaryGreen,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.eco, color: Colors.white, size: 22),
+              child: const Icon(Icons.eco, color: Colors.white, size: 18),
             ),
-            const SizedBox(width: 12),
-            Text(
-              loc.harvestBot,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-                letterSpacing: -0.5,
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                loc.harvestBot,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  letterSpacing: -0.2,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
             ),
           ],
