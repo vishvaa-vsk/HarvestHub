@@ -143,17 +143,16 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
-
-                // Calendar section (matching old UI exactly)
+                const SizedBox(
+                  height: 16,
+                ), // Calendar section (matching old UI exactly)
                 _buildOldStyleCalendar(context, forecastData, loc),
 
-                const SizedBox(height: 24),
-
+                const SizedBox(height: 16), // Reduced from 24 to 16
                 // Recommended Crop Section (enhanced design)
                 _buildRecommendedCropSection(context, loc, weatherProvider),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16), // Reduced from 20 to 16
               ],
             ),
           );
@@ -215,7 +214,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
         children: [
           // Month navigation header (like old design)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -258,11 +257,9 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                 ),
               ],
             ),
-          ),
-
-          // Day headers (simple like old design)
+          ), // Day headers (simple like old design)
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 1),
             child: Row(
               children: [
                 _buildDayHeader(loc.sunday),
@@ -275,11 +272,10 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
               ],
             ),
           ),
-
           // Calendar grid (exactly like old design)
           _buildCalendarGrid(forecastData),
 
-          const SizedBox(height: 8),
+          // Remove excess space for better layout
         ],
       ),
     );
@@ -288,7 +284,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   Widget _buildDayHeader(String day) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 2),
         child: Text(
           day,
           textAlign: TextAlign.center,
@@ -310,17 +306,19 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
     final weeks = <Widget>[];
     final today = DateTime.now();
-    int lastDayNumber = 0;
 
-    for (int week = 0; week < 6; week++) {
+    // Calculate the minimum number of weeks needed
+    final totalCells = firstWeekday + daysInMonth;
+    final weeksNeeded = (totalCells / 7).ceil();
+
+    for (int week = 0; week < weeksNeeded; week++) {
       final days = <Widget>[];
 
       for (int day = 0; day < 7; day++) {
         final dayNumber = week * 7 + day - firstWeekday + 1;
-        lastDayNumber = dayNumber;
-
         if (dayNumber < 1 || dayNumber > daysInMonth) {
-          days.add(const SizedBox(height: 65)); // Fixed height like old design
+          // Empty cell for days outside current month
+          days.add(const Expanded(child: SizedBox(height: 60)));
         } else {
           final date = DateTime(
             currentMonth.year,
@@ -328,12 +326,11 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
             dayNumber,
           );
           final weatherData = _getWeatherForDate(forecastData, date);
-          days.add(_buildOldStyleDayCell(dayNumber, date, weatherData, today));
+          days.add(_buildCalendarDayCell(date, weatherData, today));
         }
       }
 
       weeks.add(Row(children: days));
-      if (weeks.length >= 5 && lastDayNumber >= daysInMonth) break;
     }
 
     return Column(children: weeks);
@@ -353,8 +350,7 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
     }
   }
 
-  Widget _buildOldStyleDayCell(
-    int dayNumber,
+  Widget _buildCalendarDayCell(
     DateTime date,
     Map<String, dynamic>? weatherData,
     DateTime today,
@@ -365,49 +361,48 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
         date.month == today.month &&
         date.day == today.day;
 
-    // Check if date is in the past (before today) or beyond 30 days from today
+    // Check if date is in the past or future for weather data availability
     final now = DateTime.now();
     final todayDateOnly = DateTime(now.year, now.month, now.day);
-    final thirtyDaysFromToday = todayDateOnly.add(
-      const Duration(days: 29),
-    ); // 30 days total including today
+    final thirtyDaysFromToday = todayDateOnly.add(const Duration(days: 29));
     final dateOnly = DateTime(date.year, date.month, date.day);
 
     final isPast = dateOnly.isBefore(todayDateOnly);
-    final isBeyond30Days = dateOnly.isAfter(thirtyDaysFromToday);
-    final isWithin30Days = !isPast && !isBeyond30Days;
-
+    final isWithin30Days = !isPast && !dateOnly.isAfter(thirtyDaysFromToday);
+    final isCurrentMonth =
+        date.month == currentMonth.month && date.year == currentMonth.year;
     Color backgroundColor = Colors.white;
     Color borderColor = Colors.transparent;
     Color textColor = Colors.black87;
 
-    // If date is in past, make it grey
-    if (isPast) {
+    // Color coding based on weather data availability
+    if (!isCurrentMonth) {
+      // Dates outside current month
       backgroundColor = AppConstants.lightGray;
-      textColor = Colors.grey.shade400;
-    } else if (isBeyond30Days) {
-      // Dates beyond 30 days - show them as inactive
-      backgroundColor = AppConstants.offWhite;
       textColor = Colors.grey.shade300;
-    } else if (isWithin30Days) {
-      // Color coding for dates within 30-day forecast period
-      if (hasWeather && weatherData['rainChance'] != null) {
-        final rainChance = weatherData['rainChance'] as int;
-        if (rainChance >= 80) {
-          backgroundColor = AppConstants.lightBlue; // Light blue for 80%+
-        } else if (rainChance >= 60) {
-          backgroundColor = AppConstants.lightGreenBg; // Light green for 60-79%
-        } else if (rainChance > 0) {
-          backgroundColor = const Color(
-            0xFFFFF3E0,
-          ); // Light orange for any rain
-        } else {
-          backgroundColor = Colors.white; // White for 0%
-        }
+    } else if (!hasWeather || !isWithin30Days) {
+      // Past dates OR future dates without weather data (not in 30-day forecast) - grey them out
+      backgroundColor = Colors.grey.shade100;
+      textColor = Colors.grey.shade400;
+    } else if (hasWeather &&
+        isWithin30Days &&
+        weatherData['rainChance'] != null) {
+      // Dates with weather data (part of 30-day forecast) - color by rain chance
+      final rainChance = weatherData['rainChance'] as int;
+      if (rainChance >= 80) {
+        backgroundColor =
+            AppConstants.lightBlue; // Light blue for high rain chance
+      } else if (rainChance >= 60) {
+        backgroundColor =
+            AppConstants.lightGreenBg; // Light green for medium rain
+      } else if (rainChance > 0) {
+        backgroundColor = const Color(0xFFFFF3E0); // Light orange for low rain
+      } else {
+        backgroundColor = Colors.white; // White for no rain
       }
     }
 
-    // Today's highlight (green border for current date)
+    // Today's highlight
     if (isToday) {
       borderColor = AppConstants.materialGreen;
       textColor = AppConstants.materialGreen;
@@ -415,59 +410,96 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
 
     return Expanded(
       child: Container(
-        height: 65, // Fixed height like old design
-        margin: const EdgeInsets.all(0.5),
+        height: 60,
+        margin: const EdgeInsets.all(1),
         decoration: BoxDecoration(
           color: backgroundColor,
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: isToday ? borderColor : Colors.grey.shade300,
+            color: isToday ? borderColor : Colors.grey.shade200,
             width: isToday ? 2.0 : 0.5,
           ),
+          boxShadow:
+              isToday
+                  ? [
+                    BoxShadow(
+                      color: AppConstants.materialGreen.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(2),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Day number
               Text(
-                dayNumber.toString(),
+                date.day.toString(),
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: textColor,
+                  height: 1.0,
                 ),
-              ), // Temperature (show for dates within 30-day forecast period with weather data)
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+
+              // Temperature (show for dates with weather data)
               if (isWithin30Days &&
                   hasWeather &&
                   weatherData['temperature'] != null)
                 Text(
-                  '${(weatherData['temperature']['max'] ?? weatherData['temperature']['min'] ?? 0).toStringAsFixed(1)}°C',
+                  '${(weatherData['temperature']['max'] ?? weatherData['temperature']['min'] ?? 0).toStringAsFixed(0)}°',
                   style: const TextStyle(
-                    fontSize: 11,
+                    fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
+                    height: 1.0,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 )
               else
-                const SizedBox(height: 13), // Maintain spacing
-              // Rain percentage (show for dates within 30-day forecast period with weather data)
+                const SizedBox(height: 9),
+
+              // Rain percentage (show for dates with weather data)
               if (isWithin30Days &&
                   hasWeather &&
                   weatherData['rainChance'] != null)
-                Text(
-                  '${weatherData['rainChance']}%',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 1,
+                    vertical: 0.5,
+                  ),
+                  decoration: BoxDecoration(
                     color:
                         weatherData['rainChance'] > 0
-                            ? const Color(0xFF2196F3) // Blue for rain
-                            : Colors.black54, // Gray for no rain
+                            ? const Color(0xFF2196F3).withValues(alpha: 0.1)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: Text(
+                    '${weatherData['rainChance']}%',
+                    style: TextStyle(
+                      fontSize: 7,
+                      fontWeight: FontWeight.w500,
+                      color:
+                          weatherData['rainChance'] > 0
+                              ? const Color(0xFF2196F3)
+                              : Colors.black54,
+                      height: 1.0,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 )
               else
-                const SizedBox(height: 12), // Maintain spacing
+                const SizedBox(height: 7),
             ],
           ),
         ),
@@ -534,27 +566,6 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                     ),
                   ],
                 ),
-              ),
-              // Add refresh button
-              IconButton(
-                onPressed:
-                    _isLoadingRecommendation
-                        ? null
-                        : () {
-                          setState(() {
-                            _cachedRecommendation = null;
-                          });
-                          _loadCropRecommendation();
-                        },
-                icon: Icon(
-                  Icons.refresh,
-                  color:
-                      _isLoadingRecommendation
-                          ? Colors.grey
-                          : AppConstants.primaryGreen,
-                  size: 20,
-                ),
-                tooltip: 'Refresh recommendation',
               ),
             ],
           ),

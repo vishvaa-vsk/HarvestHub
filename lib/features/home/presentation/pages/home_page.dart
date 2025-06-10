@@ -153,31 +153,39 @@ class _MainScreenState extends State<MainScreen>
             height: 60, // Reduced height to prevent overflow
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildOptimizedNavItem(
-                  icon: Icons.home_filled,
-                  label: localizations.home,
-                  index: 0,
-                  isSelected: _currentIndex == 0,
+                Expanded(
+                  child: _buildOptimizedNavItem(
+                    icon: Icons.home_filled,
+                    label: localizations.home,
+                    index: 0,
+                    isSelected: _currentIndex == 0,
+                  ),
                 ),
-                _buildOptimizedNavItem(
-                  icon: Icons.smart_toy_rounded,
-                  label: localizations.harvestBot,
-                  index: 1,
-                  isSelected: false, // Never selected since it navigates away
+                Expanded(
+                  child: _buildOptimizedNavItem(
+                    icon: Icons.smart_toy_rounded,
+                    label: localizations.harvestBot,
+                    index: 1,
+                    isSelected: false, // Never selected since it navigates away
+                  ),
                 ),
-                _buildOptimizedNavItem(
-                  icon: Icons.pest_control_rounded,
-                  label: localizations.pestDetection,
-                  index: 2,
-                  isSelected: _currentIndex == 1, // Adjusted index
+                Expanded(
+                  child: _buildOptimizedNavItem(
+                    icon: Icons.pest_control_rounded,
+                    label: localizations.pestDetection,
+                    index: 2,
+                    isSelected: _currentIndex == 1, // Adjusted index
+                  ),
                 ),
-                _buildOptimizedNavItem(
-                  icon: Icons.people_alt_rounded,
-                  label: localizations.community,
-                  index: 3,
-                  isSelected: _currentIndex == 2, // Adjusted index
+                Expanded(
+                  child: _buildOptimizedNavItem(
+                    icon: Icons.people_alt_rounded,
+                    label: localizations.community,
+                    index: 3,
+                    isSelected: _currentIndex == 2, // Adjusted index
+                  ),
                 ),
               ],
             ),
@@ -205,12 +213,12 @@ class _MainScreenState extends State<MainScreen>
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
+          width: double.infinity,
           constraints: const BoxConstraints(
-            minWidth: 60,
             minHeight: 50,
             maxHeight: 52, // Constrain height to prevent overflow
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -231,7 +239,7 @@ class _MainScreenState extends State<MainScreen>
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 10, // Slightly smaller font
+                    fontSize: 9, // Reduced font size for better fit
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color:
                         isSelected
