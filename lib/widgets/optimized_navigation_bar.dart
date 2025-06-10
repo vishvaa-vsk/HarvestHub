@@ -14,12 +14,10 @@ class OptimizedNavigationBar extends StatelessWidget {
     required this.onTap,
     required this.items,
   });
-
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Container(
-        height: 70,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -36,22 +34,24 @@ class OptimizedNavigationBar extends StatelessWidget {
           ],
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Container(
+            height: 60, // Reduced height to prevent overflow
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: items.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                return _OptimizedNavItem(
-                  key: ValueKey('nav_item_$index'),
-                  icon: item.icon,
-                  label: item.label,
-                  index: index,
-                  isSelected: currentIndex == item.targetIndex,
-                  onTap: onTap,
-                );
-              }).toList(),
+              children:
+                  items.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final item = entry.value;
+                    return _OptimizedNavItem(
+                      key: ValueKey('nav_item_$index'),
+                      icon: item.icon,
+                      label: item.label,
+                      index: index,
+                      isSelected: currentIndex == item.targetIndex,
+                      onTap: onTap,
+                    );
+                  }).toList(),
             ),
           ),
         ),
@@ -87,7 +87,6 @@ class _OptimizedNavItem extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
   });
-
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
@@ -95,38 +94,51 @@ class _OptimizedNavItem extends StatelessWidget {
         onTap: () {
           // Use navigation utility throttling for better performance
           if (NavigationUtils.canNavigate(
-              throttleDuration: const Duration(milliseconds: 200))) {
+            throttleDuration: const Duration(milliseconds: 200),
+          )) {
             onTap(index);
           }
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          constraints: const BoxConstraints(
+            minWidth: 60,
+            minHeight: 50,
+            maxHeight: 52, // Constrain height to prevent overflow
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Use simple Icon instead of animated containers for better performance
+              // Remove scale transformation to prevent overflow
               Icon(
                 icon,
-                color: isSelected
-                    ? AppConstants.primaryGreen
-                    : const Color(0xFF9E9E9E),
-                size: 24,
+                color:
+                    isSelected
+                        ? AppConstants.primaryGreen
+                        : const Color(0xFF9E9E9E),
+                size:
+                    isSelected ? 22 : 20, // Subtle size change instead of scale
               ),
-              const SizedBox(height: 4),
-              // Optimize text rendering
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected
-                      ? AppConstants.primaryGreen
-                      : const Color(0xFF9E9E9E),
+              const SizedBox(height: 2), // Reduced spacing
+              // Optimize text rendering with height constraint
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10, // Slightly smaller font
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color:
+                        isSelected
+                            ? AppConstants.primaryGreen
+                            : const Color(0xFF9E9E9E),
+                    height: 1.0, // Tight line height
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

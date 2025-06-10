@@ -133,7 +133,6 @@ class _MainScreenState extends State<MainScreen>
   Widget _buildOptimizedBottomNavigationBar(AppLocalizations localizations) {
     return RepaintBoundary(
       child: Container(
-        height: 70,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -150,8 +149,9 @@ class _MainScreenState extends State<MainScreen>
           ],
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Container(
+            height: 60, // Reduced height to prevent overflow
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -205,37 +205,44 @@ class _MainScreenState extends State<MainScreen>
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          constraints: const BoxConstraints(
+            minWidth: 60,
+            minHeight: 50,
+            maxHeight: 52, // Constrain height to prevent overflow
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Use Transform instead of AnimatedContainer for better performance
-              Transform.scale(
-                scale: isSelected ? 1.1 : 1.0,
-                child: Icon(
-                  icon,
-                  color:
-                      isSelected
-                          ? AppConstants.primaryGreen
-                          : const Color(0xFF9E9E9E),
-                  size: 24,
-                ),
+              // Remove Transform.scale to prevent overflow, use size change instead
+              Icon(
+                icon,
+                color:
+                    isSelected
+                        ? AppConstants.primaryGreen
+                        : const Color(0xFF9E9E9E),
+                size:
+                    isSelected ? 22 : 20, // Subtle size change instead of scale
               ),
-              const SizedBox(height: 4),
-              // Optimize text animation
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color:
-                      isSelected
-                          ? AppConstants.primaryGreen
-                          : const Color(0xFF9E9E9E),
+              const SizedBox(height: 2), // Reduced spacing
+              // Optimize text rendering with height constraint
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10, // Slightly smaller font
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color:
+                        isSelected
+                            ? AppConstants.primaryGreen
+                            : const Color(0xFF9E9E9E),
+                    height: 1.0, // Tight line height
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
