@@ -1,5 +1,5 @@
 name: harvesthub
-description: "A new Flutter project."
+description: "HarvestHub is a comprehensive agricultural application designed to empower farmers with modern technology. It provides weather insights, AI-powered farming recommendations, pest detection capabilities, and a community platform for knowledge sharing."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev

@@ -32,11 +32,12 @@ class _AIChatPageState extends State<AIChatPage> {
   static const String _chatSessionKey = 'harvesthub_chat_session';
   static const int _maxMessagesInSession = 50; // Limit for low-end devices
   static const int _saveThrottleMs = 1000; // Throttle save operations
-
   // Performance optimization variables
   bool _isSessionLoaded = false;
   DateTime _lastSaveTime = DateTime.now();
-  bool _hasPendingSave = false; // Track if we have unsaved changes  @override
+  bool _hasPendingSave = false; // Track if we have unsaved changes
+
+  @override
   void initState() {
     super.initState();
     _initializeUserAvatar();

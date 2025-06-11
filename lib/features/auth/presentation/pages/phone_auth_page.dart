@@ -296,9 +296,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
       if (userCredential.user != null) {
         await _storeUserData(userCredential.user!.phoneNumber!);
         if (mounted) {
-          await _onOtpVerified(
-            context,
-          ); // Call the function to set preferred language
+          await _onOtpVerified(); // Call the function to set preferred language
         }
       } else {
         if (mounted) {
@@ -319,25 +317,23 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> with CodeAutoFill {
     }
   }
 
-  Future<void> _onOtpVerified(BuildContext context) async {
+  Future<void> _onOtpVerified() async {
     // Check if user needs to select language (first time user)
     final prefs = await SharedPreferences.getInstance();
     final hasSelectedLanguage = prefs.getString('preferred_language') != null;
 
-    if (mounted) {
-      if (!hasSelectedLanguage) {
-        // First time user or no language selected - show language selection
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LanguageSelectionPage(),
-          ),
-        );
-      } else {
-        // Returning user with language already selected - go directly to home
-        // The StreamBuilder in main.dart will handle the navigation automatically
-        // No need to explicitly navigate here
-      }
+    if (!mounted) return;
+
+    if (!hasSelectedLanguage) {
+      // First time user or no language selected - show language selection
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LanguageSelectionPage()),
+      );
+    } else {
+      // Returning user with language already selected - go directly to home
+      // The StreamBuilder in main.dart will handle the navigation automatically
+      // No need to explicitly navigate here
     }
   }
 

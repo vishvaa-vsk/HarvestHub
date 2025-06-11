@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
 import '../models/post.dart';
 import '../services/firebase_service.dart';
@@ -21,7 +20,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage>
   final FirebaseService _firebaseService = FirebaseService();
   final ScrollController _scrollController = ScrollController();
   bool _showFab = true;
-  
+
   // Performance optimization: throttle scroll events
   late final Throttler _scrollThrottler;
 
@@ -36,7 +35,7 @@ class _CommunityFeedPageState extends State<CommunityFeedPage>
     super.initState();
     _scrollThrottler = Throttler(milliseconds: 100);
     _scrollController.addListener(_scrollListener);
-    
+
     // Initialize stream only once
     _postsStream = _firebaseService.getCommunityPosts();
   }
@@ -61,10 +60,11 @@ class _CommunityFeedPageState extends State<CommunityFeedPage>
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: StreamBuilder<List<Post>>(
@@ -289,7 +289,8 @@ class _CommunityFeedPageState extends State<CommunityFeedPage>
                     ),
                   ),
                 )
-              else                SliverList(
+              else
+                SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final posts = snapshot.data!;
@@ -302,12 +303,15 @@ class _CommunityFeedPageState extends State<CommunityFeedPage>
                           name: 'PostCard_$index',
                           child: PostCard(
                             post: posts[index],
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PostDetailPage(post: posts[index]),
-                              ),
-                            ),
+                            onTap:
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) =>
+                                            PostDetailPage(post: posts[index]),
+                                  ),
+                                ),
                           ),
                         ),
                       );

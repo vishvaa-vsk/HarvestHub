@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter/foundation.dart';
 
 /// Service class for handling pest detection API calls
 class PestDetectionService {
@@ -18,15 +18,19 @@ class PestDetectionService {
           800 * 1024; // 800KB threshold (reduced for faster processing)
 
       if (fileSizeBytes <= maxSizeBytes) {
-        print(
-          '📱 Image size: ${(fileSizeBytes / 1024).toStringAsFixed(1)}KB - Skipping compression',
-        );
+        if (kDebugMode) {
+          debugPrint(
+            '📱 Image size: ${(fileSizeBytes / 1024).toStringAsFixed(1)}KB - Skipping compression',
+          );
+        }
         return await imageFile.readAsBytes();
       }
 
-      print(
-        '📱 Image size: ${(fileSizeBytes / 1024 / 1024).toStringAsFixed(1)}MB - Compressing...',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          '📱 Image size: ${(fileSizeBytes / 1024 / 1024).toStringAsFixed(1)}MB - Compressing...',
+        );
+      }
 
       // Use adaptive compression based on file size
       int quality = 70;
@@ -52,16 +56,24 @@ class PestDetectionService {
       );
 
       compressionStopwatch.stop();
-      print(
-        '⚡ Compression completed in ${compressionStopwatch.elapsedMilliseconds}ms',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          '⚡ Compression completed in ${compressionStopwatch.elapsedMilliseconds}ms',
+        );
+      }
 
       final result = compressedBytes ?? await imageFile.readAsBytes();
-      print('📦 Final size: ${(result.length / 1024).toStringAsFixed(1)}KB');
+      if (kDebugMode) {
+        debugPrint(
+          '📦 Final size: ${(result.length / 1024).toStringAsFixed(1)}KB',
+        );
+      }
 
       return result;
     } catch (e) {
-      print('❌ Compression failed: $e - Using original file');
+      if (kDebugMode) {
+        debugPrint('❌ Compression failed: $e - Using original file');
+      }
       // Return original file bytes if compression fails
       return await imageFile.readAsBytes();
     }
@@ -83,7 +95,9 @@ class PestDetectionService {
       // Compress to bytes (faster than file compression)
       final imageBytes = await _compressImageToBytes(imageFile);
 
-      print('🌐 Preparing API request...');
+      if (kDebugMode) {
+        debugPrint('🌐 Preparing API request...');
+      }
       final networkStopwatch = Stopwatch()..start();
 
       // Create multipart request
@@ -104,7 +118,9 @@ class PestDetectionService {
         'Accept': 'application/json',
       });
 
-      print('📡 Sending request to API...');
+      if (kDebugMode) {
+        debugPrint('📡 Sending request to API...');
+      }
 
       // Send request
       final streamedResponse = await request.send();
@@ -113,10 +129,14 @@ class PestDetectionService {
       networkStopwatch.stop();
       totalStopwatch.stop();
 
-      print('🔗 Network time: ${networkStopwatch.elapsedMilliseconds}ms');
-      print(
-        '⏱️ Total processing time: ${totalStopwatch.elapsedMilliseconds}ms',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          '🔗 Network time: ${networkStopwatch.elapsedMilliseconds}ms',
+        );
+        debugPrint(
+          '⏱️ Total processing time: ${totalStopwatch.elapsedMilliseconds}ms',
+        );
+      }
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

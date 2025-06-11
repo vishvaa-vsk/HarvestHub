@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../l10n/app_localizations.dart';
@@ -42,11 +43,12 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
 
     try {
       final stopwatch = Stopwatch()..start();
-
       // Get current language code from localization
       final languageCode = AppLocalizations.of(context)!.localeName;
 
-      print('🔍 Starting pest detection...');
+      if (kDebugMode) {
+        debugPrint('🔍 Starting pest detection...');
+      }
 
       // Call the pest detection API
       final apiResponse = await PestDetectionService.predictPest(
@@ -54,7 +56,11 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
         languageCode: languageCode,
       );
 
-      print('✅ API response received in ${stopwatch.elapsedMilliseconds}ms');
+      if (kDebugMode) {
+        debugPrint(
+          '✅ API response received in ${stopwatch.elapsedMilliseconds}ms',
+        );
+      }
 
       // Format the response for display
       final formattedResult = PestDetectionService.formatPredictionResponse(
@@ -62,7 +68,11 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
       );
 
       stopwatch.stop();
-      print('🎯 Total detection time: ${stopwatch.elapsedMilliseconds}ms');
+      if (kDebugMode) {
+        debugPrint(
+          '🎯 Total detection time: ${stopwatch.elapsedMilliseconds}ms',
+        );
+      }
 
       setState(() {
         _scanning = false;
