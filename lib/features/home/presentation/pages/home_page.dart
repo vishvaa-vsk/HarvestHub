@@ -856,6 +856,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
+                    // PERFORMANCE: Preload some forecast data before navigation
+                    final weatherProvider = Provider.of<WeatherProvider>(
+                      context,
+                      listen: false,
+                    );
+
+                    // Start preloading 3-day forecast immediately for faster extended forecast page
+                    if (weatherProvider.futureWeather == null ||
+                        weatherProvider.futureWeather!.isEmpty) {
+                      weatherProvider.fetchExtendedForecast('auto', 3);
+                    }
+
+                    // Navigate to extended forecast page
                     Navigator.push(
                       context,
                       MaterialPageRoute(

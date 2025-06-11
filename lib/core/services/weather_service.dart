@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 import 'google_translate_api.dart';
 
 /// A service class for interacting with the Weather API.
@@ -13,6 +14,11 @@ class WeatherService {
   static const String _weatherApiBaseUrl = 'https://api.weatherapi.com/v1';
   final String? _weatherApiKey = dotenv.env['WEATHER_API_KEY'];
   final String? _googleTranslateApiKey = dotenv.env['GOOGLE_TRANSLATE_API_KEY'];
+
+  // Performance cache for repeated requests
+  static final Map<String, Map<String, dynamic>> _forecastCache = {};
+  static final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheExpiry = Duration(minutes: 15); // 15 minute cache
 
   // Helper to map locale to supported weatherapi lang
   String _getWeatherApiLang(String langCode) {
@@ -235,6 +241,17 @@ class WeatherService {
     int days,
   ) async {
     try {
+      // Check cache first for performance
+      final cacheKey = '${location}_$days';
+      if (_forecastCache.containsKey(cacheKey) &&
+          _cacheTimestamps.containsKey(cacheKey)) {
+        final cacheTime = _cacheTimestamps[cacheKey]!;
+        if (DateTime.now().difference(cacheTime) < _cacheExpiry) {
+          final cachedData = _forecastCache[cacheKey]!;
+          return List<Map<String, dynamic>>.from(cachedData['data']);
+        }
+      }
+
       // Get current location if "auto" is passed
       String locationQuery =
           location.toLowerCase() == "auto"
@@ -244,58 +261,101 @@ class WeatherService {
       // Ensure days is within API limits (1-30)
       int forecastDays = days.clamp(1, 30);
 
-      List<Map<String, dynamic>> extendedForecast = [];
+      List<Map<String, dynamic>> extendedForecast =
+          []; // ULTRA-OPTIMIZED: Minimize API calls for speed
+      if (forecastDays <= 3) {
+        // Fastest path: Single API call for 3 days or less - ULTRA FAST
+        final response = await http
+            .get(
+              Uri.parse(
+                '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$locationQuery&days=$forecastDays',
+              ),
+            )
+            .timeout(
+              const Duration(seconds: 3),
+            ); // ULTRA FAST timeout for 3-day
 
-      for (int i = 0; i < forecastDays; i++) {
-        final date = DateTime.now().add(Duration(days: i));
-        final formattedDate =
-            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-
-        if (i < 14) {
-          // Use forecast.json for dates within the next 14 days
-          final response = await http.get(
-            Uri.parse(
-              '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$locationQuery&days=${i + 1}',
-            ),
-          );
-
-          if (response.statusCode != 200) {
-            throw Exception('Failed to load forecast data');
-          }
-
+        if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final forecast = data['forecast']['forecastday'];
 
-          extendedForecast.addAll(
-            forecast.map<Map<String, dynamic>>((day) {
-              return {
-                'date': day['date'],
-                'temperature': {
-                  'min': day['day']['mintemp_c'],
-                  'max': day['day']['maxtemp_c'],
-                },
-                'condition': day['day']['condition']['text'],
-                'rainChance': day['day']['daily_chance_of_rain'],
-              };
-            }),
-          );
-        } else {
-          // Use future.json for dates beyond 14 days
-          final response = await http.get(
-            Uri.parse(
-              '$_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$locationQuery&dt=$formattedDate',
-            ),
-          );
+          extendedForecast =
+              forecast.map<Map<String, dynamic>>((day) {
+                return {
+                  'date': day['date'],
+                  'temperature': {
+                    'min': day['day']['mintemp_c'],
+                    'max': day['day']['maxtemp_c'],
+                  },
+                  'condition': day['day']['condition']['text'],
+                  'rainChance': day['day']['daily_chance_of_rain'],
+                };
+              }).toList();
+        }
+      } else if (forecastDays <= 14) {
+        // Single API call for 14 days or less
+        final response = await http
+            .get(
+              Uri.parse(
+                '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$locationQuery&days=$forecastDays',
+              ),
+            )
+            .timeout(const Duration(seconds: 8)); // Reasonable timeout
 
-          if (response.statusCode != 200) {
-            throw Exception('Failed to load future weather data');
-          }
-
+        if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final forecast = data['forecast']['forecastday'];
 
+          extendedForecast =
+              forecast.map<Map<String, dynamic>>((day) {
+                return {
+                  'date': day['date'],
+                  'temperature': {
+                    'min': day['day']['mintemp_c'],
+                    'max': day['day']['maxtemp_c'],
+                  },
+                  'condition': day['day']['condition']['text'],
+                  'rainChance': day['day']['daily_chance_of_rain'],
+                };
+              }).toList();
+        }
+      } else {
+        // For 15-30 days: Use more aggressive parallel processing
+
+        // Get first 14 days in one call
+        final response14Future = http
+            .get(
+              Uri.parse(
+                '$_weatherApiBaseUrl/forecast.json?key=$_weatherApiKey&q=$locationQuery&days=14',
+              ),
+            )
+            .timeout(
+              const Duration(seconds: 8),
+            ); // Prepare parallel future day requests immediately
+        List<Future<Map<String, dynamic>?>> futureDayRequests = [];
+        for (int i = 14; i < forecastDays; i++) {
+          final date = DateTime.now().add(Duration(days: i));
+          final formattedDate =
+              "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+          futureDayRequests.add(
+            _fetchSingleFutureDayOptimized(locationQuery, formattedDate),
+          );
+        }
+
+        // Execute all requests in parallel
+        final results = await Future.wait([
+          response14Future,
+          ...futureDayRequests,
+        ]);
+
+        // Process 14-day response
+        final response14 = results[0] as http.Response;
+        if (response14.statusCode == 200) {
+          final data14 = json.decode(response14.body);
+          final forecast14 = data14['forecast']['forecastday'];
+
           extendedForecast.addAll(
-            forecast.map<Map<String, dynamic>>((day) {
+            forecast14.map<Map<String, dynamic>>((day) {
               return {
                 'date': day['date'],
                 'temperature': {
@@ -308,12 +368,64 @@ class WeatherService {
             }),
           );
         }
+
+        // Process future day results
+        for (int i = 1; i < results.length; i++) {
+          final dayData = results[i] as Map<String, dynamic>?;
+          if (dayData != null) {
+            extendedForecast.add(dayData);
+          }
+        }
       }
+
+      // Sort by date to ensure correct order
+      extendedForecast.sort((a, b) => a['date'].compareTo(b['date']));
+
+      // Cache the results for future requests
+      _forecastCache[cacheKey] = {'data': extendedForecast};
+      _cacheTimestamps[cacheKey] = DateTime.now();
 
       return extendedForecast;
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<Map<String, dynamic>?> _fetchSingleFutureDayOptimized(
+    String locationQuery,
+    String formattedDate,
+  ) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse(
+              '$_weatherApiBaseUrl/future.json?key=$_weatherApiKey&q=$locationQuery&dt=$formattedDate',
+            ),
+          )
+          .timeout(const Duration(seconds: 8)); // Optimized timeout
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final forecast = data['forecast']['forecastday'];
+
+        if (forecast.isNotEmpty) {
+          final day = forecast[0];
+          return {
+            'date': day['date'],
+            'temperature': {
+              'min': day['day']['mintemp_c'],
+              'max': day['day']['maxtemp_c'],
+            },
+            'condition': day['day']['condition']['text'],
+            'rainChance': day['day']['daily_chance_of_rain'],
+          };
+        }
+      }
+    } catch (e) {
+      // Continue with other requests even if one fails
+      debugPrint('Failed to fetch weather for $formattedDate: $e');
+    }
+    return null;
   }
 
   // Helper method to get location query string

@@ -16,20 +16,57 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
   DateTime currentMonth = DateTime.now();
   String? _cachedRecommendation;
   bool _isLoadingRecommendation = false;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Immediate UI rendering with ultra-fast progressive loading
+    _initializeDataAsync();
+  }
+
+  void _initializeDataAsync() {
+    // Priority: Show SOMETHING useful within 2-3 seconds
+    Future.microtask(() async {
+      if (!mounted) return;
+
       final weatherProvider = Provider.of<WeatherProvider>(
         context,
         listen: false,
       );
+
+      // STEP 1: Get minimal essential data IMMEDIATELY (3 days max)
       if (weatherProvider.futureWeather == null ||
           weatherProvider.futureWeather!.isEmpty) {
-        weatherProvider.fetchExtendedForecast('auto', 30);
+        // Ultra-fast: Get only 3 days first (fastest possible load)
+        await weatherProvider.fetchExtendedForecast('auto', 3);
+
+        // STEP 2: Quick expansion to 7 days (still very fast)
+        Future.delayed(const Duration(milliseconds: 100), () async {
+          if (mounted) {
+            await weatherProvider.fetchExtendedForecast('auto', 7);
+          }
+        });
+
+        // STEP 3: Medium expansion to 14 days
+        Future.delayed(const Duration(milliseconds: 300), () async {
+          if (mounted) {
+            await weatherProvider.fetchExtendedForecast('auto', 14);
+          }
+        });
+
+        // STEP 4: Full 30 days in background (user can already interact)
+        Future.delayed(const Duration(milliseconds: 800), () async {
+          if (mounted) {
+            await weatherProvider.fetchExtendedForecast('auto', 30);
+          }
+        });
       }
-      _loadCropRecommendation();
+
+      // Load crop recommendation much later in background (non-essential)
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        if (mounted) {
+          _loadCropRecommendation();
+        }
+      });
     });
   }
 
@@ -44,23 +81,26 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
         listen: false,
       );
 
-      try {
-        final recommendation =
-            await weatherProvider.getExtendedForecastCropRecommendation();
-        if (mounted) {
-          setState(() {
-            _cachedRecommendation = recommendation;
-            _isLoadingRecommendation = false;
-          });
+      // Use background processing to avoid blocking UI
+      Future.microtask(() async {
+        try {
+          final recommendation =
+              await weatherProvider.getExtendedForecastCropRecommendation();
+          if (mounted) {
+            setState(() {
+              _cachedRecommendation = recommendation;
+              _isLoadingRecommendation = false;
+            });
+          }
+        } catch (e) {
+          if (mounted) {
+            setState(() {
+              _cachedRecommendation = null;
+              _isLoadingRecommendation = false;
+            });
+          }
         }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _cachedRecommendation = null;
-            _isLoadingRecommendation = false;
-          });
-        }
-      }
+      });
     }
   }
 
@@ -99,20 +139,16 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
             });
           }
 
-          if (weatherProvider.isLoading &&
-              (weatherProvider.futureWeather == null ||
-                  weatherProvider.futureWeather!.isEmpty)) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppConstants.materialGreen,
-                ),
-              ),
-            );
+          // FAST SKELETON: Show immediately even if loading
+          final forecastData = weatherProvider.futureWeather ?? [];
+
+          // Show skeleton only if we have absolutely no data
+          if (weatherProvider.isLoading && forecastData.isEmpty) {
+            return _buildFastSkeletonLoader(loc);
           }
 
-          final forecastData = weatherProvider.futureWeather;
-          if (forecastData == null || forecastData.isEmpty) {
+          // Show content even with minimal data (3 days minimum)
+          if (forecastData.isEmpty) {
             return Center(
               child: Text(
                 loc.failedToLoadWeather,
@@ -615,6 +651,154 @@ class _ExtendedForecastPageState extends State<ExtendedForecastPage> {
                   height: 1.5,
                 ),
               ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFastSkeletonLoader(AppLocalizations loc) {
+    // Ultra-lightweight skeleton that renders in under 100ms
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header skeleton
+          Container(
+            width: double.infinity,
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Container(
+              height: 20,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Simple calendar skeleton - just boxes
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children: [
+                // Month header
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    height: 18,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+
+                // Simple grid of boxes (5 rows x 7 columns)
+                ...List.generate(
+                  5,
+                  (week) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    child: Row(
+                      children: List.generate(
+                        7,
+                        (day) => Expanded(
+                          child: Container(
+                            height: 50,
+                            margin: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Simple recommendation skeleton
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 16,
+                            width: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            height: 12,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Text skeleton lines
+                ...List.generate(
+                  3,
+                  (i) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    height: 14,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

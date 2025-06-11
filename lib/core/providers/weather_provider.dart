@@ -260,20 +260,52 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   Future<void> fetchExtendedForecast(String location, int days) async {
-    _isLoading = true;
-    notifyListeners();
+    // Check if we already have this data cached in provider
+    if (_futureWeather != null &&
+        _futureWeather!.isNotEmpty &&
+        _futureWeather!.length >= days) {
+      // We already have enough data, just return
+      notifyListeners();
+      return;
+    }
+
+    // Don't show loading for progressive updates (3->7->14->30 days)
+    final isProgressive = _futureWeather != null && _futureWeather!.isNotEmpty;
+
+    if (!isProgressive) {
+      _isLoading = true;
+      notifyListeners();
+    }
 
     try {
-      // Fetch extended forecast data using the new method
-      _futureWeather = await _weatherService.getExtendedForecast(
+      // Fetch extended forecast data using optimized method
+      final newForecastData = await _weatherService.getExtendedForecast(
         location,
         days,
       );
-      // Clear cache since we have new forecast data
-      _clearRecommendationCache();
+
+      // Progressive loading: Only update if we got more data
+      if (newForecastData.isNotEmpty &&
+          (isProgressive == false ||
+              newForecastData.length > (_futureWeather?.length ?? 0))) {
+        _futureWeather = newForecastData;
+
+        // Clear cache since we have new forecast data
+        _clearRecommendationCache();
+
+        // Notify listeners for any data update
+        notifyListeners();
+      }
+    } catch (e) {
+      // Don't let errors block the UI for progressive loads
+      if (!isProgressive) {
+        rethrow;
+      }
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (!isProgressive) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
