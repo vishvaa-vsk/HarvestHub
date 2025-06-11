@@ -1,40 +1,69 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path/path.dart' as path;
 
 /// Service class for handling pest detection API calls
 class PestDetectionService {
   static const String _baseUrl =
       'https://harvesthub-pest-api-47719572182.us-central1.run.app';
 
-  /// Compresses an image file for optimal API performance
-  static Future<File> _compressImage(File imageFile) async {
+  /// Compresses image to bytes for optimal API performance
+  static Future<Uint8List> _compressImageToBytes(File imageFile) async {
     try {
-      final String fileName = path.basename(imageFile.path);
-      final String targetPath = path.join(
-        path.dirname(imageFile.path),
-        'compressed_$fileName',
+      // Skip compression for small files
+      final fileSizeBytes = await imageFile.length();
+      const maxSizeBytes =
+          800 * 1024; // 800KB threshold (reduced for faster processing)
+
+      if (fileSizeBytes <= maxSizeBytes) {
+        print(
+          '📱 Image size: ${(fileSizeBytes / 1024).toStringAsFixed(1)}KB - Skipping compression',
+        );
+        return await imageFile.readAsBytes();
+      }
+
+      print(
+        '📱 Image size: ${(fileSizeBytes / 1024 / 1024).toStringAsFixed(1)}MB - Compressing...',
       );
 
-      final compressedFile = await FlutterImageCompress.compressAndGetFile(
+      // Use adaptive compression based on file size
+      int quality = 70;
+      int targetWidth = 600;
+      int targetHeight = 400;
+
+      // For very large files (>5MB), use more aggressive compression
+      if (fileSizeBytes > 5 * 1024 * 1024) {
+        quality = 60;
+        targetWidth = 500;
+        targetHeight = 350;
+      }
+
+      final compressionStopwatch = Stopwatch()..start();
+
+      // Compress to bytes (faster than file operations)
+      final compressedBytes = await FlutterImageCompress.compressWithFile(
         imageFile.absolute.path,
-        targetPath,
-        quality: 85,
-        minWidth: 800,
-        minHeight: 600,
+        quality: quality,
+        minWidth: targetWidth,
+        minHeight: targetHeight,
         format: CompressFormat.jpeg,
       );
 
-      if (compressedFile != null) {
-        return File(compressedFile.path);
-      } else {
-        return imageFile;
-      }
+      compressionStopwatch.stop();
+      print(
+        '⚡ Compression completed in ${compressionStopwatch.elapsedMilliseconds}ms',
+      );
+
+      final result = compressedBytes ?? await imageFile.readAsBytes();
+      print('📦 Final size: ${(result.length / 1024).toStringAsFixed(1)}KB');
+
+      return result;
     } catch (e) {
-      // Return original file if compression fails
-      return imageFile;
+      print('❌ Compression failed: $e - Using original file');
+      // Return original file bytes if compression fails
+      return await imageFile.readAsBytes();
     }
   }
 
@@ -49,17 +78,23 @@ class PestDetectionService {
     required String languageCode,
   }) async {
     try {
-      // Compress the image for optimal API performance
-      final compressedImage = await _compressImage(imageFile);
+      final totalStopwatch = Stopwatch()..start();
+
+      // Compress to bytes (faster than file compression)
+      final imageBytes = await _compressImageToBytes(imageFile);
+
+      print('🌐 Preparing API request...');
+      final networkStopwatch = Stopwatch()..start();
 
       // Create multipart request
       final uri = Uri.parse('$_baseUrl/predict/$languageCode');
       final request = http.MultipartRequest('POST', uri);
 
-      // Add the compressed image file
-      final multipartFile = await http.MultipartFile.fromPath(
+      // Add image bytes directly
+      final multipartFile = http.MultipartFile.fromBytes(
         'file',
-        compressedImage.path,
+        imageBytes,
+        filename: 'image.jpg',
       );
       request.files.add(multipartFile);
 
@@ -69,18 +104,19 @@ class PestDetectionService {
         'Accept': 'application/json',
       });
 
+      print('📡 Sending request to API...');
+
       // Send request
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      // Clean up compressed file if it's different from original
-      if (compressedImage.path != imageFile.path) {
-        try {
-          await compressedImage.delete();
-        } catch (e) {
-          // Ignore cleanup errors
-        }
-      }
+      networkStopwatch.stop();
+      totalStopwatch.stop();
+
+      print('🔗 Network time: ${networkStopwatch.elapsedMilliseconds}ms');
+      print(
+        '⏱️ Total processing time: ${totalStopwatch.elapsedMilliseconds}ms',
+      );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

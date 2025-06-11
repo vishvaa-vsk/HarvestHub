@@ -41,8 +41,12 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
     });
 
     try {
+      final stopwatch = Stopwatch()..start();
+
       // Get current language code from localization
       final languageCode = AppLocalizations.of(context)!.localeName;
+
+      print('🔍 Starting pest detection...');
 
       // Call the pest detection API
       final apiResponse = await PestDetectionService.predictPest(
@@ -50,10 +54,15 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
         languageCode: languageCode,
       );
 
+      print('✅ API response received in ${stopwatch.elapsedMilliseconds}ms');
+
       // Format the response for display
       final formattedResult = PestDetectionService.formatPredictionResponse(
         apiResponse,
       );
+
+      stopwatch.stop();
+      print('🎯 Total detection time: ${stopwatch.elapsedMilliseconds}ms');
 
       setState(() {
         _scanning = false;
