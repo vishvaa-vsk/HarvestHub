@@ -132,7 +132,11 @@ class _EditProfilePageState extends State<EditProfilePage> with CodeAutoFill {
                 }); // Show a confirmation message
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(loc.mobileNumberUpdatedSuccessfully)),
+                SnackBar(
+                  content: Text(loc.mobileNumberUpdatedSuccessfully),
+                  behavior: SnackBarBehavior.floating,
+                  showCloseIcon: true,
+                ),
               );
 
               Navigator.pop(context);
