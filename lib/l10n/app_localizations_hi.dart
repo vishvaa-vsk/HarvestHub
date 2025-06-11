@@ -475,13 +475,49 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cropsHealthyMessage => 'आपकी फसलें स्वस्थ दिख रही हैं! नियमित निगरानी जारी रखें और अच्छी कृषि प्रथाओं को बनाए रखें।';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'सिफारिशें';
 
   @override
-  String get readyToAnalyze => 'Ready to analyze';
+  String get confidence => 'विश्वास';
 
   @override
-  String get uploadImageAndAnalyze => 'Upload an image and tap \"Analyze\" to detect pests and get recommendations';
+  String get diagnosis => 'निदान';
+
+  @override
+  String get causalAgent => 'कारक एजेंट';
+
+  @override
+  String get analysisError => 'विश्लेषण त्रुटि';
+
+  @override
+  String get analysisErrorDesc => 'छवि का विश्लेषण करने में असमर्थ। कृपया एक स्पष्ट फोटो के साथ पुनः प्रयास करें।';
+
+  @override
+  String get readyToAnalyze => 'विश्लेषण के लिए तैयार';
+
+  @override
+  String get uploadImageAndAnalyze => 'छवि अपलोड करें और कीटों का पता लगाने और सिफारिशें प्राप्त करने के लिए \"विश्लेषण करें\" पर टैप करें';
+
+  @override
+  String get scanAgain => 'फिर से स्कैन करें';
+
+  @override
+  String get saveResult => 'परिणाम सहेजें';
+
+  @override
+  String get resultSaved => 'परिणाम सहेजा गया';
+
+  @override
+  String get uploadImageFirst => 'पहले एक छवि अपलोड करें';
+
+  @override
+  String get tapAnalyzeToStart => 'पहचान शुरू करने के लिए विश्लेषण बटन पर टैप करें';
+
+  @override
+  String get selectImageFromCameraOrGallery => 'कैमरा या गैलरी से छवि चुनें';
+
+  @override
+  String get failedToAnalyzeImage => 'छवि का विश्लेषण करने में विफल';
 
   @override
   String get howToUse => 'How to use';

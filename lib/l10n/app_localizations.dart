@@ -1007,6 +1007,36 @@ abstract class AppLocalizations {
   /// **'Recommendations'**
   String get recommendations;
 
+  /// No description provided for @confidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get confidence;
+
+  /// No description provided for @diagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnosis'**
+  String get diagnosis;
+
+  /// No description provided for @causalAgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Causal Agent'**
+  String get causalAgent;
+
+  /// No description provided for @analysisError.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis Error'**
+  String get analysisError;
+
+  /// No description provided for @analysisErrorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to analyze the image. Please try again with a clearer photo.'**
+  String get analysisErrorDesc;
+
   /// No description provided for @readyToAnalyze.
   ///
   /// In en, this message translates to:
@@ -1018,6 +1048,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upload an image and tap \"Analyze\" to detect pests and get recommendations'**
   String get uploadImageAndAnalyze;
+
+  /// No description provided for @scanAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Again'**
+  String get scanAgain;
+
+  /// No description provided for @saveResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Result'**
+  String get saveResult;
+
+  /// No description provided for @resultSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved'**
+  String get resultSaved;
+
+  /// No description provided for @uploadImageFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image first'**
+  String get uploadImageFirst;
+
+  /// No description provided for @tapAnalyzeToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the analyze button to start detection'**
+  String get tapAnalyzeToStart;
+
+  /// No description provided for @selectImageFromCameraOrGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an image from camera or gallery'**
+  String get selectImageFromCameraOrGallery;
+
+  /// No description provided for @failedToAnalyzeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to analyze image'**
+  String get failedToAnalyzeImage;
 
   /// No description provided for @howToUse.
   ///

@@ -478,10 +478,46 @@ class AppLocalizationsTe extends AppLocalizations {
   String get recommendations => 'సిఫార్సులు';
 
   @override
+  String get confidence => 'Confidence';
+
+  @override
+  String get diagnosis => 'Diagnosis';
+
+  @override
+  String get causalAgent => 'Causal Agent';
+
+  @override
+  String get analysisError => 'Analysis Error';
+
+  @override
+  String get analysisErrorDesc => 'Unable to analyze the image. Please try again with a clearer photo.';
+
+  @override
   String get readyToAnalyze => 'విశ్లేషించడానికి సిద్ధం';
 
   @override
   String get uploadImageAndAnalyze => 'చిత్రాన్ని అప్‌లోడ్ చేసి పురుగులను గుర్తించి సిఫార్సులు పొందడానికి \"విశ్లేషించండి\"ని నొక్కండి';
+
+  @override
+  String get scanAgain => 'Scan Again';
+
+  @override
+  String get saveResult => 'Save Result';
+
+  @override
+  String get resultSaved => 'Result saved';
+
+  @override
+  String get uploadImageFirst => 'Upload an image first';
+
+  @override
+  String get tapAnalyzeToStart => 'Tap the analyze button to start detection';
+
+  @override
+  String get selectImageFromCameraOrGallery => 'Select an image from camera or gallery';
+
+  @override
+  String get failedToAnalyzeImage => 'Failed to analyze image';
 
   @override
   String get howToUse => 'ఎలా ఉపయోగించాలి';

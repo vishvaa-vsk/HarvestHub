@@ -478,10 +478,46 @@ class AppLocalizationsTa extends AppLocalizations {
   String get recommendations => 'பரிந்துரைகள்';
 
   @override
+  String get confidence => 'Confidence';
+
+  @override
+  String get diagnosis => 'Diagnosis';
+
+  @override
+  String get causalAgent => 'Causal Agent';
+
+  @override
+  String get analysisError => 'Analysis Error';
+
+  @override
+  String get analysisErrorDesc => 'Unable to analyze the image. Please try again with a clearer photo.';
+
+  @override
   String get readyToAnalyze => 'பகுப்பாய்வு செய்ய தயார்';
 
   @override
   String get uploadImageAndAnalyze => 'ஒரு படத்தை பதிவேற்றி பூச்சிகளைக் கண்டறிந்து பரிந்துரைகளைப் பெற \"பகுப்பாய்வு\" என்பதைத் தட்டவும்';
+
+  @override
+  String get scanAgain => 'Scan Again';
+
+  @override
+  String get saveResult => 'Save Result';
+
+  @override
+  String get resultSaved => 'Result saved';
+
+  @override
+  String get uploadImageFirst => 'Upload an image first';
+
+  @override
+  String get tapAnalyzeToStart => 'Tap the analyze button to start detection';
+
+  @override
+  String get selectImageFromCameraOrGallery => 'Select an image from camera or gallery';
+
+  @override
+  String get failedToAnalyzeImage => 'Failed to analyze image';
 
   @override
   String get howToUse => 'எப்படி பயன்படுத்துவது';

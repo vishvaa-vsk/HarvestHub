@@ -478,10 +478,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recommendations => 'Recommendations';
 
   @override
+  String get confidence => 'Confidence';
+
+  @override
+  String get diagnosis => 'Diagnosis';
+
+  @override
+  String get causalAgent => 'Causal Agent';
+
+  @override
+  String get analysisError => 'Analysis Error';
+
+  @override
+  String get analysisErrorDesc => 'Unable to analyze the image. Please try again with a clearer photo.';
+
+  @override
   String get readyToAnalyze => 'Ready to analyze';
 
   @override
   String get uploadImageAndAnalyze => 'Upload an image and tap \"Analyze\" to detect pests and get recommendations';
+
+  @override
+  String get scanAgain => 'Scan Again';
+
+  @override
+  String get saveResult => 'Save Result';
+
+  @override
+  String get resultSaved => 'Result saved';
+
+  @override
+  String get uploadImageFirst => 'Upload an image first';
+
+  @override
+  String get tapAnalyzeToStart => 'Tap the analyze button to start detection';
+
+  @override
+  String get selectImageFromCameraOrGallery => 'Select an image from camera or gallery';
+
+  @override
+  String get failedToAnalyzeImage => 'Failed to analyze image';
 
   @override
   String get howToUse => 'How to use';

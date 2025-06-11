@@ -478,10 +478,46 @@ class AppLocalizationsMl extends AppLocalizations {
   String get recommendations => 'ശുപാർശകൾ';
 
   @override
+  String get confidence => 'Confidence';
+
+  @override
+  String get diagnosis => 'Diagnosis';
+
+  @override
+  String get causalAgent => 'Causal Agent';
+
+  @override
+  String get analysisError => 'Analysis Error';
+
+  @override
+  String get analysisErrorDesc => 'Unable to analyze the image. Please try again with a clearer photo.';
+
+  @override
   String get readyToAnalyze => 'വിശകലനത്തിന് തയ്യാർ';
 
   @override
   String get uploadImageAndAnalyze => 'ഒരു ചിത്രം അപ്‌ലോഡ് ചെയ്ത് കീടങ്ങളെ കണ്ടെത്താനും ശുപാർശകൾ ലഭിക്കാനും \"വിശകലനം ചെയ്യുക\" ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get scanAgain => 'Scan Again';
+
+  @override
+  String get saveResult => 'Save Result';
+
+  @override
+  String get resultSaved => 'Result saved';
+
+  @override
+  String get uploadImageFirst => 'Upload an image first';
+
+  @override
+  String get tapAnalyzeToStart => 'Tap the analyze button to start detection';
+
+  @override
+  String get selectImageFromCameraOrGallery => 'Select an image from camera or gallery';
+
+  @override
+  String get failedToAnalyzeImage => 'Failed to analyze image';
 
   @override
   String get howToUse => 'എങ്ങനെ ഉപയോഗിക്കാം';
