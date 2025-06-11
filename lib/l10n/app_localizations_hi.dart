@@ -601,4 +601,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get otpResentSuccessfully => 'OTP सफलतापूर्वक फिर से भेजा गया';
+
+  @override
+  String get aiDisclaimer => 'AI-जनरेटेड परिणाम अस्वीकरण';
+
+  @override
+  String get aiDisclaimerDesc => 'प्रदान किए गए निदान और सिफारिशें AI द्वारा उत्पन्न की गई हैं और इनमें त्रुटियां हो सकती हैं। कृपया महत्वपूर्ण निर्णयों के लिए कृषि विशेषज्ञों से सलाह लें और इस जानकारी का उपयोग केवल एक पूरक गाइड के रूप में करें।';
 }

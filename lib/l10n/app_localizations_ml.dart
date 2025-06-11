@@ -601,4 +601,10 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get otpResentSuccessfully => 'OTP വിജയകരമായി വീണ്ടും അയച്ചു';
+
+  @override
+  String get aiDisclaimer => 'AI-ജനറേറ്റുചെയ്ത ഫലങ്ങളുടെ ഡിസ്‌ക്ലെയിമർ';
+
+  @override
+  String get aiDisclaimerDesc => 'നൽകുന്ന രോഗനിർണ്ണയവും ശുപാർശകളും AI-യിലൂടെ സൃഷ്ടിച്ചതാണ്, അതിൽ പിശകുകൾ ഉണ്ടാകാം. നിർണായക തീരുമാനങ്ങൾക്ക് കാർഷിക വിദഗ്ധരുമായി നിർബന്ധമായി ആശയവിനിമയം നടത്തുക. ഈ വിവരങ്ങൾ ഒരു അധിക മാർഗ്ഗനിർദ്ദേശമായി മാത്രം ഉപയോഗിക്കുക.';
 }

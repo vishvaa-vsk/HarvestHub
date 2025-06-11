@@ -601,4 +601,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get otpResentSuccessfully => 'OTP విజయవంతంగా మళ్లీ పంపబడింది';
+
+  @override
+  String get aiDisclaimer => 'AI-ఉత్పత్తి ఫలితాల వివరణ';
+
+  @override
+  String get aiDisclaimerDesc => 'ఇక్కడ ఇచ్చిన నిర్ధారణలు మరియు సిఫారసులు AI ద్వారా రూపొందించబడ్డవి మరియు వాటిలో పొరపాట్లు ఉండవచ్చు. ముఖ్యమైన నిర్ణయాల కోసం వ్యవసాయ నిపుణులను సంప్రదించండి మరియు ఈ సమాచారాన్ని అదనపు మార్గదర్శకంగా మాత్రమే ఉపయోగించండి.';
 }

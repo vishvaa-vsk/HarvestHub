@@ -235,7 +235,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get rain => 'மழை';
 
   @override
-  String get viewAll => 'அனைத்தையும் காண்க >';
+  String get viewAll => 'மேலும் >';
 
   @override
   String get january => 'ஜனவரி';
@@ -601,4 +601,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get otpResentSuccessfully => 'OTP வெற்றிகரமாக மீண்டும் அனுப்பப்பட்டது';
+
+  @override
+  String get aiDisclaimer => 'AI உருவாக்கிய முடிவுகள் மறுப்பு';
+
+  @override
+  String get aiDisclaimerDesc => 'AI மூலம் உருவாக்கப்பட்ட நோயறிதல் மற்றும் பரிந்துரைகள் பிழைகள் இருக்கலாம். முக்கிய முடிவுகளுக்கு விவசாய நிபுணர்களை அணுகவும். இந்த தகவலை கூடுதல் வழிகாட்டியாக மட்டும் பயன்படுத்தவும்.';
 }

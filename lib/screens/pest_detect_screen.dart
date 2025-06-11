@@ -631,6 +631,37 @@ class _PestDetectScreenState extends State<PestDetectScreen> {
           }),
         ],
 
+        const SizedBox(height: 16),
+
+        // AI Disclaimer
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.amber.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.amber.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20, color: Colors.amber[700]),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.aiDisclaimerDesc,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.amber[800],
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         const SizedBox(height: 20), // Action Button
         SizedBox(
           width: double.infinity,
