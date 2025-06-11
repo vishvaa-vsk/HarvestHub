@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:harvesthub/core/constants/app_constants.dart';
 
 /// Ultra-lightweight startup screen optimized for maximum performance
 /// This widget has minimal complexity to allow immediate rendering
@@ -7,6 +9,8 @@ class UltraMinimalStartupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
+
     return const Scaffold(
       backgroundColor: Colors.white,
       body: Center(

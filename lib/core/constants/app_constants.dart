@@ -63,10 +63,9 @@ class AppConstants {
       spreadRadius: 0,
     ),
   ];
-
   // System UI overlay styles
   static const SystemUiOverlayStyle defaultSystemUIStyle = SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.white,
+    systemNavigationBarColor: Colors.transparent,
     systemNavigationBarIconBrightness: Brightness.dark,
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,

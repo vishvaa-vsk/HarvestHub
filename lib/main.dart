@@ -21,6 +21,7 @@ import 'features/auth/presentation/pages/language_selection_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'core/providers/weather_provider.dart';
 import 'core/utils/avatar_utils.dart';
+import 'core/constants/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -36,17 +37,9 @@ void main() async {
   StartupPerformance.markAppStart();
 
   WidgetsFlutterBinding.ensureInitialized();
-
   // Set system UI overlay style early
   StartupPerformance.markStart('system_ui_setup');
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
+  SystemChrome.setSystemUIOverlayStyle(AppConstants.defaultSystemUIStyle);
   StartupPerformance.markEnd('system_ui_setup');
   // CRITICAL: Make startup completely non-blocking
   StartupPerformance.markStart('async_initialization');
