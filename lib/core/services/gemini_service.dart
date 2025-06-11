@@ -42,18 +42,23 @@ class GeminiService {
       final content = [
         Content.text('''
         $langInstruction
-        You are an AI-powered agricultural assistant. Based on the given weather conditions, provide a crisp farming tip and a crop recommendation.
+        You are an AI-powered agricultural assistant. Based on the current weather conditions, provide immediate farming advice and crop recommendations suitable for today's conditions.
 
-        Weather Data:
+        Current Weather Data:
         - Temperature: $temperature°C
         - Humidity: $humidity%
         - Rainfall: ${rainfall}mm
         - Wind Speed: $windSpeed km/h
         - Condition: $condition
 
+        Provide recommendations that are:
+        - Suitable for immediate action based on current weather
+        - Focused on short-term farming activities (today/this week)
+        - Appropriate for the current seasonal conditions
+
         Response Format:
-        Farming Tip: <Provide only the farming tip here>
-        Recommended Crop: <Provide only the recommended crop advice in few lines (not more than 4 lines) here>
+        Farming Tip: <Provide only the farming tip based on current weather conditions>
+        Recommended Crop: <Provide crop recommendations suitable for current weather and immediate planting decisions (not more than 4 lines)>
         '''),
       ];
 
@@ -89,15 +94,60 @@ class GeminiService {
   }
 
   Future<String> getCropRecommendation(
-    List<Map<String, dynamic>> monthlyForecast,
-  ) async {
+    List<Map<String, dynamic>> monthlyForecast, {
+    String lang = 'en',
+  }) async {
     try {
+      // Determine the forecast period for more specific recommendations
+      final forecastDays = monthlyForecast.length;
+      final forecastPeriod =
+          forecastDays >= 30
+              ? '30-day extended forecast'
+              : forecastDays >= 14
+              ? '2-week forecast'
+              : 'weekly forecast';
+
+      // Add language instruction based on the lang parameter
+      String langInstruction = '';
+      switch (lang) {
+        case 'ta':
+          langInstruction = 'Respond in Tamil.';
+          break;
+        case 'te':
+          langInstruction = 'Respond in Telugu.';
+          break;
+        case 'hi':
+          langInstruction = 'Respond in Hindi.';
+          break;
+        case 'ml':
+          langInstruction = 'Respond in Malayalam.';
+          break;
+        default:
+          langInstruction = 'Respond in English.';
+      }
+
       // Prepare the prompt for Gemini API
       final prompt = '''
-        You are an AI-powered agricultural assistant. Based on the given monthly weather forecast, recommend the best crop for planting in a detailed manner.
+        $langInstruction
+        You are an AI-powered agricultural assistant. Based on the given $forecastPeriod weather data, recommend the best crop for planting.
+        
+        Consider the following factors:
+        - Temperature patterns and ranges throughout the forecast period
+        - Rainfall distribution and frequency
+        - Seasonal weather trends
+        - Crop growth cycles that align with the forecast period
+        - Regional agricultural practices
+        
+        Provide a comprehensive recommendation that includes:
+        1. Primary crop recommendation with reasoning
+        2. Alternative crop options
+        3. Planting timeline suggestions
+        4. Key weather-related considerations
 
-        Monthly Weather Data:
+        Weather Forecast Data ($forecastDays days):
         ${monthlyForecast.map((day) => '- Date: ${day['date']}, Max Temp: ${day['temperature']['max']}°C, Min Temp: ${day['temperature']['min']}°C, Condition: ${day['condition']}, Rain Chance: ${day['rainChance']}%').join('\n')}
+        
+        Please provide a detailed but concise recommendation (maximum 4 sentences).
       ''';
 
       final client = GenerativeModel(

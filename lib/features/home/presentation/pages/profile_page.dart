@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:harvesthub/l10n/app_localizations.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -38,11 +39,13 @@ class ProfilePage extends StatelessWidget {
                 Center(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundColor: Colors.green.shade100,
+                    backgroundColor: AppConstants.primaryGreen.withValues(
+                      alpha: 0.1,
+                    ),
                     child: const Icon(
                       Icons.person,
                       size: 50,
-                      color: Colors.green,
+                      color: AppConstants.primaryGreen,
                     ),
                   ),
                 ),
@@ -83,7 +86,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Country: ${userData['country'] ?? 'Not specified'}',
+                          'Country: ${userData['country'] ?? 'Not specified'}',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 8),

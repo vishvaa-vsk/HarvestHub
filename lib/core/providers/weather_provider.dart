@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../services/gemini_service.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../utils/startup_performance.dart';
 
 /// A provider class for managing weather data and agricultural insights.
 ///
@@ -14,24 +15,81 @@ class WeatherProvider extends ChangeNotifier {
   Map<String, String>? _insights;
   List<Map<String, dynamic>>? _monthlyForecast;
   List<Map<String, dynamic>>? _futureWeather;
-  bool _isLoading = true;
+  bool _isLoading = false; // Start as false to prevent immediate loading
+  bool _insightsLoading = false; // Track insights loading separately
   String _lang = 'en';
+  bool _initialized = false; // Track initialization state
 
+  // Crop recommendation caching
+  String? _cachedExtendedForecastRecommendation;
+  String? _cachedGeneralRecommendation;
+  String? _cachedForecastDataHash;
+  String? _cachedRecommendationLang;
+  DateTime? _cacheTimestamp;
+  static const Duration _cacheExpiration = Duration(
+    hours: 6,
+  ); // Cache for 6 hours
   Map<String, dynamic>? get weatherData => _weatherData;
   Map<String, String>? get insights => _insights;
   List<Map<String, dynamic>>? get monthlyForecast => _monthlyForecast;
   List<Map<String, dynamic>>? get futureWeather => _futureWeather;
   bool get isLoading => _isLoading;
+  bool get isInsightsLoading => _insightsLoading;
   String get lang => _lang;
+  bool get isInitialized => _initialized;
+
+  /// Initialize the provider when first accessed (lazy initialization)
+  void _ensureInitialized() {
+    if (!_initialized) {
+      _initialized = true;
+      // Initialization can be done here if needed
+    }
+  }
 
   void setLanguage(String langCode) {
+    _ensureInitialized();
     _lang = langCode;
     _weatherData = null;
     _insights = null;
+    // Clear cache when language changes
+    _clearRecommendationCache();
     notifyListeners();
   }
 
+  /// Clear all cached recommendations
+  void _clearRecommendationCache() {
+    _cachedExtendedForecastRecommendation = null;
+    _cachedGeneralRecommendation = null;
+    _cachedForecastDataHash = null;
+    _cachedRecommendationLang = null;
+    _cacheTimestamp = null;
+  }
+
+  /// Generate a hash for forecast data to use as cache key
+  String _generateForecastHash(List<Map<String, dynamic>> forecastData) {
+    final dataString = forecastData
+        .map(
+          (day) =>
+              '${day['date']}_${day['temperature']}_${day['condition']}_${day['rainChance']}',
+        )
+        .join('|');
+    return dataString.hashCode.toString();
+  }
+
+  /// Check if cache is valid
+  bool _isCacheValid(String? forecastHash, String lang) {
+    if (_cacheTimestamp == null ||
+        _cachedForecastDataHash != forecastHash ||
+        _cachedRecommendationLang != lang) {
+      return false;
+    }
+
+    final now = DateTime.now();
+    return now.difference(_cacheTimestamp!).abs() < _cacheExpiration;
+  }
+
   Future<void> fetchWeatherData() async {
+    _ensureInitialized();
     if (_weatherData != null) return;
     _isLoading = true;
     notifyListeners();
@@ -44,10 +102,13 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWeatherAndInsights() async {
+    _ensureInitialized();
     if (_weatherData != null && _insights != null) return;
+    StartupPerformance.markStart('WeatherProvider.fetchWeatherAndInsights');
     _isLoading = true;
     notifyListeners();
     try {
+      StartupPerformance.markStart('WeatherProvider.locationCheck');
       final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isLocationEnabled) {
         throw Exception('Location services are disabled.');
@@ -61,19 +122,50 @@ class WeatherProvider extends ChangeNotifier {
           throw Exception('Location permission denied.');
         }
       }
+      StartupPerformance.markEnd('WeatherProvider.locationCheck');
+
+      StartupPerformance.markStart('WeatherProvider.getPosition');
       final position = await Geolocator.getCurrentPosition();
-      final weatherFuture = _weatherService.getWeatherData(
+      StartupPerformance.markEnd('WeatherProvider.getPosition');
+
+      StartupPerformance.markStart('WeatherProvider.fetchWeatherData');
+      // First, fetch weather data immediately (fast operation)
+      _weatherData = await _weatherService.getWeatherData(
         latitude: position.latitude,
         longitude: position.longitude,
         lang: _lang,
       );
-      final insightsFuture = weatherFuture.then<Map<String, String>>((
-        weatherData,
-      ) {
-        final current = weatherData['current'];
+      StartupPerformance.markEnd('WeatherProvider.fetchWeatherData');
+
+      // Update UI with weather data immediately
+      _isLoading = false;
+      notifyListeners();
+
+      // Defer heavy AI insights to background to avoid blocking startup
+      _fetchInsightsInBackground();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    } finally {
+      StartupPerformance.markEnd('WeatherProvider.fetchWeatherAndInsights');
+    }
+  }
+
+  /// Fetch AI insights in background without blocking startup
+  void _fetchInsightsInBackground() {
+    // Set insights loading state
+    _insightsLoading = true;
+    notifyListeners();
+
+    // Use Future.microtask to ensure this runs after UI is updated
+    Future.microtask(() async {
+      try {
+        StartupPerformance.markStart('WeatherProvider.fetchInsights');
+        final current = _weatherData?['current'];
         if (current != null) {
           final geminiService = GeminiService();
-          return geminiService.getAgriculturalInsights(
+          _insights = await geminiService.getAgriculturalInsights(
             temperature: (current['temperature'] as num).toDouble(),
             humidity: (current['humidity'] as num).toDouble(),
             rainfall: (current['precipitation'] as num?)?.toDouble() ?? 0.0,
@@ -82,19 +174,26 @@ class WeatherProvider extends ChangeNotifier {
             lang: _lang,
           );
         }
-        return Future.value({});
-      });
-      final results = await Future.wait([weatherFuture, insightsFuture]);
-      _weatherData = results[0] as Map<String, dynamic>?;
-      _insights = results[1] as Map<String, String>?;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+        StartupPerformance.markEnd('WeatherProvider.fetchInsights');
+      } catch (e) {
+        // Handle insights error gracefully - app should still work without insights
+        debugPrint('Error fetching insights: $e');
+        _insights = {
+          'farmingTip': 'Insights temporarily unavailable',
+          'cropRecommendation': 'Please try again later',
+        };
+        StartupPerformance.markEnd('WeatherProvider.fetchInsights');
+      } finally {
+        // Clear insights loading state and notify listeners
+        _insightsLoading = false;
+        notifyListeners();
+      }
+    });
   }
 
   // Optimized fetchMonthlyForecast to support pagination and reduce loading times
   Future<void> fetchMonthlyForecast({int monthOffset = 0}) async {
+    _ensureInitialized();
     _isLoading = true;
     notifyListeners();
 
@@ -109,6 +208,8 @@ class WeatherProvider extends ChangeNotifier {
         month: targetDate.month,
       );
       _monthlyForecast = forecastResponse;
+      // Clear cache since we have new forecast data
+      _clearRecommendationCache();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -122,6 +223,8 @@ class WeatherProvider extends ChangeNotifier {
     try {
       // Fetch future weather data from WeatherAPI
       _futureWeather = await _weatherService.getFutureWeather(location, date);
+      // Clear cache since we have new forecast data
+      _clearRecommendationCache();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -157,18 +260,52 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   Future<void> fetchExtendedForecast(String location, int days) async {
-    _isLoading = true;
-    notifyListeners();
+    // Check if we already have this data cached in provider
+    if (_futureWeather != null &&
+        _futureWeather!.isNotEmpty &&
+        _futureWeather!.length >= days) {
+      // We already have enough data, just return
+      notifyListeners();
+      return;
+    }
+
+    // Don't show loading for progressive updates (3->7->14->30 days)
+    final isProgressive = _futureWeather != null && _futureWeather!.isNotEmpty;
+
+    if (!isProgressive) {
+      _isLoading = true;
+      notifyListeners();
+    }
 
     try {
-      // Fetch extended forecast data using the new method
-      _futureWeather = await _weatherService.getExtendedForecast(
+      // Fetch extended forecast data using optimized method
+      final newForecastData = await _weatherService.getExtendedForecast(
         location,
         days,
       );
+
+      // Progressive loading: Only update if we got more data
+      if (newForecastData.isNotEmpty &&
+          (isProgressive == false ||
+              newForecastData.length > (_futureWeather?.length ?? 0))) {
+        _futureWeather = newForecastData;
+
+        // Clear cache since we have new forecast data
+        _clearRecommendationCache();
+
+        // Notify listeners for any data update
+        notifyListeners();
+      }
+    } catch (e) {
+      // Don't let errors block the UI for progressive loads
+      if (!isProgressive) {
+        rethrow;
+      }
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (!isProgressive) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -180,10 +317,59 @@ class WeatherProvider extends ChangeNotifier {
     if (forecastData == null || forecastData.isEmpty) return null;
 
     try {
+      // Generate hash for caching
+      final forecastHash = _generateForecastHash(forecastData);
+
+      // Check if we have a valid cached recommendation
+      if (_isCacheValid(forecastHash, _lang) &&
+          _cachedGeneralRecommendation != null) {
+        return _cachedGeneralRecommendation;
+      }
+
       final geminiService = GeminiService();
       final recommendation = await geminiService.getCropRecommendation(
         forecastData,
+        lang: _lang,
       );
+
+      // Cache the recommendation
+      _cachedGeneralRecommendation = recommendation;
+      _cachedForecastDataHash = forecastHash;
+      _cachedRecommendationLang = _lang;
+      _cacheTimestamp = DateTime.now();
+
+      return recommendation;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String?> getExtendedForecastCropRecommendation() async {
+    // Specifically use 30-day extended forecast data only
+    if (_futureWeather == null || _futureWeather!.isEmpty) return null;
+
+    try {
+      // Generate hash for caching
+      final forecastHash = _generateForecastHash(_futureWeather!);
+
+      // Check if we have a valid cached recommendation
+      if (_isCacheValid(forecastHash, _lang) &&
+          _cachedExtendedForecastRecommendation != null) {
+        return _cachedExtendedForecastRecommendation;
+      }
+
+      final geminiService = GeminiService();
+      final recommendation = await geminiService.getCropRecommendation(
+        _futureWeather!,
+        lang: _lang,
+      );
+
+      // Cache the recommendation
+      _cachedExtendedForecastRecommendation = recommendation;
+      _cachedForecastDataHash = forecastHash;
+      _cachedRecommendationLang = _lang;
+      _cacheTimestamp = DateTime.now();
+
       return recommendation;
     } catch (e) {
       return null;

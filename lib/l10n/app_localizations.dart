@@ -191,6 +191,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
   /// No description provided for @errorLoadingUserData.
   ///
   /// In en, this message translates to:
@@ -250,6 +256,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'3-Day Forecast'**
   String get threeDayForecast;
+
+  /// No description provided for @thirtyDayForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'30-Day Forecast'**
+  String get thirtyDayForecast;
+
+  /// No description provided for @weatherForecastCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Forecast: {startDate} - {endDate}'**
+  String weatherForecastCalendar(Object startDate, Object endDate);
 
   /// No description provided for @viewMore.
   ///
@@ -394,6 +412,858 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Talk to HarvestBot'**
   String get talkToHarvestBot;
+
+  /// No description provided for @createPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Post'**
+  String get createPost;
+
+  /// No description provided for @addComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment...'**
+  String get addComment;
+
+  /// No description provided for @post.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get post;
+
+  /// No description provided for @noPostsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet.'**
+  String get noPostsYet;
+
+  /// No description provided for @whatsOnYourMind.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get whatsOnYourMind;
+
+  /// No description provided for @welcomeToHarvestHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to the HarvestHub...'**
+  String get welcomeToHarvestHub;
+
+  /// No description provided for @shareYourThoughts.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts, ask questions, and connect with fellow farmers.'**
+  String get shareYourThoughts;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @checkConnectionAndTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your connection and try again'**
+  String get checkConnectionAndTryAgain;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @welcomeToCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to the Community!'**
+  String get welcomeToCommunity;
+
+  /// No description provided for @shareYourFarmingExperiences.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your farming experiences, tips, and connect with fellow farmers'**
+  String get shareYourFarmingExperiences;
+
+  /// No description provided for @createFirstPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create first post'**
+  String get createFirstPost;
+
+  /// No description provided for @currentWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Weather'**
+  String get currentWeather;
+
+  /// No description provided for @upcomingForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Forecast'**
+  String get upcomingForecast;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @minTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Min:'**
+  String get minTemperature;
+
+  /// No description provided for @rain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain'**
+  String get rain;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All >'**
+  String get viewAll;
+
+  /// No description provided for @january.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get january;
+
+  /// No description provided for @february.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get february;
+
+  /// No description provided for @march.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get march;
+
+  /// No description provided for @april.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get april;
+
+  /// No description provided for @may.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get may;
+
+  /// No description provided for @june.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get june;
+
+  /// No description provided for @july.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get july;
+
+  /// No description provided for @august.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get august;
+
+  /// No description provided for @september.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get september;
+
+  /// No description provided for @october.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get october;
+
+  /// No description provided for @november.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get november;
+
+  /// No description provided for @december.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get december;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sunday;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get saturday;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @helpAndSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupportTitle;
+
+  /// No description provided for @appFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Features'**
+  String get appFeaturesTitle;
+
+  /// No description provided for @gettingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting Started'**
+  String get gettingStartedTitle;
+
+  /// No description provided for @featuresAndUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features & Usage'**
+  String get featuresAndUsageTitle;
+
+  /// No description provided for @contactSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupportTitle;
+
+  /// No description provided for @weatherUpdatesFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Updates'**
+  String get weatherUpdatesFeature;
+
+  /// No description provided for @weatherUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get real-time weather information including temperature, humidity, wind speed, and 3-day forecasts to plan your farming activities.'**
+  String get weatherUpdatesDesc;
+
+  /// No description provided for @aiChatFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'HarvestBot AI Assistant'**
+  String get aiChatFeature;
+
+  /// No description provided for @aiChatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with our AI-powered farming expert for personalized advice, crop recommendations, and answers to your agricultural questions.'**
+  String get aiChatDesc;
+
+  /// No description provided for @pestDetectionFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest Detection'**
+  String get pestDetectionFeature;
+
+  /// No description provided for @pestDetectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload photos of your crops to identify potential pest issues and get recommendations for treatment and prevention.'**
+  String get pestDetectionDesc;
+
+  /// No description provided for @communityFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Farming Community'**
+  String get communityFeature;
+
+  /// No description provided for @communityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with fellow farmers, share experiences, ask questions, and learn from the farming community.'**
+  String get communityDesc;
+
+  /// No description provided for @multiLanguageFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Language Support'**
+  String get multiLanguageFeature;
+
+  /// No description provided for @multiLanguageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the app in your preferred language with support for English, Hindi, Tamil, Telugu, and Malayalam.'**
+  String get multiLanguageDesc;
+
+  /// No description provided for @profileManagementFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Management'**
+  String get profileManagementFeature;
+
+  /// No description provided for @profileManagementDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your personal information, crop preferences, and location settings for personalized recommendations.'**
+  String get profileManagementDesc;
+
+  /// No description provided for @gettingStartedStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Set up your profile with your location and crop preferences'**
+  String get gettingStartedStep1;
+
+  /// No description provided for @gettingStartedStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Allow location access for accurate weather updates'**
+  String get gettingStartedStep2;
+
+  /// No description provided for @gettingStartedStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Explore weather forecasts and farming insights on the home screen'**
+  String get gettingStartedStep3;
+
+  /// No description provided for @gettingStartedStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Chat with HarvestBot for personalized farming advice'**
+  String get gettingStartedStep4;
+
+  /// No description provided for @gettingStartedStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Join the community to connect with other farmers'**
+  String get gettingStartedStep5;
+
+  /// No description provided for @weatherUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Weather Features'**
+  String get weatherUsageTitle;
+
+  /// No description provided for @weatherUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View current weather conditions, 3-day forecasts, and 30-day extended forecasts. Tap \'View All\' to see detailed calendar view.'**
+  String get weatherUsageDesc;
+
+  /// No description provided for @aiChatUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using HarvestBot'**
+  String get aiChatUsageTitle;
+
+  /// No description provided for @aiChatUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions about crops, diseases, fertilizers, or any farming topic. The AI provides context-aware responses based on your conversation.'**
+  String get aiChatUsageDesc;
+
+  /// No description provided for @pestDetectionUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Pest Detection'**
+  String get pestDetectionUsageTitle;
+
+  /// No description provided for @pestDetectionUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Take clear photos of affected plants. The system will analyze and provide identification and treatment recommendations.'**
+  String get pestDetectionUsageDesc;
+
+  /// No description provided for @communityUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Using Community Features'**
+  String get communityUsageTitle;
+
+  /// No description provided for @communityUsageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share posts, photos, and experiences. Comment on others\' posts and build connections with fellow farmers.'**
+  String get communityUsageDesc;
+
+  /// No description provided for @troubleshootingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Troubleshooting'**
+  String get troubleshootingTitle;
+
+  /// No description provided for @locationIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Issues'**
+  String get locationIssues;
+
+  /// No description provided for @locationIssuesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure location services are enabled in your device settings for accurate weather data.'**
+  String get locationIssuesDesc;
+
+  /// No description provided for @weatherNotLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather Not Loading'**
+  String get weatherNotLoading;
+
+  /// No description provided for @weatherNotLoadingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection and location permissions. Pull down to refresh the home screen.'**
+  String get weatherNotLoadingDesc;
+
+  /// No description provided for @aiNotResponding.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Not Responding'**
+  String get aiNotResponding;
+
+  /// No description provided for @aiNotRespondingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure you have a stable internet connection. Try rephrasing your question if the AI doesn\'t understand.'**
+  String get aiNotRespondingDesc;
+
+  /// No description provided for @contactSupportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For additional help or to report issues, you can:'**
+  String get contactSupportDesc;
+
+  /// No description provided for @emailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email us at: support@harvesthub.com'**
+  String get emailSupport;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report issues through the app feedback'**
+  String get reportIssue;
+
+  /// No description provided for @visitWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit our website: www.harvesthub.com'**
+  String get visitWebsite;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version: 1.5.0'**
+  String get appVersion;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated: June 2025'**
+  String get lastUpdated;
+
+  /// No description provided for @uploadPlantImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Plant Image'**
+  String get uploadPlantImage;
+
+  /// No description provided for @uploadPlantImageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a clear photo of your plant leaves or upload from gallery to detect pests and diseases.'**
+  String get uploadPlantImageDesc;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @analyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing...'**
+  String get analyzing;
+
+  /// No description provided for @analyzingForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing 30-day forecast...'**
+  String get analyzingForecast;
+
+  /// No description provided for @analyzeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze Image'**
+  String get analyzeImage;
+
+  /// No description provided for @detectionResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Detection Results'**
+  String get detectionResults;
+
+  /// No description provided for @noImageSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No image selected'**
+  String get noImageSelected;
+
+  /// No description provided for @uploadImageToGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image to get started'**
+  String get uploadImageToGetStarted;
+
+  /// No description provided for @analysisComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis Complete'**
+  String get analysisComplete;
+
+  /// No description provided for @noPestsDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No pests detected in this image'**
+  String get noPestsDetected;
+
+  /// No description provided for @cropsHealthyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your crops appear healthy! Continue with regular monitoring and maintain good agricultural practices.'**
+  String get cropsHealthyMessage;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @confidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get confidence;
+
+  /// No description provided for @diagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnosis'**
+  String get diagnosis;
+
+  /// No description provided for @causalAgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Causal Agent'**
+  String get causalAgent;
+
+  /// No description provided for @analysisError.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis Error'**
+  String get analysisError;
+
+  /// No description provided for @analysisErrorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to analyze the image. Please try again with a clearer photo.'**
+  String get analysisErrorDesc;
+
+  /// No description provided for @readyToAnalyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to analyze'**
+  String get readyToAnalyze;
+
+  /// No description provided for @uploadImageAndAnalyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image and tap \"Analyze\" to detect pests and get recommendations'**
+  String get uploadImageAndAnalyze;
+
+  /// No description provided for @scanAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Again'**
+  String get scanAgain;
+
+  /// No description provided for @saveResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Result'**
+  String get saveResult;
+
+  /// No description provided for @resultSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved'**
+  String get resultSaved;
+
+  /// No description provided for @uploadImageFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image first'**
+  String get uploadImageFirst;
+
+  /// No description provided for @tapAnalyzeToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the analyze button to start detection'**
+  String get tapAnalyzeToStart;
+
+  /// No description provided for @selectImageFromCameraOrGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an image from camera or gallery'**
+  String get selectImageFromCameraOrGallery;
+
+  /// No description provided for @failedToAnalyzeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to analyze image'**
+  String get failedToAnalyzeImage;
+
+  /// No description provided for @howToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get howToUse;
+
+  /// No description provided for @takeClearPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Take clear, well-lit photos of plant leaves'**
+  String get takeClearPhotos;
+
+  /// No description provided for @focusOnAffectedAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus on affected areas with visible symptoms'**
+  String get focusOnAffectedAreas;
+
+  /// No description provided for @avoidBlurryImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid blurry or dark images'**
+  String get avoidBlurryImages;
+
+  /// No description provided for @includeMultipleLeaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Include multiple leaves if possible'**
+  String get includeMultipleLeaves;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// No description provided for @basedOn30DayForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on 30-day weather forecast'**
+  String get basedOn30DayForecast;
+
+  /// No description provided for @basedOnCurrentConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on current weather conditions'**
+  String get basedOnCurrentConditions;
+
+  /// No description provided for @personalInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInformation;
+
+  /// No description provided for @updateYourProfileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your profile details'**
+  String get updateYourProfileDetails;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @enterYourFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get enterYourFullName;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @enterYourEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
+  String get enterYourEmailAddress;
+
+  /// No description provided for @enterYourPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get enterYourPhoneNumber;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @changeProfilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile Picture'**
+  String get changeProfilePicture;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile has been updated successfully.'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @mobileNumberUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mobile number has been updated successfully.'**
+  String get mobileNumberUpdatedSuccessfully;
+
+  /// No description provided for @pleaseEnterVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code sent to your phone'**
+  String get pleaseEnterVerificationCode;
+
+  /// No description provided for @otpAutoFilledSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP auto-filled successfully!'**
+  String get otpAutoFilledSuccessfully;
+
+  /// No description provided for @otpWillBeFilledAutomatically.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP will be filled automatically when SMS is received'**
+  String get otpWillBeFilledAutomatically;
+
+  /// No description provided for @didntReceiveOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive OTP? '**
+  String get didntReceiveOTP;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// No description provided for @resendInSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendInSeconds(Object seconds);
+
+  /// No description provided for @otpResentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP resent successfully'**
+  String get otpResentSuccessfully;
+
+  /// No description provided for @aiDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-Generated Results Disclaimer'**
+  String get aiDisclaimer;
+
+  /// No description provided for @aiDisclaimerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The diagnosis and recommendations provided are generated by AI and may contain errors. Please consult agricultural experts for critical decisions and use this information as a supplementary guide only.'**
+  String get aiDisclaimerDesc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

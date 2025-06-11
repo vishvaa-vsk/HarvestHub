@@ -6,13 +6,37 @@ import 'package:flutter/services.dart';
 class LanguageSelectionPage extends StatefulWidget {
   final void Function(String)? onLanguageSelected;
   const LanguageSelectionPage({super.key, this.onLanguageSelected});
-
   static const List<Map<String, String>> languages = [
-    {'code': 'en', 'native': 'English'},
-    {'code': 'ta', 'native': 'தமிழ்'},
-    {'code': 'te', 'native': 'తెలుగు'},
-    {'code': 'ml', 'native': 'മലയാളം'},
-    {'code': 'hi', 'native': 'हिंदी'}
+    {
+      'code': 'en',
+      'native': 'English',
+      'firstLetter': 'Aa',
+      'fontFamily': 'Poppins',
+    },
+    {
+      'code': 'hi',
+      'native': 'हिंदी',
+      'firstLetter': 'हिं',
+      'fontFamily': 'NotoSansDevanagari',
+    },
+    {
+      'code': 'ta',
+      'native': 'தமிழ்',
+      'firstLetter': 'த',
+      'fontFamily': 'NotoSansTamil',
+    },
+    {
+      'code': 'te',
+      'native': 'తెలుగు',
+      'firstLetter': 'తె',
+      'fontFamily': 'NotoSansTelugu',
+    },
+    {
+      'code': 'ml',
+      'native': 'മലയാളം',
+      'firstLetter': 'മ',
+      'fontFamily': 'NotoSansMalayalam',
+    },
   ];
 
   @override
@@ -38,12 +62,13 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     if (_selectedCode == null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('preferred_language', _selectedCode!);
+    await prefs.setBool('has_completed_onboarding', true);
     Intl.defaultLocale = _selectedCode!;
     if (widget.onLanguageSelected != null) {
       widget.onLanguageSelected!(_selectedCode!);
       return;
     }
-    if (context.mounted) {
+    if (mounted) {
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -127,6 +152,8 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                   for (final lang in LanguageSelectionPage.languages)
                     _LanguageTile(
                       label: lang['native']!,
+                      firstLetter: lang['firstLetter']!,
+                      fontFamily: lang['fontFamily']!,
                       selected: _selectedCode == lang['code'],
                       onTap: () => _selectLanguage(lang['code']!),
                       accent: green,
@@ -169,18 +196,21 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
 class _LanguageTile extends StatelessWidget {
   final String label;
+  final String firstLetter;
+  final String fontFamily;
   final bool selected;
   final VoidCallback onTap;
   final Color accent;
   final Color grey;
   const _LanguageTile({
     required this.label,
+    required this.firstLetter,
+    required this.fontFamily,
     required this.selected,
     required this.onTap,
     required this.accent,
     required this.grey,
   });
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -188,21 +218,49 @@ class _LanguageTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? accent.withOpacity(0.08) : grey,
+          color: selected ? accent.withValues(alpha: 0.08) : grey,
           border: Border.all(
             color: selected ? accent : grey,
             width: selected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(14),
         ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-            color: Colors.black87,
-            fontSize: 18,
-          ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: selected ? accent : accent.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Center(
+                child: Text(
+                  firstLetter,
+                  style: TextStyle(
+                    color: selected ? Colors.white : accent,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: fontFamily,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                  color: Colors.black87,
+                  fontSize: 16,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
