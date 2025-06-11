@@ -15,7 +15,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get welcomeMessage => 'ஹார்வெஸ்ட்ஹப்-க்கு வரவேற்கிறோம்!';
 
   @override
-  String get selectLanguage => 'மொழியைத் தேர்ந்தெடுக்கவும்';
+  String get selectLanguage => 'விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get english => 'ஆங்கிலம்';
@@ -54,7 +54,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get logout => 'லாக்அவுட்';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'ஏற்றுகிறது...';
 
   @override
   String get errorLoadingUserData => 'பயனர் தரவுகளை ஏற்றுவதில் பிழை';
@@ -64,7 +64,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String feelsLike(Object value) {
-    return 'மனிதன் உணர்கிறார்: $value°C';
+    return 'உணர்வு: $value°C';
   }
 
   @override
@@ -105,7 +105,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String weatherForecastCalendar(Object startDate, Object endDate) {
-    return 'காலநிலை முன்னறிவிப்பு';
+    return 'காலநிலை முன்னறிவிப்பு: $startDate - $endDate';
   }
 
   @override
@@ -181,19 +181,19 @@ class AppLocalizationsTa extends AppLocalizations {
   String get talkToHarvestBot => 'ஹார்வெஸ்ட்பாட்-க்கு பேசுங்கள்';
 
   @override
-  String get createPost => 'பதிவு உருவாக்கவும்';
+  String get createPost => 'இடுகை உருவாக்க';
 
   @override
-  String get addComment => 'கருத்தைச் சேர்க்கவும்...';
+  String get addComment => 'கருத்து சேர்க்க...';
 
   @override
-  String get post => 'பதிவு';
+  String get post => 'இடுகை';
 
   @override
-  String get noPostsYet => 'இன்னும் பதிவுகள் இல்லை.';
+  String get noPostsYet => 'இன்னும் இடுகைகள் இல்லை.';
 
   @override
-  String get whatsOnYourMind => 'உங்கள் மனதில் என்ன உள்ளது?';
+  String get whatsOnYourMind => 'உங்கள் மனதில் என்ன?';
 
   @override
   String get welcomeToHarvestHub => 'HarvestHub இல் உங்களை வரவேற்கிறோம்...';
@@ -235,7 +235,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get rain => 'மழை';
 
   @override
-  String get viewAll => 'மேலும் >';
+  String get viewAll => 'அனைத்தையும் காண்க >';
 
   @override
   String get january => 'ஜனவரி';
@@ -439,7 +439,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get uploadPlantImage => 'தாவர படத்தை பதிவேற்றவும்';
 
   @override
-  String get uploadPlantImageDesc => 'பூச்சிகள் மற்றும் நோய்களைக் கண்டறிய தாவர இலைகளின் தெளிவான புகைப்படம் எடுக்கவும் அல்லது கேலரியிலிருந்து பதிவேற்றவும்.';
+  String get uploadPlantImageDesc => 'கீடுகள் மற்றும் நோய்களைக் கண்டறிய உங்கள் தாவர இலைகளின் தெளிவான புகைப்படம் எடுக்கவும் அல்லது கேலரியிலிருந்து பதிவேற்றவும்.';
 
   @override
   String get camera => 'கேமரா';
@@ -469,70 +469,70 @@ class AppLocalizationsTa extends AppLocalizations {
   String get analysisComplete => 'பகுப்பாய்வு முடிந்தது';
 
   @override
-  String get noPestsDetected => 'இந்த படத்தில் பூச்சிகள் எதுவும் கண்டறியப்படவில்லை';
+  String get noPestsDetected => 'இந்த படத்தில் கீடுகள் எதுவும் கண்டறியப்படவில்லை';
 
   @override
-  String get cropsHealthyMessage => 'உங்கள் பயிர்கள் ஆரோக்கியமாக தெரிகிறது! வழக்கமான கண்காணிப்பை தொடருங்கள் மற்றும் நல்ல விவசாய நடைமுறைகளை பராமரிக்கவும்.';
+  String get cropsHealthyMessage => 'உங்கள் பயிர்கள் ஆரோக்கியமாக தெரிகின்றன! வழக்கமான கண்காணிப்பைத் தொடரவும் மற்றும் நல்ல விவசாய நடைமுறைகளை பராமரிக்கவும்.';
 
   @override
   String get recommendations => 'பரிந்துரைகள்';
 
   @override
-  String get confidence => 'Confidence';
+  String get confidence => 'நம்பிக்கை';
 
   @override
-  String get diagnosis => 'Diagnosis';
+  String get diagnosis => 'நோயறிதல்';
 
   @override
-  String get causalAgent => 'Causal Agent';
+  String get causalAgent => 'காரணமான முகவர்';
 
   @override
-  String get analysisError => 'Analysis Error';
+  String get analysisError => 'பகுப்பாய்வு பிழை';
 
   @override
-  String get analysisErrorDesc => 'Unable to analyze the image. Please try again with a clearer photo.';
+  String get analysisErrorDesc => 'படத்தை பகுப்பாய்வு செய்ய முடியவில்லை. தயவு செய்து தெளிவான புகைப்படத்துடன் மீண்டும் முயற்சிக்கவும்.';
 
   @override
   String get readyToAnalyze => 'பகுப்பாய்வு செய்ய தயார்';
 
   @override
-  String get uploadImageAndAnalyze => 'ஒரு படத்தை பதிவேற்றி பூச்சிகளைக் கண்டறிந்து பரிந்துரைகளைப் பெற \"பகுப்பாய்வு\" என்பதைத் தட்டவும்';
+  String get uploadImageAndAnalyze => 'படத்தை பதிவேற்றி கீடுகளைக் கண்டறிந்து பரிந்துரைகளைப் பெற \"பகுப்பாய்வு\" என்பதைத் தட்டவும்';
 
   @override
-  String get scanAgain => 'Scan Again';
+  String get scanAgain => 'மீண்டும் ஸ்கேன் செய்யவும்';
 
   @override
-  String get saveResult => 'Save Result';
+  String get saveResult => 'முடிவை சேமிக்கவும்';
 
   @override
-  String get resultSaved => 'Result saved';
+  String get resultSaved => 'முடிவு சேமிக்கப்பட்டது';
 
   @override
-  String get uploadImageFirst => 'Upload an image first';
+  String get uploadImageFirst => 'முதலில் ஒரு படத்தை பதிவேற்றவும்';
 
   @override
-  String get tapAnalyzeToStart => 'Tap the analyze button to start detection';
+  String get tapAnalyzeToStart => 'கண்டறிதலைத் தொடங்க பகுப்பாய்வு பொத்தானைத் தட்டவும்';
 
   @override
-  String get selectImageFromCameraOrGallery => 'Select an image from camera or gallery';
+  String get selectImageFromCameraOrGallery => 'கேமரா அல்லது கேலரியில் இருந்து படத்தைத் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get failedToAnalyzeImage => 'Failed to analyze image';
+  String get failedToAnalyzeImage => 'படத்தை பகுப்பாய்வு செய்வதில் தோல்வி';
 
   @override
   String get howToUse => 'எப்படி பயன்படுத்துவது';
 
   @override
-  String get takeClearPhotos => 'தாவர இலைகளின் தெளிவான, நன்கு வெளிச்சமான புகைப்படங்களை எடுக்கவும்';
+  String get takeClearPhotos => 'தாவர இலைகளின் தெளிவான, நன்கு ஒளிரும் புகைப்படங்களை எடுக்கவும்';
 
   @override
-  String get focusOnAffectedAreas => 'தெளிவான அறிகுறிகளுடன் பாதிக்கப்பட்ட பகுதிகளில் கவனம் செலுத்துங்கள்';
+  String get focusOnAffectedAreas => 'தெரியும் அறிகுறிகளுடன் பாதிக்கப்பட்ட பகுதிகளில் கவனம் செலுத்துங்கள்';
 
   @override
   String get avoidBlurryImages => 'மங்கலான அல்லது இருண்ட படங்களைத் தவிர்க்கவும்';
 
   @override
-  String get includeMultipleLeaves => 'முடிந்தால் பல இலைகளை சேர்க்கவும்';
+  String get includeMultipleLeaves => 'முடிந்தால் பல இலைகளைச் சேர்க்கவும்';
 
   @override
   String get gotIt => 'புரிந்தது';
@@ -541,7 +541,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get basedOn30DayForecast => '30-நாள் வானிலை முன்னறிவிப்பின் அடிப்படையில்';
 
   @override
-  String get basedOnCurrentConditions => 'தற்போதைய வானிலை நிலவரங்களின் அடிப்படையில்';
+  String get basedOnCurrentConditions => 'தற்போதைய வானிலை நிலைமைகளின் அடிப்படையில்';
 
   @override
   String get personalInformation => 'தனிப்பட்ட தகவல்';
@@ -580,23 +580,23 @@ class AppLocalizationsTa extends AppLocalizations {
   String get mobileNumberUpdatedSuccessfully => 'உங்கள் மொபைல் எண் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.';
 
   @override
-  String get pleaseEnterVerificationCode => 'உங்கள் தொலைபேசிக்கு அனுப்பப்பட்ட சரிபார்ப்பு குறியீட்டை உள்ளிடவும்';
+  String get pleaseEnterVerificationCode => 'தயவு செய்து உங்கள் தொலைபேசிக்கு அனுப்பப்பட்ட சரிபார்ப்பு குறியீட்டை உள்ளிடவும்';
 
   @override
-  String get otpAutoFilledSuccessfully => 'OTP வெற்றிகரமாக தானாகவே நிரப்பப்பட்டது!';
+  String get otpAutoFilledSuccessfully => 'OTP வெற்றிகரமாக தானாக நிரப்பப்பட்டது!';
 
   @override
-  String get otpWillBeFilledAutomatically => 'SMS பெறப்படும்போது OTP தானாகவே நிரப்பப்படும்';
+  String get otpWillBeFilledAutomatically => 'SMS பெறப்படும் போது OTP தானாகவே நிரப்பப்படும்';
 
   @override
-  String get didntReceiveOTP => 'OTP கிடைக்கவில்லையா? ';
+  String get didntReceiveOTP => 'OTP பெறவில்லையா? ';
 
   @override
   String get resend => 'மீண்டும் அனுப்பு';
 
   @override
   String resendInSeconds(Object seconds) {
-    return '$secondsவி-யில் மீண்டும் அனுப்பு';
+    return '$secondsவில் மீண்டும் அனுப்பு';
   }
 
   @override

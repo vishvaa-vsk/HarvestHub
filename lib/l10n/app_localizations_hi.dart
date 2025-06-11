@@ -54,7 +54,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get logout => 'लॉगआउट';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'लोड हो रहा है...';
 
   @override
   String get errorLoadingUserData => 'उपयोगकर्ता डेटा लोड करने में त्रुटि';
@@ -157,7 +157,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get failedToSendOTP => 'OTP भेजने में विफल। कृपया पुनः प्रयास करें।';
 
   @override
-  String get failedToSignIn => 'Failed to sign in';
+  String get failedToSignIn => 'साइन इन करने में विफल';
 
   @override
   String get enableLocationServices => 'स्थान सेवाएँ सक्षम करें';
@@ -235,7 +235,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get rain => 'बारिश';
 
   @override
-  String get viewAll => 'अधिक >';
+  String get viewAll => 'सभी देखें >';
 
   @override
   String get january => 'जनवरी';
@@ -520,22 +520,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get failedToAnalyzeImage => 'छवि का विश्लेषण करने में विफल';
 
   @override
-  String get howToUse => 'How to use';
+  String get howToUse => 'उपयोग कैसे करें';
 
   @override
-  String get takeClearPhotos => 'Take clear, well-lit photos of plant leaves';
+  String get takeClearPhotos => 'पौधे की पत्तियों की स्पष्ट, अच्छी रोशनी वाली तस्वीरें लें';
 
   @override
-  String get focusOnAffectedAreas => 'Focus on affected areas with visible symptoms';
+  String get focusOnAffectedAreas => 'दिखाई देने वाले लक्षणों के साथ प्रभावित क्षेत्रों पर ध्यान दें';
 
   @override
-  String get avoidBlurryImages => 'Avoid blurry or dark images';
+  String get avoidBlurryImages => 'धुंधली या अंधेरी छवियों से बचें';
 
   @override
-  String get includeMultipleLeaves => 'Include multiple leaves if possible';
+  String get includeMultipleLeaves => 'यदि संभव हो तो कई पत्तियों को शामिल करें';
 
   @override
-  String get gotIt => 'Got it';
+  String get gotIt => 'समझ गया';
 
   @override
   String get basedOn30DayForecast => '30-दिन के मौसम पूर्वानुमान के आधार पर';
