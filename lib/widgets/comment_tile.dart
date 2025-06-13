@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../services/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Legacy comment tile for backward compatibility
 class CommentTile extends StatelessWidget {
@@ -140,37 +141,58 @@ class ModernCommentTile extends StatelessWidget {
                     // Header with name and time
                     Row(
                       children: [
-                        Text(
-                          user['name'] ?? 'User',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Text(
+                                user['name'] ?? 'User',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '·',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _timeAgo(_getDateTime(data['timestamp'])),
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
+                        // Delete button for comment owner
+                        if (_isCurrentUserComment())
+                          InkWell(
+                            onTap:
+                                () => _showDeleteCommentConfirmation(context),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Colors.grey[600],
+                                size: 16,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '·',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _timeAgo(_getDateTime(data['timestamp'])),
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -282,6 +304,113 @@ class ModernCommentTile extends StatelessWidget {
       return timestamp.toDate();
     } else {
       throw ArgumentError('Invalid timestamp type: ${timestamp.runtimeType}');
+    }
+  }
+
+  // Check if current user owns this comment
+  bool _isCurrentUserComment() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return currentUser?.phoneNumber == data['authorId'];
+  }
+
+  // Show delete confirmation dialog for comment
+  Future<void> _showDeleteCommentConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Delete Comment'),
+            content: Text('Are you sure you want to delete this comment?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text('Delete'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await _deleteComment(context);
+    }
+  } // Delete the comment
+
+  Future<void> _deleteComment(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = currentUser?.phoneNumber;
+    if (userId == null) return;
+
+    // Store the navigator and scaffold messenger
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    bool isDialogShowing = false;
+
+    try {
+      print('Starting comment deletion...');
+
+      // Show loading indicator
+      if (context.mounted) {
+        isDialogShowing = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (dialogContext) =>
+                  const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      // Extract postId from context
+      final postId = data['postId'];
+
+      print('PostId: $postId, CommentId: $commentId, UserId: $userId');
+
+      if (postId == null) {
+        throw Exception('Post ID not found');
+      }
+
+      await _firebaseService.deleteComment(
+        postId: postId,
+        commentId: commentId,
+        userId: userId,
+      );
+
+      print('Comment deleted successfully');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show success message
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Comment deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error deleting comment: $e');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show error message
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete comment: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

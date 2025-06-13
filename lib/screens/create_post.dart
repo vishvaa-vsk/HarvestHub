@@ -63,7 +63,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       String? imageUrl;
 
       if (_image != null) {
-        // Add validation for the image file
+        // Validate and upload image
         if (!await _image!.exists()) {
           throw Exception('Selected image file no longer exists');
         }
@@ -75,15 +75,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
           throw Exception('Image file is too large (max 10MB)');
         }
 
-        print('Uploading image: ${_image!.path}');
-        print('File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
-
         imageUrl = await FirebaseService().uploadImage(
           _image!.path,
           user.phoneNumber!,
         );
-
-        print('Image uploaded successfully: $imageUrl');
       }
 
       await FirebaseService().createPost(
@@ -105,7 +100,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
         );
       }
     } catch (e) {
-      print('Error creating post: $e');
       if (mounted) {
         setState(() => _loading = false);
 

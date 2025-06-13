@@ -344,6 +344,7 @@ class CommentsListWidget extends StatelessWidget {
                   'authorId': comments[i].authorId,
                   'content': comments[i].content,
                   'timestamp': comments[i].timestamp,
+                  'postId': postId, // Add postId for delete functionality
                 },
               ),
         );
@@ -388,7 +389,6 @@ class _CommentPageState extends State<CommentPage> {
                   child: Text('No comments yet. Be the first to comment!'),
                 );
               }
-
               return ListView.builder(
                 itemCount: comments.length,
                 itemBuilder:
@@ -398,6 +398,9 @@ class _CommentPageState extends State<CommentPage> {
                         'authorId': comments[i].authorId,
                         'content': comments[i].content,
                         'timestamp': comments[i].timestamp,
+                        'postId':
+                            widget
+                                .postId, // Add postId for delete functionality
                       },
                     ),
               );

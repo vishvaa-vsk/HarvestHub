@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path/path.dart' as path;
 import '../models/post.dart';
 import '../models/comment.dart';
 
@@ -156,41 +158,70 @@ class FirebaseService {
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }
+  }
+
+  // Private method to compress images for community posts
+  // This performs light compression transparently - users are not notified
+  // Only compresses files > 1MB to maintain quality while reducing storage costs
+  Future<String> _compressImage(String originalPath) async {
+    try {
+      final originalFile = File(originalPath);
+      final fileSize = await originalFile.length();
+
+      // Only compress if file is larger than 1MB to avoid unnecessary processing
+      if (fileSize <= 1024 * 1024) {
+        return originalPath;
+      }
+
+      // Create a temporary file path for the compressed image
+      final directory = originalFile.parent;
+      final originalName = path.basenameWithoutExtension(originalPath);
+      final extension = path.extension(originalPath);
+      final compressedPath = path.join(
+        directory.path,
+        '${originalName}_compressed$extension',
+      );
+
+      // Light compression - maintain high quality while reducing file size
+      final compressedFile = await FlutterImageCompress.compressAndGetFile(
+        originalPath,
+        compressedPath,
+        quality: 90, // Higher quality for better user experience
+        minWidth: 1200, // Slightly higher resolution for better quality
+        minHeight: 1200, // Slightly higher resolution for better quality
+        format: CompressFormat.jpeg, // Use JPEG for better compression
+      );
+
+      if (compressedFile != null) {
+        return compressedFile.path;
+      } else {
+        // If compression fails, return original path
+        return originalPath;
+      }
+    } catch (e) {
+      // If any error occurs during compression, silently use original image
+      return originalPath;
+    }
   } // Test Firebase Storage connectivity
 
   Future<bool> testStorageConnectivity() async {
     try {
-      print('Testing Firebase Storage connectivity...');
-
       // Get the default bucket
       final storageRef = _storage.ref();
-      print('Storage reference created successfully');
-
-      // Try to get storage bucket info
-      final bucket = _storage.bucket;
-      print('Storage bucket: $bucket');
 
       // Test by creating a small reference (doesn't upload anything)
-      final testRef = storageRef.child('test/connectivity_test.txt');
-      print('Test reference created: ${testRef.fullPath}');
-
+      storageRef.child('test/connectivity_test.txt');
       return true;
-    } on FirebaseException catch (e) {
-      print(
-        'Firebase Storage connectivity test failed: ${e.code} - ${e.message}',
-      );
-      return false;
     } catch (e) {
-      print('Storage connectivity test error: $e');
       return false;
     }
   }
 
   // Upload image with improved error handling and validation
   Future<String> uploadImage(String path, String userId) async {
-    try {
-      print('=== Starting image upload ===');
+    String? compressedImagePath;
 
+    try {
       // Check connectivity first
       final isConnected = await testStorageConnectivity();
       if (!isConnected) {
@@ -215,18 +246,15 @@ class FirebaseService {
       final fileSize = await file.length();
       if (fileSize > 10 * 1024 * 1024) {
         throw ArgumentError('Image file is too large (max 10MB)');
-      }
-
-      print('Uploading image for user: $userId');
-      print('File path: $path');
-      print('File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
+      } // Compress the image before upload (done silently)
+      compressedImagePath = await _compressImage(path);
+      final compressedFile = File(compressedImagePath);
 
       // Check if user is authenticated
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         throw Exception('User must be authenticated to upload images');
       }
-      print('User is authenticated: ${currentUser.uid}');
 
       // Clean the userId to be filesystem-safe (remove + symbol and other special chars)
       final cleanUserId = userId.replaceAll(RegExp(r'[+\-\s()]'), '');
@@ -234,18 +262,14 @@ class FirebaseService {
       final originalFileName = file.path.split('/').last.split('.').first;
       final extension = file.path.toLowerCase().split('.').last;
       final fileName =
-          '${timestamp}_${originalFileName}_${cleanUserId}.${extension}';
-
-      print('Clean user ID: $cleanUserId');
-      print('Generated filename: $fileName');
+          '${timestamp}_$originalFileName'
+          '_$cleanUserId.$extension';
 
       // Create reference with the storage bucket explicitly
       // Use a simpler path structure to avoid issues
       final storagePath = '$_storageFolder/$fileName';
-      print('Storage path: $storagePath');
 
       final ref = _storage.ref(storagePath);
-      print('Storage reference created: ${ref.fullPath}');
 
       // Determine content type from file extension
       String contentType = 'image/jpeg'; // default
@@ -265,11 +289,7 @@ class FirebaseService {
           break;
         default:
           contentType = 'image/jpeg';
-      }
-
-      print('Content type: $contentType');
-
-      // Upload the file with metadata
+      } // Upload the file with metadata
       final metadata = SettableMetadata(
         contentType: contentType,
         customMetadata: {
@@ -280,30 +300,26 @@ class FirebaseService {
         },
       );
 
-      print('Starting upload...');
-
       // Use uploadTask for better error handling
-      final uploadTask = ref.putFile(file, metadata);
-
-      // Monitor upload progress (optional)
-      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-        final progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        print('Upload progress: ${progress.toStringAsFixed(1)}%');
-      });
+      final uploadTask = ref.putFile(compressedFile, metadata);
 
       // Wait for upload to complete
       final taskSnapshot = await uploadTask;
-      print('Upload completed. Getting download URL...');
 
       // Get download URL from the completed upload
       final downloadUrl = await taskSnapshot.ref.getDownloadURL();
-      print('Download URL obtained: $downloadUrl');
-      print('=== Upload successful ===');
+
+      // Clean up temporary compressed file if it's different from original
+      if (compressedImagePath != path) {
+        try {
+          await compressedFile.delete();
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }
 
       return downloadUrl;
     } on FirebaseException catch (e) {
-      print('Firebase error: ${e.code} - ${e.message}');
       // Handle specific Firebase Storage errors
       switch (e.code) {
         case 'storage/object-not-found':
@@ -362,7 +378,15 @@ class FirebaseService {
           );
       }
     } catch (e) {
-      print('General error: $e');
+      // Clean up temporary compressed file if it's different from original
+      if (compressedImagePath != null && compressedImagePath != path) {
+        try {
+          await File(compressedImagePath).delete();
+        } catch (cleanupError) {
+          // Ignore cleanup errors
+        }
+      }
+
       // Handle other types of errors
       if (e.toString().contains('object-not-found')) {
         throw Exception(
@@ -380,6 +404,18 @@ class FirebaseService {
         );
       } else {
         throw Exception('Failed to upload image: ${e.toString()}');
+      }
+    } finally {
+      // Additional cleanup in finally block to ensure cleanup happens
+      if (compressedImagePath != null && compressedImagePath != path) {
+        try {
+          final tempFile = File(compressedImagePath);
+          if (await tempFile.exists()) {
+            await tempFile.delete();
+          }
+        } catch (e) {
+          // Ignore cleanup errors
+        }
       }
     }
   }
@@ -468,49 +504,224 @@ class FirebaseService {
   }
 
   // Delete post (admin functionality)
-  Future<void> deletePost(String postId) async {
+  Future<void> deletePost({
+    required String postId,
+    required String userId,
+  }) async {
     try {
+      print(
+        'FirebaseService: Starting deletePost with postId: $postId, userId: $userId',
+      );
+
       if (postId.trim().isEmpty) {
         throw ArgumentError('Post ID cannot be empty');
       }
+      if (userId.trim().isEmpty) {
+        throw ArgumentError('User ID cannot be empty');
+      }
 
-      await _firestore.collection(_postsCollection).doc(postId).delete();
+      final postRef = _firestore.collection(_postsCollection).doc(postId);
+      print('FirebaseService: Getting post document...');
+      final postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        print('FirebaseService: Post not found');
+        throw Exception('Post not found');
+      }
+
+      final postData = postDoc.data()!;
+      print('FirebaseService: Post data: $postData');
+
+      // Check if user owns the post
+      if (postData['authorId'] != userId) {
+        print(
+          'FirebaseService: User does not own post. AuthorId: ${postData['authorId']}, UserId: $userId',
+        );
+        throw Exception('You can only delete your own posts');
+      }
+
+      // Delete image from storage if exists
+      if (postData['imageUrl'] != null &&
+          postData['imageUrl'].toString().isNotEmpty) {
+        try {
+          print('FirebaseService: Deleting image from storage...');
+          final imageUrl = postData['imageUrl'] as String;
+          if (imageUrl.contains('firebase')) {
+            final ref = _storage.refFromURL(imageUrl);
+            await ref.delete();
+            print('FirebaseService: Image deleted from storage');
+          }
+        } catch (e) {
+          print('FirebaseService: Failed to delete image: $e');
+          // Continue with post deletion even if image deletion fails
+        }
+      }
+
+      // Delete all comments in the post
+      print('FirebaseService: Deleting comments...');
+      final commentsSnapshot =
+          await postRef.collection(_commentsCollection).get();
+      final batch = _firestore.batch();
+
+      for (final commentDoc in commentsSnapshot.docs) {
+        batch.delete(commentDoc.reference);
+      }
+      print(
+        'FirebaseService: Added ${commentsSnapshot.docs.length} comments to batch deletion',
+      );
+
+      // Delete all likes in the post
+      print('FirebaseService: Deleting likes...');
+      final likesSnapshot = await postRef.collection('likes').get();
+      for (final likeDoc in likesSnapshot.docs) {
+        batch.delete(likeDoc.reference);
+      }
+      print(
+        'FirebaseService: Added ${likesSnapshot.docs.length} likes to batch deletion',
+      );
+
+      // Delete the post itself
+      print('FirebaseService: Adding post to batch deletion...');
+      batch.delete(postRef);
+
+      // Execute all deletions
+      print('FirebaseService: Committing batch deletion...');
+      await batch.commit();
+      print('FirebaseService: Post deleted successfully');
     } catch (e) {
+      print('FirebaseService: Error deleting post: $e');
       throw Exception('Failed to delete post: $e');
     }
   }
 
-  // Update like count
-  Future<void> updateLikeCount(String postId, int newCount) async {
+  // Delete a comment
+  Future<void> deleteComment({
+    required String postId,
+    required String commentId,
+    required String userId,
+  }) async {
     try {
+      print(
+        'FirebaseService: Starting deleteComment with postId: $postId, commentId: $commentId, userId: $userId',
+      );
+
       if (postId.trim().isEmpty) {
         throw ArgumentError('Post ID cannot be empty');
       }
-      if (newCount < 0) {
-        throw ArgumentError('Like count cannot be negative');
+      if (commentId.trim().isEmpty) {
+        throw ArgumentError('Comment ID cannot be empty');
+      }
+      if (userId.trim().isEmpty) {
+        throw ArgumentError('User ID cannot be empty');
       }
 
-      await _firestore.collection(_postsCollection).doc(postId).update({
-        'likeCount': newCount,
-      });
+      final commentRef = _firestore
+          .collection(_postsCollection)
+          .doc(postId)
+          .collection(_commentsCollection)
+          .doc(commentId);
+
+      print('FirebaseService: Getting comment document...');
+      final commentDoc = await commentRef.get();
+
+      if (!commentDoc.exists) {
+        print('FirebaseService: Comment not found');
+        throw Exception('Comment not found');
+      }
+
+      final commentData = commentDoc.data()!;
+      print('FirebaseService: Comment data: $commentData');
+
+      // Check if user owns the comment
+      if (commentData['authorId'] != userId) {
+        print(
+          'FirebaseService: User does not own comment. AuthorId: ${commentData['authorId']}, UserId: $userId',
+        );
+        throw Exception('You can only delete your own comments');
+      }
+
+      // Delete the comment
+      print('FirebaseService: Deleting comment...');
+      await commentRef.delete();
+      print('FirebaseService: Comment deleted successfully');
     } catch (e) {
-      throw Exception('Failed to update like count: $e');
+      print('FirebaseService: Error deleting comment: $e');
+      throw Exception('Failed to delete comment: $e');
     }
   }
 
-  // Check if user has liked a post
+  // Check if user owns a post
+  Future<bool> userOwnsPost({
+    required String postId,
+    required String userId,
+  }) async {
+    try {
+      final postDoc =
+          await _firestore.collection(_postsCollection).doc(postId).get();
+      if (!postDoc.exists) return false;
+
+      final postData = postDoc.data()!;
+      return postData['authorId'] == userId;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Check if user owns a comment
+  Future<bool> userOwnsComment({
+    required String postId,
+    required String commentId,
+    required String userId,
+  }) async {
+    try {
+      final commentDoc =
+          await _firestore
+              .collection(_postsCollection)
+              .doc(postId)
+              .collection(_commentsCollection)
+              .doc(commentId)
+              .get();
+
+      if (!commentDoc.exists) return false;
+
+      final commentData = commentDoc.data()!;
+      return commentData['authorId'] == userId;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Stream whether user has liked a post (for real-time UI)
+  Stream<bool> userLikedPostStream({
+    required String postId,
+    required String userId,
+  }) {
+    return _firestore
+        .collection(_postsCollection)
+        .doc(postId)
+        .collection('likes')
+        .doc(userId)
+        .snapshots()
+        .map((doc) => doc.exists);
+  }
+
+  // Check if user has liked a post (synchronous)
   Future<bool> hasUserLikedPost({
     required String postId,
     required String userId,
   }) async {
-    final doc =
-        await _firestore
-            .collection(_postsCollection)
-            .doc(postId)
-            .collection('likes')
-            .doc(userId)
-            .get();
-    return doc.exists;
+    try {
+      final likeDoc =
+          await _firestore
+              .collection(_postsCollection)
+              .doc(postId)
+              .collection('likes')
+              .doc(userId)
+              .get();
+      return likeDoc.exists;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Like a post
@@ -537,19 +748,5 @@ class FirebaseService {
     batch.delete(likeRef);
     batch.update(postRef, {'likeCount': FieldValue.increment(-1)});
     await batch.commit();
-  }
-
-  // Stream whether user has liked a post (for real-time UI)
-  Stream<bool> userLikedPostStream({
-    required String postId,
-    required String userId,
-  }) {
-    return _firestore
-        .collection(_postsCollection)
-        .doc(postId)
-        .collection('likes')
-        .doc(userId)
-        .snapshots()
-        .map((doc) => doc.exists);
   }
 }

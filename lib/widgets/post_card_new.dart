@@ -62,37 +62,79 @@ class PostCard extends StatelessWidget {
                         // Header Row with Name and Time
                         Row(
                           children: [
-                            Text(
-                              user['name'] ?? 'User',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Text(
+                                    user['name'] ?? 'User',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '·',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _timeAgo(post.timestamp),
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '@${user['name']?.toLowerCase().replaceAll(' ', '') ?? 'user'}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
+                            // Menu button for post owner
+                            if (_isCurrentUserPost())
+                              PopupMenuButton<String>(
+                                icon: Icon(
+                                  Icons.more_horiz,
+                                  color: Colors.grey[600],
+                                  size: 20,
+                                ),
+                                onSelected: (value) {
+                                  if (value == 'delete') {
+                                    _showDeleteConfirmation(context);
+                                  }
+                                },
+                                itemBuilder:
+                                    (context) => [
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.red,
+                                              size: 20,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Delete Post',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '·',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _timeAgo(post.timestamp),
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 15,
-                              ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -334,5 +376,103 @@ class PostCard extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours}h';
     if (diff.inDays < 7) return '${diff.inDays}d';
     return '${(diff.inDays / 7).floor()}w';
+  }
+
+  // Check if current user owns this post
+  bool _isCurrentUserPost() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return currentUser?.phoneNumber == post.authorId;
+  }
+
+  // Show delete confirmation dialog
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Delete Post'),
+            content: Text(
+              'Are you sure you want to delete this post? This action cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text('Delete'),
+              ),
+            ],
+          ),
+    );
+    if (confirmed == true && context.mounted) {
+      await _deletePost(context);
+    }
+  }
+
+  // Delete the post
+  Future<void> _deletePost(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = currentUser?.phoneNumber;
+    if (userId == null) return;
+
+    // Store the navigator and scaffold messenger
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    bool isDialogShowing = false;
+
+    try {
+      print('Starting post deletion...');
+
+      // Show loading indicator
+      if (context.mounted) {
+        isDialogShowing = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (dialogContext) =>
+                  const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      print('PostId: ${post.id}, UserId: $userId');
+
+      await _firebaseService.deletePost(postId: post.id, userId: userId);
+
+      print('Post deleted successfully');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show success message
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Post deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error deleting post: $e');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show error message
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete post: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
