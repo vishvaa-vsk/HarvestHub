@@ -430,7 +430,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visitWebsite => 'Visit our website: www.harvesthub.com';
 
   @override
-  String get appVersion => 'App Version: 1.5.0';
+  String get appVersion => 'App Version: 2.0.1';
 
   @override
   String get lastUpdated => 'Last Updated: June 2025';

@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Rules for community images - simplified for debugging
+    match /community_images/{imageId} {
+      // Allow authenticated users to upload and read images
+      allow read: if true; // Allow anyone to read images (public access)
+      allow write: if request.auth != null; // Allow any authenticated user to write
+    }
+    
+    // Legacy rule for nested user folders (backup)
+    match /community_images/{userId}/{imageId} {
+      // Allow authenticated users to upload images to their own folder
+      allow read: if true; // Allow anyone to read images
+      allow write: if request.auth != null;
+    }
+    
+    // Fallback rule for all other paths
+    match /{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+  }
+}

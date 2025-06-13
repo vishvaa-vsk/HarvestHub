@@ -208,6 +208,32 @@ class _PerformanceOptimizedPostCardState
           _formattedTime,
           style: const TextStyle(color: Color(0xFF757575), fontSize: 15),
         ),
+        // Menu button for post owner
+        if (_isCurrentUserPost())
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_horiz, color: Colors.grey[600], size: 20),
+            onSelected: (value) {
+              if (value == 'delete') {
+                _showDeleteConfirmation(context);
+              }
+            },
+            itemBuilder:
+                (context) => [
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Delete Post',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+          ),
       ],
     );
   }
@@ -317,6 +343,103 @@ class _PerformanceOptimizedPostCardState
       }
     } catch (e) {
       debugPrint('Error liking post: $e');
+    }
+  }
+
+  // Check if current user owns this post
+  bool _isCurrentUserPost() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return currentUser?.phoneNumber == widget.post.authorId;
+  }
+
+  // Show delete confirmation dialog
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Delete Post'),
+            content: Text(
+              'Are you sure you want to delete this post? This action cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text('Delete'),
+              ),
+            ],
+          ),
+    );
+    if (confirmed == true && context.mounted) {
+      await _deletePost(context);
+    }
+  } // Delete the post
+
+  Future<void> _deletePost(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = currentUser?.phoneNumber;
+    if (userId == null) return;
+
+    // Store the navigator and scaffold messenger
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    bool isDialogShowing = false;
+
+    try {
+      print('Starting post deletion...');
+
+      // Show loading indicator
+      if (context.mounted) {
+        isDialogShowing = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (dialogContext) =>
+                  const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      print('PostId: ${widget.post.id}, UserId: $userId');
+
+      await _firebaseService.deletePost(postId: widget.post.id, userId: userId);
+
+      print('Post deleted successfully');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show success message
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Post deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error deleting post: $e');
+
+      // Close loading dialog
+      if (isDialogShowing) {
+        navigator.pop();
+        isDialogShowing = false;
+      }
+
+      // Show error message
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete post: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

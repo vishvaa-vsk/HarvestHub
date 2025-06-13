@@ -63,6 +63,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
       String? imageUrl;
 
       if (_image != null) {
+        // Validate and upload image
+        if (!await _image!.exists()) {
+          throw Exception('Selected image file no longer exists');
+        }
+
+        // Add file size check (optional)
+        final fileSize = await _image!.length();
+        if (fileSize > 10 * 1024 * 1024) {
+          // 10MB limit
+          throw Exception('Image file is too large (max 10MB)');
+        }
+
         imageUrl = await FirebaseService().uploadImage(
           _image!.path,
           user.phoneNumber!,
@@ -91,11 +103,26 @@ class _CreatePostPageState extends State<CreatePostPage> {
       if (mounted) {
         setState(() => _loading = false);
 
-        // Show error message
+        // Show more specific error message
+        String errorMessage = 'Failed to create post';
+        if (e.toString().contains('Storage bucket not properly configured')) {
+          errorMessage =
+              'Storage not configured properly. Please contact support.';
+        } else if (e.toString().contains('Unauthorized access')) {
+          errorMessage = 'Permission denied. Please check your account.';
+        } else if (e.toString().contains('too large')) {
+          errorMessage = 'Image file is too large (max 10MB)';
+        } else if (e.toString().contains('no longer exists')) {
+          errorMessage = 'Selected image is no longer available';
+        } else {
+          errorMessage = 'Failed to create post: ${e.toString()}';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create post: $e'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
           ),
         );
       }
