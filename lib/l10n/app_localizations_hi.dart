@@ -430,7 +430,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get visitWebsite => 'हमारी वेबसाइट पर जाएं: www.harvesthub.com';
 
   @override
-  String get appVersion => 'ऐप संस्करण: 1.5.0';
+  String get appVersion => 'ऐप संस्करण: 2.0.1';
 
   @override
   String get lastUpdated => 'अंतिम अपडेट: जून 2025';

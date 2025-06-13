@@ -430,7 +430,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get visitWebsite => 'మా వెబ్‌సైట్ సందర్శించండి: www.harvesthub.com';
 
   @override
-  String get appVersion => 'యాప్ వెర్షన్: 1.5.0';
+  String get appVersion => 'యాప్ వెర్షన్: 2.0.1';
 
   @override
   String get lastUpdated => 'చివరిగా నవీకరించబడింది: జూన్ 2025';

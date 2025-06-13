@@ -430,7 +430,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get visitWebsite => 'ഞങ്ങളുടെ വെബ്സൈറ്റ് സന്ദർശിക്കുക: www.harvesthub.com';
 
   @override
-  String get appVersion => 'ആപ്പ് പതിപ്പ്: 1.5.0';
+  String get appVersion => 'ആപ്പ് പതിപ്പ്: 2.0.1';
 
   @override
   String get lastUpdated => 'അവസാനമായി അപ്ഡേറ്റ് ചെയ്തത്: ജൂൺ 2025';
