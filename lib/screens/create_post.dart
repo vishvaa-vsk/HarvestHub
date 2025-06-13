@@ -63,10 +63,27 @@ class _CreatePostPageState extends State<CreatePostPage> {
       String? imageUrl;
 
       if (_image != null) {
+        // Add validation for the image file
+        if (!await _image!.exists()) {
+          throw Exception('Selected image file no longer exists');
+        }
+
+        // Add file size check (optional)
+        final fileSize = await _image!.length();
+        if (fileSize > 10 * 1024 * 1024) {
+          // 10MB limit
+          throw Exception('Image file is too large (max 10MB)');
+        }
+
+        print('Uploading image: ${_image!.path}');
+        print('File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
+
         imageUrl = await FirebaseService().uploadImage(
           _image!.path,
           user.phoneNumber!,
         );
+
+        print('Image uploaded successfully: $imageUrl');
       }
 
       await FirebaseService().createPost(
@@ -88,14 +105,30 @@ class _CreatePostPageState extends State<CreatePostPage> {
         );
       }
     } catch (e) {
+      print('Error creating post: $e');
       if (mounted) {
         setState(() => _loading = false);
 
-        // Show error message
+        // Show more specific error message
+        String errorMessage = 'Failed to create post';
+        if (e.toString().contains('Storage bucket not properly configured')) {
+          errorMessage =
+              'Storage not configured properly. Please contact support.';
+        } else if (e.toString().contains('Unauthorized access')) {
+          errorMessage = 'Permission denied. Please check your account.';
+        } else if (e.toString().contains('too large')) {
+          errorMessage = 'Image file is too large (max 10MB)';
+        } else if (e.toString().contains('no longer exists')) {
+          errorMessage = 'Selected image is no longer available';
+        } else {
+          errorMessage = 'Failed to create post: ${e.toString()}';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create post: $e'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
           ),
         );
       }

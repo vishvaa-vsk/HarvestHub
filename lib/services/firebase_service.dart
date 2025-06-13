@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/post.dart';
 import '../models/comment.dart';
 
@@ -155,11 +156,49 @@ class FirebaseService {
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }
+  } // Test Firebase Storage connectivity
+
+  Future<bool> testStorageConnectivity() async {
+    try {
+      print('Testing Firebase Storage connectivity...');
+
+      // Get the default bucket
+      final storageRef = _storage.ref();
+      print('Storage reference created successfully');
+
+      // Try to get storage bucket info
+      final bucket = _storage.bucket;
+      print('Storage bucket: $bucket');
+
+      // Test by creating a small reference (doesn't upload anything)
+      final testRef = storageRef.child('test/connectivity_test.txt');
+      print('Test reference created: ${testRef.fullPath}');
+
+      return true;
+    } on FirebaseException catch (e) {
+      print(
+        'Firebase Storage connectivity test failed: ${e.code} - ${e.message}',
+      );
+      return false;
+    } catch (e) {
+      print('Storage connectivity test error: $e');
+      return false;
+    }
   }
 
   // Upload image with improved error handling and validation
   Future<String> uploadImage(String path, String userId) async {
     try {
+      print('=== Starting image upload ===');
+
+      // Check connectivity first
+      final isConnected = await testStorageConnectivity();
+      if (!isConnected) {
+        throw Exception(
+          'Firebase Storage is not properly configured or accessible',
+        );
+      }
+
       if (path.trim().isEmpty) {
         throw ArgumentError('Image path cannot be empty');
       }
@@ -172,18 +211,176 @@ class FirebaseService {
         throw ArgumentError('Image file does not exist at path: $path');
       }
 
+      // Check file size (limit to 10MB)
+      final fileSize = await file.length();
+      if (fileSize > 10 * 1024 * 1024) {
+        throw ArgumentError('Image file is too large (max 10MB)');
+      }
+
+      print('Uploading image for user: $userId');
+      print('File path: $path');
+      print('File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
+
+      // Check if user is authenticated
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception('User must be authenticated to upload images');
+      }
+      print('User is authenticated: ${currentUser.uid}');
+
       // Clean the userId to be filesystem-safe (remove + symbol and other special chars)
       final cleanUserId = userId.replaceAll(RegExp(r'[+\-\s()]'), '');
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final originalFileName = file.path.split('/').last.split('.').first;
+      final extension = file.path.toLowerCase().split('.').last;
       final fileName =
-          '${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+          '${timestamp}_${originalFileName}_${cleanUserId}.${extension}';
 
-      final ref = _storage.ref().child(
-        '$_storageFolder/$cleanUserId/$fileName',
+      print('Clean user ID: $cleanUserId');
+      print('Generated filename: $fileName');
+
+      // Create reference with the storage bucket explicitly
+      // Use a simpler path structure to avoid issues
+      final storagePath = '$_storageFolder/$fileName';
+      print('Storage path: $storagePath');
+
+      final ref = _storage.ref(storagePath);
+      print('Storage reference created: ${ref.fullPath}');
+
+      // Determine content type from file extension
+      String contentType = 'image/jpeg'; // default
+      switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+          contentType = 'image/jpeg';
+          break;
+        case 'png':
+          contentType = 'image/png';
+          break;
+        case 'gif':
+          contentType = 'image/gif';
+          break;
+        case 'webp':
+          contentType = 'image/webp';
+          break;
+        default:
+          contentType = 'image/jpeg';
+      }
+
+      print('Content type: $contentType');
+
+      // Upload the file with metadata
+      final metadata = SettableMetadata(
+        contentType: contentType,
+        customMetadata: {
+          'uploadedBy': userId,
+          'uploadTime': DateTime.now().toIso8601String(),
+          'originalFileName': originalFileName,
+          'userUid': currentUser.uid,
+        },
       );
-      final uploadTask = await ref.putFile(file);
-      return await uploadTask.ref.getDownloadURL();
+
+      print('Starting upload...');
+
+      // Use uploadTask for better error handling
+      final uploadTask = ref.putFile(file, metadata);
+
+      // Monitor upload progress (optional)
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        final progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        print('Upload progress: ${progress.toStringAsFixed(1)}%');
+      });
+
+      // Wait for upload to complete
+      final taskSnapshot = await uploadTask;
+      print('Upload completed. Getting download URL...');
+
+      // Get download URL from the completed upload
+      final downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      print('Download URL obtained: $downloadUrl');
+      print('=== Upload successful ===');
+
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      print('Firebase error: ${e.code} - ${e.message}');
+      // Handle specific Firebase Storage errors
+      switch (e.code) {
+        case 'storage/object-not-found':
+          throw Exception(
+            'Storage bucket not found. Please check Firebase project configuration.',
+          );
+        case 'storage/bucket-not-found':
+          throw Exception(
+            'Storage bucket does not exist. Please verify Firebase Storage setup.',
+          );
+        case 'storage/project-not-found':
+          throw Exception(
+            'Firebase project not found. Please check project configuration.',
+          );
+        case 'storage/quota-exceeded':
+          throw Exception(
+            'Storage quota exceeded. Please check your Firebase plan.',
+          );
+        case 'storage/unauthenticated':
+          throw Exception(
+            'User not authenticated. Please sign in and try again.',
+          );
+        case 'storage/unauthorized':
+          throw Exception(
+            'Permission denied. Please check storage rules and user permissions.',
+          );
+        case 'storage/retry-limit-exceeded':
+          throw Exception(
+            'Upload failed after multiple retries. Please try again later.',
+          );
+        case 'storage/invalid-format':
+          throw Exception(
+            'Invalid file format. Please select a valid image file.',
+          );
+        case 'storage/no-default-bucket':
+          throw Exception(
+            'No default storage bucket configured. Please check Firebase setup.',
+          );
+        case 'storage/cannot-slice-blob':
+          throw Exception(
+            'File upload failed. Please try with a different image.',
+          );
+        case 'storage/invalid-checksum':
+          throw Exception('File corrupted during upload. Please try again.');
+        case 'storage/invalid-event-name':
+          throw Exception('Invalid storage operation. Please contact support.');
+        case 'storage/no-available-buckets':
+          throw Exception(
+            'No storage buckets available. Please check Firebase configuration.',
+          );
+        case 'storage/invalid-argument':
+          throw Exception('Invalid upload parameters. Please try again.');
+        default:
+          throw Exception(
+            'Upload failed (${e.code}): ${e.message ?? 'Unknown error'}',
+          );
+      }
     } catch (e) {
-      throw Exception('Failed to upload image: $e');
+      print('General error: $e');
+      // Handle other types of errors
+      if (e.toString().contains('object-not-found')) {
+        throw Exception(
+          'Storage bucket not properly configured. Please contact support.',
+        );
+      } else if (e.toString().contains('unauthorized')) {
+        throw Exception('Permission denied. Please ensure you are logged in.');
+      } else if (e.toString().contains('permission-denied')) {
+        throw Exception(
+          'Access denied. Please check your account permissions.',
+        );
+      } else if (e.toString().contains('network')) {
+        throw Exception(
+          'Network error. Please check your internet connection.',
+        );
+      } else {
+        throw Exception('Failed to upload image: ${e.toString()}');
+      }
     }
   }
 
