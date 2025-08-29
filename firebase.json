@@ -3,17 +3,17 @@
     "platforms": {
       "android": {
         "default": {
-          "projectId": "harvest-hub-c9ee5",
-          "appId": "1:47719572182:android:86eb3f80ba30ea03d6df77",
+          "projectId": "farmflux-44493",
+          "appId": "1:685447383281:android:aab8ccf6327a033d788150",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "dart": {
         "lib/firebase_options.dart": {
-          "projectId": "harvest-hub-c9ee5",
+          "projectId": "farmflux-44493",
           "configurations": {
-            "android": "1:47719572182:android:86eb3f80ba30ea03d6df77",
-            "ios": "1:47719572182:ios:a483e4a441e20f59d6df77"
+            "android": "1:685447383281:android:aab8ccf6327a033d788150",
+            "ios": "1:685447383281:ios:a483e4a441e20f59d6df77"
           }
         }
       }

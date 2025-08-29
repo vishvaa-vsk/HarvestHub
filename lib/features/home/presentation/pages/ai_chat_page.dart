@@ -260,7 +260,7 @@ Just ask me anything in your preferred language! 🌱''',
 
     try {
       final model = GenerativeModel(
-        model: 'models/gemini-1.5-pro',
+        model: 'models/gemini-1.5-flash',
         apiKey: dotenv.env['GEMINI_API_KEY']!,
         systemInstruction: Content.text(
           '''You are HarvestBot, an expert agricultural AI assistant specifically designed for Indian farmers. Your core expertise includes:

@@ -1,4 +1,4 @@
-package com.hacktheharvest.harvesthub
+package com.hacktheharvest.farmflux
 
 import io.flutter.embedding.android.FlutterActivity
 

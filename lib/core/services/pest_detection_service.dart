@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 /// Service class for handling pest detection API calls
 class PestDetectionService {
   static const String _baseUrl =
-      'https://harvesthub-pest-api-47719572182.us-central1.run.app';
+      'https://harvesthub-pest-api-685447383281.us-central1.run.app';
 
   /// Compresses image to bytes for optimal API performance
   static Future<Uint8List> _compressImageToBytes(File imageFile) async {

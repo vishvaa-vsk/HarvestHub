@@ -1,40 +1,21 @@
 {
   "project_info": {
-    "project_number": "47719572182",
-    "project_id": "harvest-hub-c9ee5",
-    "storage_bucket": "harvest-hub-c9ee5.firebasestorage.app"
+    "project_number": "685447383281",
+    "project_id": "farmflux-44493",
+    "storage_bucket": "farmflux-44493.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:47719572182:android:86eb3f80ba30ea03d6df77",
+        "mobilesdk_app_id": "1:685447383281:android:aab8ccf6327a033d788150",
         "android_client_info": {
-          "package_name": "com.example.harvesthub"
+          "package_name": "com.hacktheharvest.farmflux"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCq86wYEFXcwgzkvOoyrDA0zm3jtEHWTl4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:47719572182:android:5a6edc9d611ca1cbd6df77",
-        "android_client_info": {
-          "package_name": "com.hacktheharvest.harvesthub"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCq86wYEFXcwgzkvOoyrDA0zm3jtEHWTl4"
+          "current_key": "AIzaSyD-qSvIFhY04RCNC-I-m6ujhXiAQniqpo8"
         }
       ],
       "services": {

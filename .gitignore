@@ -55,3 +55,8 @@ ios/Runner/GoogleService-Info.plist
 !google-services.example.json
 
 lib/core/services/gemini_service_account.json
+
+# Android keystore files
+android/key.properties
+android/*.jks
+android/*.keystore

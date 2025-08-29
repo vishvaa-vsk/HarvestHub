@@ -18,7 +18,7 @@ class GeminiService {
     try {
       // Initialize the GenerativeModel client
       final model = GenerativeModel(
-        model: 'models/gemini-1.5-pro',
+        model: 'models/gemini-1.5-flash',
         apiKey: dotenv.env['GEMINI_API_KEY']!,
       );
       String langInstruction = '';
@@ -151,7 +151,7 @@ class GeminiService {
       ''';
 
       final client = GenerativeModel(
-        model: 'models/gemini-1.5-pro',
+        model: 'models/gemini-1.5-flash',
         apiKey: dotenv.env['GEMINI_API_KEY']!,
       );
 
